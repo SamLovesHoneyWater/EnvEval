@@ -1,0 +1,5 @@
+{
+  "method": "EnvGym",
+  "model": "Gemini-2.5-Pro",
+  "fcs_score": 66.81
+}

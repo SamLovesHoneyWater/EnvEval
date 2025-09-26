@@ -154,10 +154,10 @@ logs/
 .cache/
 cache/
 
-# Results and outputs
-results/
+# Results and outputs (exclude dataset results)
 outputs/
 experiments/
+# Note: dataset/results/ should be included
 
 # Model files (large)
 *.pkl

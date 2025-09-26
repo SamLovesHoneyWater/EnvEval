@@ -1,0 +1,5 @@
+{
+  "method": "EnvGym",
+  "model": "Claude-Opus-4",
+  "fcs_score": 74.01
+}
