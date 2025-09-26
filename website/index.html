@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EnvEval - Environment Evaluation Benchmark</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo-section">
+            <h1 class="logo">EnvEval</h1>
+            <p class="subtitle">Environment Evaluation Benchmark</p>
+          </div>
+          <div class="links-section">
+            <a href="#" class="link-btn github-btn" title="GitHub Repository">
+              <i class="fab fa-github"></i>
+              <span>GitHub</span>
+            </a>
+            <a href="#" class="link-btn arxiv-btn" title="ArXiv Paper">
+              <i class="fas fa-file-alt"></i>
+              <span>arXiv</span>
+            </a>
+            <a href="#" class="link-btn dataset-btn" title="Dataset">
+              <i class="fas fa-database"></i>
+              <span>Dataset</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <section class="intro-section">
+          <h2>About EnvEval</h2>
+          <p>
+            EnvEval is a comprehensive benchmark platform specifically designed
+            for evaluating environment configuration and code execution
+            capabilities. We provide performance comparisons of various advanced
+            models across different task categories, helping researchers and
+            developers better understand and select suitable AI models.
+          </p>
+        </section>
+
+        <section class="results-section">
+          <h2>Benchmark Results</h2>
+          <div class="table-container">
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Model</th>
+                  <th>FCS (%)</th>
+                </tr>
+              </thead>
+              <tbody id="results-tbody">
+                <!-- Results will be loaded dynamically from dataset files -->
+                <tr>
+                  <td colspan="3" class="loading-message">
+                    Loading results...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="insights-section">
+          <h2>Key Insights</h2>
+          <div class="insights-grid">
+            <div class="insight-card">
+              <div class="insight-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <h3>Best Performance</h3>
+              <p>
+                Claude Opus-4 achieved the highest FCS score of
+                <strong>74.01%</strong> under the EnvGym framework
+              </p>
+            </div>
+            <div class="insight-card">
+              <div class="insight-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3>Significant Improvement</h3>
+              <p>
+                EnvGym method achieved an average performance improvement of
+                <strong>2.4x</strong> compared to baseline methods
+              </p>
+            </div>
+            <div class="insight-card">
+              <div class="insight-icon">
+                <i class="fas fa-balance-scale"></i>
+              </div>
+              <h3>Consistent Improvement</h3>
+              <p>
+                All tested models show significant performance improvements
+                under the EnvGym framework
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h4>EnvEval</h4>
+            <p>Professional Environment Evaluation Benchmark Platform</p>
+          </div>
+          <div class="footer-section">
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="#">GitHub Repository</a></li>
+              <li><a href="#">Research Paper</a></li>
+              <li><a href="#">Dataset</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Contact Us</h4>
+            <p>
+              For questions or suggestions, please contact us through GitHub
+              Issues
+            </p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 EnvEval Team. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
