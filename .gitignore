@@ -169,3 +169,6 @@ experiments/
 data/large/
 *.csv.gz
 *.json.gz
+
+# Benchmark files
+benchmark/data/*

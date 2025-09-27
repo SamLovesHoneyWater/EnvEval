@@ -1,0 +1,15 @@
+{
+  "repo": "example",
+  "dockerfile": "artifacts\\example.dockerfile",
+  "rubric": "rubrics\\example.json",
+  "summary": {
+    "total_tests": 0,
+    "passed_tests": 0,
+    "failed_tests": 0,
+    "total_score": 0,
+    "max_score": 11,
+    "success_rate": 0,
+    "total_execution_time": 0
+  },
+  "test_results": []
+}
