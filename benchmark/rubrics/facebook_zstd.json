@@ -1,0 +1,375 @@
+{
+  "repo": "facebook_zstd",
+  "tests": [
+    {
+      "id": "check_gcc",
+      "type": "command_exists",
+      "params": {
+        "name": "gcc"
+      },
+      "score": 2
+    },
+    {
+      "id": "check_gpp",
+      "type": "command_exists",
+      "params": {
+        "name": "g++"
+      },
+      "score": 2
+    },
+    {
+      "id": "check_make",
+      "type": "command_exists",
+      "params": {
+        "name": "make"
+      },
+      "score": 2
+    },
+    {
+      "id": "check_cmake",
+      "type": "command_exists",
+      "params": {
+        "name": "cmake"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_ninja",
+      "type": "command_exists",
+      "params": {
+        "name": "ninja"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_python3",
+      "type": "command_exists",
+      "params": {
+        "name": "python3"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_pip3",
+      "type": "command_exists",
+      "params": {
+        "name": "pip3"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_git",
+      "type": "command_exists",
+      "params": {
+        "name": "git"
+      },
+      "score": 2
+    },
+    {
+      "id": "check_curl",
+      "type": "command_exists",
+      "params": {
+        "name": "curl"
+      },
+      "score": 2
+    },
+    {
+      "id": "check_wget",
+      "type": "command_exists",
+      "params": {
+        "name": "wget"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_pkg_config",
+      "type": "command_exists",
+      "params": {
+        "name": "pkg-config"
+      },
+      "score": 1
+    },
+    {
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "lib",
+          "programs",
+          "tests",
+          "examples",
+          "doc",
+          "contrib",
+          "zlibWrapper"
+        ]
+      },
+      "score": 3
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "Makefile",
+          "README.md",
+          "LICENSE",
+          "COPYING",
+          "CHANGELOG",
+          "Package.swift"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "lib/zstd.h",
+          "lib/zdict.h",
+          "lib/zstd_errors.h",
+          "lib/Makefile"
+        ]
+      },
+      "score": 3
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "programs/zstdcli.c",
+          "programs/Makefile",
+          "programs/benchzstd.c",
+          "programs/datagen.c"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "tests/Makefile",
+          "tests/playTests.sh",
+          "tests/fullbench.c"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "id": "test_gcc_version",
+      "type": "output_contains",
+      "params": {
+        "command": "gcc --version",
+        "contains": ["gcc"]
+      },
+      "timeout": 10,
+      "requires": ["check_gcc"],
+      "score": 1
+    },
+    {
+      "id": "test_gpp_version",
+      "type": "output_contains",
+      "params": {
+        "command": "g++ --version",
+        "contains": ["g++"]
+      },
+      "timeout": 10,
+      "requires": ["check_gpp"],
+      "score": 1
+    },
+    {
+      "id": "test_make_version",
+      "type": "output_contains",
+      "params": {
+        "command": "make --version",
+        "contains": ["GNU Make", "make"]
+      },
+      "timeout": 10,
+      "requires": ["check_make"],
+      "score": 1
+    },
+    {
+      "id": "test_cmake_version",
+      "type": "output_contains",
+      "params": {
+        "command": "cmake --version",
+        "contains": ["cmake"]
+      },
+      "timeout": 10,
+      "requires": ["check_cmake"],
+      "score": 1
+    },
+    {
+      "id": "test_python3_version",
+      "type": "output_contains",
+      "params": {
+        "command": "python3 --version",
+        "contains": ["Python"]
+      },
+      "timeout": 10,
+      "requires": ["check_python3"],
+      "score": 1
+    },
+    {
+      "id": "test_git_version",
+      "type": "output_contains",
+      "params": {
+        "command": "git --version",
+        "contains": ["git"]
+      },
+      "timeout": 10,
+      "requires": ["check_git"],
+      "score": 1
+    },
+    {
+      "id": "test_c_compilation",
+      "type": "run_command",
+      "params": {
+        "command": "echo '#include <stdio.h>\nint main() { printf(\"Hello from C\\n\"); return 0; }' > test.c && gcc -o test_c test.c && ./test_c && rm -f test_c test.c"
+      },
+      "timeout": 30,
+      "requires": ["check_gcc"],
+      "score": 2
+    },
+    {
+      "id": "test_cpp_compilation",
+      "type": "run_command",
+      "params": {
+        "command": "echo '#include <iostream>\nint main() { std::cout << \"Hello from C++\" << std::endl; return 0; }' > test.cpp && g++ -o test_cpp test.cpp && ./test_cpp && rm -f test_cpp test.cpp"
+      },
+      "timeout": 30,
+      "requires": ["check_gpp"],
+      "score": 2
+    },
+    {
+      "id": "test_make_help",
+      "type": "run_command",
+      "params": {
+        "command": "make --version"
+      },
+      "timeout": 30,
+      "requires": ["check_make"],
+      "score": 1
+    },
+    {
+      "id": "test_cmake_help",
+      "type": "run_command",
+      "params": {
+        "command": "cmake --help"
+      },
+      "timeout": 30,
+      "requires": ["check_cmake"],
+      "score": 1
+    },
+    {
+      "id": "test_python3_execution",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"print('Hello from Python3')\""
+      },
+      "timeout": 30,
+      "requires": ["check_python3"],
+      "score": 1
+    },
+    {
+      "id": "test_pip3_list",
+      "type": "run_command",
+      "params": {
+        "command": "pip3 list"
+      },
+      "timeout": 30,
+      "requires": ["check_pip3"],
+      "score": 1
+    },
+    {
+      "id": "test_zstd_header_compilation",
+      "type": "run_command",
+      "params": {
+        "command": "echo '#include \"lib/zstd.h\"\n#include <stdio.h>\nint main() { printf(\"ZSTD version: %s\\n\", ZSTD_VERSION_STRING); return 0; }' > test_zstd.c && gcc -I. -o test_zstd test_zstd.c && ./test_zstd && rm -f test_zstd test_zstd.c"
+      },
+      "timeout": 60,
+      "requires": ["check_gcc"],
+      "score": 3
+    },
+    {
+      "id": "test_lib_build",
+      "type": "run_command",
+      "params": {
+        "command": "make lib"
+      },
+      "timeout": 120,
+      "requires": ["check_make"],
+      "score": 3
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "lib/libzstd.a"
+        ]
+      },
+      "requires": ["test_lib_build"],
+      "score": 2
+    },
+    {
+      "id": "test_zstd_build",
+      "type": "run_command",
+      "params": {
+        "command": "make zstd"
+      },
+      "timeout": 180,
+      "requires": ["check_make"],
+      "score": 3
+    },
+    {
+      "id": "test_zstd_binary_exists",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "zstd"
+        ]
+      },
+      "requires": ["test_zstd_build"],
+      "score": 2
+    },
+    {
+      "id": "test_zstd_version",
+      "type": "run_command",
+      "params": {
+        "command": "./zstd --version"
+      },
+      "timeout": 30,
+      "requires": ["test_zstd_binary_exists"],
+      "score": 2
+    },
+    {
+      "id": "test_zstd_help",
+      "type": "run_command",
+      "params": {
+        "command": "./zstd --help"
+      },
+      "timeout": 30,
+      "requires": ["test_zstd_binary_exists"],
+      "score": 1
+    },
+    {
+      "type": "command_exists",
+      "params": {
+        "name": "lz4"
+      },
+      "score": 1
+    },
+    {
+      "type": "command_exists",
+      "params": {
+        "name": "brotli"
+      },
+      "score": 1
+    },
+    {
+      "type": "command_exists",
+      "params": {
+        "name": "gzip"
+      },
+      "score": 1
+    }
+  ]
+}

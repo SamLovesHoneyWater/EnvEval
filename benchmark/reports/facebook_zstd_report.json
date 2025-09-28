@@ -1,0 +1,15 @@
+{
+  "repo": "facebook_zstd",
+  "dockerfile": "artifacts\\facebook_zstd.dockerfile",
+  "rubric": "rubrics\\facebook_zstd.json",
+  "summary": {
+    "total_tests": 0,
+    "passed_tests": 0,
+    "failed_tests": 0,
+    "total_score": 0,
+    "max_score": 61,
+    "success_rate": 0,
+    "total_execution_time": 0
+  },
+  "test_results": []
+}

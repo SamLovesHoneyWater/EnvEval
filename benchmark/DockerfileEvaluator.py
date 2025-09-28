@@ -63,14 +63,55 @@ class DockerfileEvaluator:
     def build_docker_image(self) -> bool:
         """Build Docker image from the provided Dockerfile"""
         print(f"Building Docker image: {self.image_name}")
+        
+        # Check if there's source code in data/{repo} directory
+        repo_data_path = Path(f"data/{self.repo_name}")
+        temp_dockerfile = None
+        
         try:
+            # Read the original Dockerfile
+            with open(self.dockerfile_path, 'r', encoding='utf-8') as f:
+                dockerfile_content = f.read()
+            
+            # If repo data exists and Dockerfile uses generic copy patterns, create a modified version
+            if repo_data_path.exists() and repo_data_path.is_dir():
+                print(f"Found source code directory: {repo_data_path}")
+                
+                # Replace common generic copy patterns with specific path
+                modified_content = dockerfile_content
+                
+                # Replace "COPY . ." with "COPY data/{repo}/ ."
+                if "COPY . ." in modified_content and f"data/{self.repo_name}" not in modified_content:
+                    modified_content = modified_content.replace("COPY . .", f"COPY data/{self.repo_name}/ .")
+                    print(f"Modified Dockerfile to copy from data/{self.repo_name}/")
+                
+                # Replace "ADD . ." with "ADD data/{repo}/ ."  
+                if "ADD . ." in modified_content and f"data/{self.repo_name}" not in modified_content:
+                    modified_content = modified_content.replace("ADD . .", f"ADD data/{self.repo_name}/ .")
+                    print(f"Modified Dockerfile to add from data/{self.repo_name}/")
+                
+                # If content was modified, create a temporary Dockerfile
+                if modified_content != dockerfile_content:
+                    temp_dockerfile = tempfile.NamedTemporaryFile(mode='w', suffix='.dockerfile', 
+                                                                delete=False, encoding='utf-8')
+                    temp_dockerfile.write(modified_content)
+                    temp_dockerfile.close()
+                    dockerfile_to_use = temp_dockerfile.name
+                    print(f"Using temporary modified Dockerfile: {dockerfile_to_use}")
+                else:
+                    dockerfile_to_use = str(self.dockerfile_path)
+            else:
+                dockerfile_to_use = str(self.dockerfile_path)
+                if not repo_data_path.exists():
+                    print(f"Warning: No source code directory found at {repo_data_path}")
+            
             cmd = [
                 "docker", "build", 
                 "-t", self.image_name,
-                "-f", str(self.dockerfile_path),
+                "-f", dockerfile_to_use,
                 "."
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600)
             
             if result.returncode == 0:
                 print("✓ Docker image built successfully")
@@ -87,6 +128,13 @@ class DockerfileEvaluator:
         except Exception as e:
             print(f"✗ Error building Docker image: {e}")
             return False
+        finally:
+            # Clean up temporary dockerfile
+            if temp_dockerfile and os.path.exists(temp_dockerfile.name):
+                try:
+                    os.unlink(temp_dockerfile.name)
+                except Exception:
+                    pass  # Ignore cleanup errors
     
     def run_docker_command(self, command: str, timeout: int = -1) -> tuple[bool, str, str]:
         """Run a command inside the Docker container"""
@@ -102,13 +150,17 @@ class DockerfileEvaluator:
                     cmd,
                     capture_output=True,
                     text=True,
+                    encoding='utf-8',
+                    errors='replace',
                     timeout=timeout
             )
             else:
                 result = subprocess.run(
                     cmd,
                     capture_output=True,
-                    text=True
+                    text=True,
+                    encoding='utf-8',
+                    errors='replace'
             )            
             success = result.returncode == 0
             return success, result.stdout, result.stderr
