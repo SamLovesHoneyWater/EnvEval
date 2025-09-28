@@ -1,7 +1,7 @@
 {
   "repo": "example",
-  "dockerfile": "artifacts\\example.dockerfile",
-  "rubric": "rubrics\\example.json",
+  "dockerfile": "artifacts/example.dockerfile",
+  "rubric": "rubrics/example.json",
   "summary": {
     "total_tests": 7,
     "passed_tests": 7,
@@ -9,7 +9,7 @@
     "total_score": 11,
     "max_score": 11,
     "success_rate": 1.0,
-    "total_execution_time": 8.439903736114502
+    "total_execution_time": 8.63770318031311
   },
   "test_results": [
     {
@@ -18,15 +18,15 @@
       "passed": true,
       "score": 2,
       "message": "Command 'java' found",
-      "execution_time": 1.0840377807617188
+      "execution_time": 0.6070282459259033
     },
     {
-      "test_id": "output_contains_-348584502494093834",
+      "test_id": "output_contains_-3575138243179922940",
       "test_type": "output_contains",
       "passed": true,
       "score": 2,
       "message": "Output contains: 12, 17",
-      "execution_time": 1.016216516494751
+      "execution_time": 0.48573923110961914
     },
     {
       "test_id": "files_exist_5740354900026072187",
@@ -34,7 +34,7 @@
       "passed": true,
       "score": 1,
       "message": "Files '' exist",
-      "execution_time": 0.0
+      "execution_time": 5.7220458984375e-06
     },
     {
       "test_id": "dirs_exist_5740354900026072187",
@@ -42,7 +42,7 @@
       "passed": true,
       "score": 1,
       "message": "Directories '' exist",
-      "execution_time": 0.0
+      "execution_time": 3.0994415283203125e-06
     },
     {
       "test_id": "envvar_set_JAVA_HOME",
@@ -50,23 +50,23 @@
       "passed": true,
       "score": 2,
       "message": "Environment variable 'JAVA_HOME' is set",
-      "execution_time": 0.7138071060180664
+      "execution_time": 0.3995554447174072
     },
     {
-      "test_id": "file_contains_-8741425352848715554",
+      "test_id": "file_contains_5406750440464895889",
       "test_type": "file_contains",
       "passed": true,
       "score": 1,
       "message": "File contains: jruby-9.3",
-      "execution_time": 1.6824605464935303
+      "execution_time": 0.7709197998046875
     },
     {
-      "test_id": "run_command_-4022700390433990241",
+      "test_id": "run_command_4252295284369441237",
       "test_type": "run_command",
       "passed": true,
       "score": 2,
       "message": "Command executed successfully",
-      "execution_time": 3.9433817863464355
+      "execution_time": 6.374451637268066
     }
   ]
 }

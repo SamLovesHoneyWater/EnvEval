@@ -1,15 +1,320 @@
 {
   "repo": "facebook_zstd",
-  "dockerfile": "artifacts\\facebook_zstd.dockerfile",
-  "rubric": "rubrics\\facebook_zstd.json",
+  "dockerfile": "artifacts/facebook_zstd.dockerfile",
+  "rubric": "rubrics/facebook_zstd.json",
   "summary": {
-    "total_tests": 0,
-    "passed_tests": 0,
-    "failed_tests": 0,
-    "total_score": 0,
+    "total_tests": 38,
+    "passed_tests": 34,
+    "failed_tests": 4,
+    "total_score": 54,
     "max_score": 61,
-    "success_rate": 0,
-    "total_execution_time": 0
+    "success_rate": 0.8947368421052632,
+    "total_execution_time": 106.77423310279846
   },
-  "test_results": []
+  "test_results": [
+    {
+      "test_id": "check_gcc",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 2,
+      "message": "Command 'gcc' found",
+      "execution_time": 0.4596574306488037
+    },
+    {
+      "test_id": "check_gpp",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 2,
+      "message": "Command 'g++' found",
+      "execution_time": 0.3911468982696533
+    },
+    {
+      "test_id": "check_make",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 2,
+      "message": "Command 'make' found",
+      "execution_time": 0.4012634754180908
+    },
+    {
+      "test_id": "check_cmake",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'cmake' found",
+      "execution_time": 0.4157371520996094
+    },
+    {
+      "test_id": "check_ninja",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'ninja' found",
+      "execution_time": 0.3823056221008301
+    },
+    {
+      "test_id": "check_python3",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'python3' found",
+      "execution_time": 0.40527772903442383
+    },
+    {
+      "test_id": "check_pip3",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'pip3' found",
+      "execution_time": 0.39124369621276855
+    },
+    {
+      "test_id": "check_git",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 2,
+      "message": "Command 'git' found",
+      "execution_time": 0.40819239616394043
+    },
+    {
+      "test_id": "check_curl",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 2,
+      "message": "Command 'curl' found",
+      "execution_time": 0.4365262985229492
+    },
+    {
+      "test_id": "check_wget",
+      "test_type": "command_exists",
+      "passed": false,
+      "score": 0,
+      "message": "Command 'wget' not found",
+      "execution_time": 0.376389741897583
+    },
+    {
+      "test_id": "check_pkg_config",
+      "test_type": "command_exists",
+      "passed": false,
+      "score": 0,
+      "message": "Command 'pkg-config' not found",
+      "execution_time": 0.4136340618133545
+    },
+    {
+      "test_id": "dirs_exist_5740354900026072187",
+      "test_type": "dirs_exist",
+      "passed": true,
+      "score": 3,
+      "message": "Directories '' exist",
+      "execution_time": 5.7220458984375e-06
+    },
+    {
+      "test_id": "files_exist_5740354900026072187",
+      "test_type": "files_exist",
+      "passed": true,
+      "score": 2,
+      "message": "Files '' exist",
+      "execution_time": 3.0994415283203125e-06
+    },
+    {
+      "test_id": "files_exist_5740354900026072187",
+      "test_type": "files_exist",
+      "passed": true,
+      "score": 3,
+      "message": "Files '' exist",
+      "execution_time": 3.0994415283203125e-06
+    },
+    {
+      "test_id": "files_exist_5740354900026072187",
+      "test_type": "files_exist",
+      "passed": true,
+      "score": 2,
+      "message": "Files '' exist",
+      "execution_time": 1.6689300537109375e-06
+    },
+    {
+      "test_id": "files_exist_5740354900026072187",
+      "test_type": "files_exist",
+      "passed": true,
+      "score": 2,
+      "message": "Files '' exist",
+      "execution_time": 9.5367431640625e-07
+    },
+    {
+      "test_id": "test_gcc_version",
+      "test_type": "output_contains",
+      "passed": true,
+      "score": 1,
+      "message": "Output contains: gcc",
+      "execution_time": 0.3812079429626465
+    },
+    {
+      "test_id": "test_gpp_version",
+      "test_type": "output_contains",
+      "passed": true,
+      "score": 1,
+      "message": "Output contains: g++",
+      "execution_time": 0.4094829559326172
+    },
+    {
+      "test_id": "test_make_version",
+      "test_type": "output_contains",
+      "passed": true,
+      "score": 1,
+      "message": "Output contains: GNU Make",
+      "execution_time": 0.38807201385498047
+    },
+    {
+      "test_id": "test_cmake_version",
+      "test_type": "output_contains",
+      "passed": true,
+      "score": 1,
+      "message": "Output contains: cmake",
+      "execution_time": 0.49219584465026855
+    },
+    {
+      "test_id": "test_python3_version",
+      "test_type": "output_contains",
+      "passed": true,
+      "score": 1,
+      "message": "Output contains: Python",
+      "execution_time": 0.4152953624725342
+    },
+    {
+      "test_id": "test_git_version",
+      "test_type": "output_contains",
+      "passed": true,
+      "score": 1,
+      "message": "Output contains: git",
+      "execution_time": 0.39519596099853516
+    },
+    {
+      "test_id": "test_c_compilation",
+      "test_type": "run_command",
+      "passed": false,
+      "score": 0,
+      "message": "Command failed: test.c: In function 'main':\ntest.c:2:21: warning: missing terminating \" character\n    2 | int main()...",
+      "execution_time": 0.3990364074707031
+    },
+    {
+      "test_id": "test_cpp_compilation",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 2,
+      "message": "Command executed successfully",
+      "execution_time": 0.8689749240875244
+    },
+    {
+      "test_id": "test_make_help",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 1,
+      "message": "Command executed successfully",
+      "execution_time": 0.3970017433166504
+    },
+    {
+      "test_id": "test_cmake_help",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 1,
+      "message": "Command executed successfully",
+      "execution_time": 0.41725778579711914
+    },
+    {
+      "test_id": "test_python3_execution",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 1,
+      "message": "Command executed successfully",
+      "execution_time": 0.43548107147216797
+    },
+    {
+      "test_id": "test_pip3_list",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 1,
+      "message": "Command executed successfully",
+      "execution_time": 0.9926116466522217
+    },
+    {
+      "test_id": "test_zstd_header_compilation",
+      "test_type": "run_command",
+      "passed": false,
+      "score": 0,
+      "message": "Command failed: test_zstd.c: In function 'main':\ntest_zstd.c:3:21: warning: missing terminating \" character\n    3 | ...",
+      "execution_time": 0.4240736961364746
+    },
+    {
+      "test_id": "test_lib_build",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 3,
+      "message": "Command executed successfully",
+      "execution_time": 59.70722222328186
+    },
+    {
+      "test_id": "files_exist_5740354900026072187",
+      "test_type": "files_exist",
+      "passed": true,
+      "score": 2,
+      "message": "Files '' exist",
+      "execution_time": 3.5762786865234375e-06
+    },
+    {
+      "test_id": "test_zstd_build",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 3,
+      "message": "Command executed successfully",
+      "execution_time": 34.09553623199463
+    },
+    {
+      "test_id": "test_zstd_binary_exists",
+      "test_type": "files_exist",
+      "passed": true,
+      "score": 2,
+      "message": "Files '' exist",
+      "execution_time": 4.0531158447265625e-06
+    },
+    {
+      "test_id": "test_zstd_version",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 2,
+      "message": "Command executed successfully",
+      "execution_time": 0.45760440826416016
+    },
+    {
+      "test_id": "test_zstd_help",
+      "test_type": "run_command",
+      "passed": true,
+      "score": 1,
+      "message": "Command executed successfully",
+      "execution_time": 0.3948500156402588
+    },
+    {
+      "test_id": "command_exists_lz4",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'lz4' found",
+      "execution_time": 0.4127836227416992
+    },
+    {
+      "test_id": "command_exists_brotli",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'brotli' found",
+      "execution_time": 0.40905022621154785
+    },
+    {
+      "test_id": "command_exists_gzip",
+      "test_type": "command_exists",
+      "passed": true,
+      "score": 1,
+      "message": "Command 'gzip' found",
+      "execution_time": 0.39990234375
+    }
+  ]
 }
