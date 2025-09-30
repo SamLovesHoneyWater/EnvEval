@@ -1,320 +1,240 @@
 {
   "repo": "facebook_zstd",
-  "dockerfile": "artifacts/facebook_zstd.dockerfile",
-  "rubric": "rubrics/facebook_zstd.json",
+  "dockerfile": "artifacts\\facebook_zstd.dockerfile",
+  "rubric": "rubrics\\facebook_zstd.json",
   "summary": {
-    "total_tests": 38,
-    "passed_tests": 34,
+    "total_tests": 28,
+    "passed_tests": 24,
     "failed_tests": 4,
-    "total_score": 54,
-    "max_score": 61,
-    "success_rate": 0.8947368421052632,
-    "total_execution_time": 106.77423310279846
+    "total_score": 49,
+    "max_score": 46,
+    "success_rate": 0.8571428571428571,
+    "total_execution_time": 87.49354434013367
   },
   "test_results": [
     {
-      "test_id": "check_gcc",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 2,
-      "message": "Command 'gcc' found",
-      "execution_time": 0.4596574306488037
-    },
-    {
-      "test_id": "check_gpp",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 2,
-      "message": "Command 'g++' found",
-      "execution_time": 0.3911468982696533
-    },
-    {
-      "test_id": "check_make",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 2,
-      "message": "Command 'make' found",
-      "execution_time": 0.4012634754180908
-    },
-    {
-      "test_id": "check_cmake",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'cmake' found",
-      "execution_time": 0.4157371520996094
-    },
-    {
-      "test_id": "check_ninja",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'ninja' found",
-      "execution_time": 0.3823056221008301
-    },
-    {
-      "test_id": "check_python3",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'python3' found",
-      "execution_time": 0.40527772903442383
-    },
-    {
-      "test_id": "check_pip3",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'pip3' found",
-      "execution_time": 0.39124369621276855
-    },
-    {
-      "test_id": "check_git",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 2,
-      "message": "Command 'git' found",
-      "execution_time": 0.40819239616394043
-    },
-    {
-      "test_id": "check_curl",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 2,
-      "message": "Command 'curl' found",
-      "execution_time": 0.4365262985229492
-    },
-    {
-      "test_id": "check_wget",
-      "test_type": "command_exists",
+      "test_id": "check_build_tools",
+      "test_type": "commands_exist",
       "passed": false,
-      "score": 0,
-      "message": "Command 'wget' not found",
-      "execution_time": 0.376389741897583
+      "score": 5,
+      "message": "Found 5/6 commands. Found: gcc, g++, make, cmake, ninja. Missing: pkg-config",
+      "execution_time": 3.8684916496276855
     },
     {
-      "test_id": "check_pkg_config",
-      "test_type": "command_exists",
+      "test_id": "check_python_tools",
+      "test_type": "commands_exist",
+      "passed": true,
+      "score": 2,
+      "message": "All commands found: python3, pip3",
+      "execution_time": 1.2339503765106201
+    },
+    {
+      "test_id": "check_network_tools",
+      "test_type": "commands_exist",
       "passed": false,
-      "score": 0,
-      "message": "Command 'pkg-config' not found",
-      "execution_time": 0.4136340618133545
+      "score": 2,
+      "message": "Found 2/3 commands. Found: git, curl. Missing: wget",
+      "execution_time": 1.92586088180542
     },
     {
-      "test_id": "dirs_exist_5740354900026072187",
+      "test_id": "check_compression_tools",
+      "test_type": "commands_exist",
+      "passed": true,
+      "score": 3,
+      "message": "All commands found: lz4, brotli, gzip",
+      "execution_time": 2.055499315261841
+    },
+    {
+      "test_id": "dirs_exist_-5923423635092548984",
       "test_type": "dirs_exist",
       "passed": true,
       "score": 3,
-      "message": "Directories '' exist",
-      "execution_time": 5.7220458984375e-06
+      "message": "Directories 'lib, programs, tests, examples, doc, contrib, zlibWrapper' exist",
+      "execution_time": 4.619918584823608
     },
     {
-      "test_id": "files_exist_5740354900026072187",
+      "test_id": "files_exist_774242043939017806",
       "test_type": "files_exist",
       "passed": true,
       "score": 2,
-      "message": "Files '' exist",
-      "execution_time": 3.0994415283203125e-06
+      "message": "Files 'Makefile, README.md, LICENSE, COPYING, CHANGELOG, Package.swift' exist",
+      "execution_time": 3.9128127098083496
     },
     {
-      "test_id": "files_exist_5740354900026072187",
+      "test_id": "files_exist_-5044865684349863286",
       "test_type": "files_exist",
       "passed": true,
       "score": 3,
-      "message": "Files '' exist",
-      "execution_time": 3.0994415283203125e-06
+      "message": "Files 'lib/zstd.h, lib/zdict.h, lib/zstd_errors.h, lib/Makefile' exist",
+      "execution_time": 2.501542568206787
     },
     {
-      "test_id": "files_exist_5740354900026072187",
+      "test_id": "files_exist_824938229648214605",
       "test_type": "files_exist",
       "passed": true,
       "score": 2,
-      "message": "Files '' exist",
-      "execution_time": 1.6689300537109375e-06
+      "message": "Files 'programs/zstdcli.c, programs/Makefile, programs/benchzstd.c, programs/datagen.c' exist",
+      "execution_time": 2.554182291030884
     },
     {
-      "test_id": "files_exist_5740354900026072187",
+      "test_id": "files_exist_2910413951718747273",
       "test_type": "files_exist",
       "passed": true,
       "score": 2,
-      "message": "Files '' exist",
-      "execution_time": 9.5367431640625e-07
+      "message": "Files 'tests/Makefile, tests/playTests.sh, tests/fullbench.c' exist",
+      "execution_time": 1.8608777523040771
     },
     {
       "test_id": "test_gcc_version",
       "test_type": "output_contains",
       "passed": true,
       "score": 1,
-      "message": "Output contains: gcc",
-      "execution_time": 0.3812079429626465
+      "message": "Output contains: gcc.",
+      "execution_time": 0.614720344543457
     },
     {
       "test_id": "test_gpp_version",
       "test_type": "output_contains",
       "passed": true,
       "score": 1,
-      "message": "Output contains: g++",
-      "execution_time": 0.4094829559326172
+      "message": "Output contains: g++.",
+      "execution_time": 0.6168868541717529
     },
     {
       "test_id": "test_make_version",
       "test_type": "output_contains",
       "passed": true,
       "score": 1,
-      "message": "Output contains: GNU Make",
-      "execution_time": 0.38807201385498047
+      "message": "Output contains: GNU Make.",
+      "execution_time": 0.6236553192138672
     },
     {
       "test_id": "test_cmake_version",
       "test_type": "output_contains",
       "passed": true,
       "score": 1,
-      "message": "Output contains: cmake",
-      "execution_time": 0.49219584465026855
+      "message": "Output contains: cmake.",
+      "execution_time": 0.7016897201538086
     },
     {
       "test_id": "test_python3_version",
       "test_type": "output_contains",
       "passed": true,
       "score": 1,
-      "message": "Output contains: Python",
-      "execution_time": 0.4152953624725342
+      "message": "Output contains: Python.",
+      "execution_time": 0.6598639488220215
     },
     {
       "test_id": "test_git_version",
       "test_type": "output_contains",
       "passed": true,
       "score": 1,
-      "message": "Output contains: git",
-      "execution_time": 0.39519596099853516
+      "message": "Output contains: git.",
+      "execution_time": 0.6538262367248535
     },
     {
       "test_id": "test_c_compilation",
       "test_type": "run_command",
       "passed": false,
       "score": 0,
-      "message": "Command failed: test.c: In function 'main':\ntest.c:2:21: warning: missing terminating \" character\n    2 | int main()...",
-      "execution_time": 0.3990364074707031
+      "message": "Command failed. Output: test.c: In function 'main':\ntest.c:2:21: warning: missing terminating \" character\n    2 | int main() { printf(\"Hello from C\n      |                     ^\ntest.c:2:21: error: missing terminating \" character\n    2 | int main() { printf(\"Hello from C\n      |                     ^~~~~~~~~~~~~\ntest.c:3:1: warning: missing terminating \" character\n    3 | \"); return 0; }\n      | ^\ntest.c:3:1: error: missing terminating \" character\n    3 | \"); return 0; }\n      | ^~~~~~~~~~~~~~~\ntest.c:3:1: error: expected expression at end of input\ntest.c:3:1: error: expected declaration or statement at end of input\n",
+      "execution_time": 0.7779233455657959
     },
     {
       "test_id": "test_cpp_compilation",
       "test_type": "run_command",
       "passed": true,
       "score": 2,
-      "message": "Command executed successfully",
-      "execution_time": 0.8689749240875244
+      "message": "Command executed successfully.",
+      "execution_time": 1.0380926132202148
     },
     {
       "test_id": "test_make_help",
       "test_type": "run_command",
       "passed": true,
       "score": 1,
-      "message": "Command executed successfully",
-      "execution_time": 0.3970017433166504
+      "message": "Command executed successfully.",
+      "execution_time": 0.6139469146728516
     },
     {
       "test_id": "test_cmake_help",
       "test_type": "run_command",
       "passed": true,
       "score": 1,
-      "message": "Command executed successfully",
-      "execution_time": 0.41725778579711914
+      "message": "Command executed successfully.",
+      "execution_time": 0.5929586887359619
     },
     {
       "test_id": "test_python3_execution",
       "test_type": "run_command",
       "passed": true,
       "score": 1,
-      "message": "Command executed successfully",
-      "execution_time": 0.43548107147216797
+      "message": "Command executed successfully.",
+      "execution_time": 0.6889955997467041
     },
     {
       "test_id": "test_pip3_list",
       "test_type": "run_command",
       "passed": true,
       "score": 1,
-      "message": "Command executed successfully",
-      "execution_time": 0.9926116466522217
+      "message": "Command executed successfully.",
+      "execution_time": 1.6153395175933838
     },
     {
       "test_id": "test_zstd_header_compilation",
       "test_type": "run_command",
       "passed": false,
       "score": 0,
-      "message": "Command failed: test_zstd.c: In function 'main':\ntest_zstd.c:3:21: warning: missing terminating \" character\n    3 | ...",
-      "execution_time": 0.4240736961364746
+      "message": "Command failed. Output: test_zstd.c: In function 'main':\ntest_zstd.c:3:21: warning: missing terminating \" character\n    3 | int main() { printf(\"ZSTD version: %s\n      |                     ^\ntest_zstd.c:3:21: error: missing terminating \" character\n    3 | int main() { printf(\"ZSTD version: %s\n      |                     ^~~~~~~~~~~~~~~~~\ntest_zstd.c:4:1: warning: missing terminating \" character\n    4 | \", ZSTD_VERSION_STRING); return 0; }\n      | ^\ntest_zstd.c:4:1: error: missing terminating \" character\n    4 | \", ZSTD_VERSION_STRING); return 0; }\n      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ntest_zstd.c:4:1: error: expected expression at end of input\ntest_zstd.c:4:1: error: expected declaration or statement at end of input\n",
+      "execution_time": 0.5778050422668457
     },
     {
       "test_id": "test_lib_build",
       "test_type": "run_command",
       "passed": true,
       "score": 3,
-      "message": "Command executed successfully",
-      "execution_time": 59.70722222328186
+      "message": "Command executed successfully.",
+      "execution_time": 31.707825899124146
     },
     {
-      "test_id": "files_exist_5740354900026072187",
+      "test_id": "files_exist_-6599688587085857230",
       "test_type": "files_exist",
       "passed": true,
       "score": 2,
-      "message": "Files '' exist",
-      "execution_time": 3.5762786865234375e-06
+      "message": "Files 'lib/libzstd.a' exist",
+      "execution_time": 0.6577074527740479
     },
     {
       "test_id": "test_zstd_build",
       "test_type": "run_command",
       "passed": true,
       "score": 3,
-      "message": "Command executed successfully",
-      "execution_time": 34.09553623199463
+      "message": "Command executed successfully.",
+      "execution_time": 18.782105207443237
     },
     {
       "test_id": "test_zstd_binary_exists",
       "test_type": "files_exist",
       "passed": true,
       "score": 2,
-      "message": "Files '' exist",
-      "execution_time": 4.0531158447265625e-06
+      "message": "Files 'zstd' exist",
+      "execution_time": 0.6999626159667969
     },
     {
       "test_id": "test_zstd_version",
       "test_type": "run_command",
       "passed": true,
       "score": 2,
-      "message": "Command executed successfully",
-      "execution_time": 0.45760440826416016
+      "message": "Command executed successfully.",
+      "execution_time": 0.6214585304260254
     },
     {
       "test_id": "test_zstd_help",
       "test_type": "run_command",
       "passed": true,
       "score": 1,
-      "message": "Command executed successfully",
-      "execution_time": 0.3948500156402588
-    },
-    {
-      "test_id": "command_exists_lz4",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'lz4' found",
-      "execution_time": 0.4127836227416992
-    },
-    {
-      "test_id": "command_exists_brotli",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'brotli' found",
-      "execution_time": 0.40905022621154785
-    },
-    {
-      "test_id": "command_exists_gzip",
-      "test_type": "command_exists",
-      "passed": true,
-      "score": 1,
-      "message": "Command 'gzip' found",
-      "execution_time": 0.39990234375
+      "message": "Command executed successfully.",
+      "execution_time": 0.715644359588623
     }
   ]
 }

@@ -3,11 +3,10 @@
   "tests": [
     {
       "id": "check_java",
-      "type": "command_exists",
+      "type": "commands_exist",
       "params": {
-        "name": "java"
-      },
-      "score": 2
+        "names": ["java"]
+      }
     },
     {
       "type": "output_contains",

@@ -2,92 +2,32 @@
   "repo": "facebook_zstd",
   "tests": [
     {
-      "id": "check_gcc",
-      "type": "command_exists",
+      "id": "check_build_tools",
+      "type": "commands_exist",
       "params": {
-        "name": "gcc"
-      },
-      "score": 2
+        "names": ["gcc", "g++", "make", "cmake", "ninja", "pkg-config"]
+      }
     },
     {
-      "id": "check_gpp",
-      "type": "command_exists",
+      "id": "check_python_tools", 
+      "type": "commands_exist",
       "params": {
-        "name": "g++"
-      },
-      "score": 2
+        "names": ["python3", "pip3"]
+      }
     },
     {
-      "id": "check_make",
-      "type": "command_exists",
+      "id": "check_network_tools",
+      "type": "commands_exist", 
       "params": {
-        "name": "make"
-      },
-      "score": 2
+        "names": ["git", "curl", "wget"]
+      }
     },
     {
-      "id": "check_cmake",
-      "type": "command_exists",
+      "id": "check_compression_tools",
+      "type": "commands_exist",
       "params": {
-        "name": "cmake"
-      },
-      "score": 1
-    },
-    {
-      "id": "check_ninja",
-      "type": "command_exists",
-      "params": {
-        "name": "ninja"
-      },
-      "score": 1
-    },
-    {
-      "id": "check_python3",
-      "type": "command_exists",
-      "params": {
-        "name": "python3"
-      },
-      "score": 1
-    },
-    {
-      "id": "check_pip3",
-      "type": "command_exists",
-      "params": {
-        "name": "pip3"
-      },
-      "score": 1
-    },
-    {
-      "id": "check_git",
-      "type": "command_exists",
-      "params": {
-        "name": "git"
-      },
-      "score": 2
-    },
-    {
-      "id": "check_curl",
-      "type": "command_exists",
-      "params": {
-        "name": "curl"
-      },
-      "score": 2
-    },
-    {
-      "id": "check_wget",
-      "type": "command_exists",
-      "params": {
-        "name": "wget"
-      },
-      "score": 1
-    },
-    {
-      "id": "check_pkg_config",
-      "type": "command_exists",
-      "params": {
-        "name": "pkg-config"
-      },
-      "score": 1
+        "names": ["lz4", "brotli", "gzip"]
+      }
     },
     {
       "type": "dirs_exist",
@@ -161,7 +101,6 @@
         "contains": ["gcc"]
       },
       "timeout": 10,
-      "requires": ["check_gcc"],
       "score": 1
     },
     {
@@ -172,7 +111,6 @@
         "contains": ["g++"]
       },
       "timeout": 10,
-      "requires": ["check_gpp"],
       "score": 1
     },
     {
@@ -183,7 +121,6 @@
         "contains": ["GNU Make", "make"]
       },
       "timeout": 10,
-      "requires": ["check_make"],
       "score": 1
     },
     {
@@ -194,7 +131,6 @@
         "contains": ["cmake"]
       },
       "timeout": 10,
-      "requires": ["check_cmake"],
       "score": 1
     },
     {
@@ -205,7 +141,6 @@
         "contains": ["Python"]
       },
       "timeout": 10,
-      "requires": ["check_python3"],
       "score": 1
     },
     {
@@ -216,7 +151,6 @@
         "contains": ["git"]
       },
       "timeout": 10,
-      "requires": ["check_git"],
       "score": 1
     },
     {
@@ -226,7 +160,6 @@
         "command": "echo '#include <stdio.h>\nint main() { printf(\"Hello from C\\n\"); return 0; }' > test.c && gcc -o test_c test.c && ./test_c && rm -f test_c test.c"
       },
       "timeout": 30,
-      "requires": ["check_gcc"],
       "score": 2
     },
     {
@@ -236,7 +169,6 @@
         "command": "echo '#include <iostream>\nint main() { std::cout << \"Hello from C++\" << std::endl; return 0; }' > test.cpp && g++ -o test_cpp test.cpp && ./test_cpp && rm -f test_cpp test.cpp"
       },
       "timeout": 30,
-      "requires": ["check_gpp"],
       "score": 2
     },
     {
@@ -246,7 +178,6 @@
         "command": "make --version"
       },
       "timeout": 30,
-      "requires": ["check_make"],
       "score": 1
     },
     {
@@ -256,7 +187,6 @@
         "command": "cmake --help"
       },
       "timeout": 30,
-      "requires": ["check_cmake"],
       "score": 1
     },
     {
@@ -266,7 +196,6 @@
         "command": "python3 -c \"print('Hello from Python3')\""
       },
       "timeout": 30,
-      "requires": ["check_python3"],
       "score": 1
     },
     {
@@ -276,7 +205,6 @@
         "command": "pip3 list"
       },
       "timeout": 30,
-      "requires": ["check_pip3"],
       "score": 1
     },
     {
@@ -286,7 +214,6 @@
         "command": "echo '#include \"lib/zstd.h\"\n#include <stdio.h>\nint main() { printf(\"ZSTD version: %s\\n\", ZSTD_VERSION_STRING); return 0; }' > test_zstd.c && gcc -I. -o test_zstd test_zstd.c && ./test_zstd && rm -f test_zstd test_zstd.c"
       },
       "timeout": 60,
-      "requires": ["check_gcc"],
       "score": 3
     },
     {
@@ -296,7 +223,6 @@
         "command": "make lib"
       },
       "timeout": 120,
-      "requires": ["check_make"],
       "score": 3
     },
     {
@@ -306,7 +232,6 @@
           "lib/libzstd.a"
         ]
       },
-      "requires": ["test_lib_build"],
       "score": 2
     },
     {
@@ -316,7 +241,6 @@
         "command": "make zstd"
       },
       "timeout": 180,
-      "requires": ["check_make"],
       "score": 3
     },
     {
@@ -327,7 +251,6 @@
           "zstd"
         ]
       },
-      "requires": ["test_zstd_build"],
       "score": 2
     },
     {
@@ -337,7 +260,6 @@
         "command": "./zstd --version"
       },
       "timeout": 30,
-      "requires": ["test_zstd_binary_exists"],
       "score": 2
     },
     {
@@ -347,28 +269,6 @@
         "command": "./zstd --help"
       },
       "timeout": 30,
-      "requires": ["test_zstd_binary_exists"],
-      "score": 1
-    },
-    {
-      "type": "command_exists",
-      "params": {
-        "name": "lz4"
-      },
-      "score": 1
-    },
-    {
-      "type": "command_exists",
-      "params": {
-        "name": "brotli"
-      },
-      "score": 1
-    },
-    {
-      "type": "command_exists",
-      "params": {
-        "name": "gzip"
-      },
       "score": 1
     }
   ]

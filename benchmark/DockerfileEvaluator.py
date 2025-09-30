@@ -170,22 +170,40 @@ class DockerfileEvaluator:
         except Exception as e:
             return False, "", str(e)
     
-    def test_command_exists(self, test: Dict[str, Any]) -> TestResult:
-        """Test if a command exists in the container"""
+    def test_commands_exist(self, test: Dict[str, Any]) -> TestResult:
+        """Test if commands exist in the container with proportional scoring"""
         start_time = time.time()
         params = test.get('params', {})
-        command_name = params.get('name', '')
-        test_id = test.get('id', f"command_exists_{command_name}")
-        test_score = test.get('score', 1)
+        command_names = params.get('names', [])
+        test_id = test.get('id', f"commands_exist_{hash(tuple(command_names))}")
         
-        success, stdout, stderr = self.run_docker_command(f"command -v {command_name}")
+        if not command_names:
+            execution_time = time.time() - start_time
+            return TestResult(test_id, "commands_exist", False, 0, 
+                            "No commands specified", execution_time)
+        
+        found_commands = []
+        missing_commands = []
+        
+        for command_name in command_names:
+            success, stdout, stderr = self.run_docker_command(f"command -v {command_name}")
+            if success and stdout.strip() != "":
+                found_commands.append(command_name)
+            else:
+                missing_commands.append(command_name)
         
         execution_time = time.time() - start_time
-        passed = success and stdout.strip() != ""
-        score = test_score if passed else 0
-        message = f"Command '{command_name}' {'found' if passed else 'not found'}"
+        score = len(found_commands)  # Each command scores 1 point
+        passed = len(found_commands) == len(command_names)
         
-        return TestResult(test_id, "command_exists", passed, score, message, execution_time)
+        if passed:
+            message = f"All commands found: {', '.join(found_commands)}"
+        elif found_commands:
+            message = f"Found {len(found_commands)}/{len(command_names)} commands. Found: {', '.join(found_commands)}. Missing: {', '.join(missing_commands)}"
+        else:
+            message = f"No commands found. Missing: {', '.join(missing_commands)}"
+        
+        return TestResult(test_id, "commands_exist", passed, score, message, execution_time)
     
     def test_output_contains(self, test: Dict[str, Any]) -> TestResult:
         """Test if command output contains specific strings"""
@@ -201,20 +219,23 @@ class DockerfileEvaluator:
         
         execution_time = time.time() - start_time
         
-        if not success:
-            return TestResult(test_id, "output_contains", False, 0, 
-                            f"Command failed: {stderr}", execution_time)
-        
         # Check if any of the required strings are in the output
         output_text = stdout + stderr
         found_matches = [item for item in contains_list if str(item) in output_text]
         passed = len(found_matches) > 0
         score = test_score if passed else 0
         
+        '''
+        # Truncate output for logging (first 200 chars)
+        output_preview = output_text.replace('\n', ' ').strip()[:200]
+        if len(output_text) > 200:
+            output_preview += "..."
+        '''
+        
         if passed:
-            message = f"Output contains: {', '.join(map(str, found_matches))}"
+            message = f"Output contains: {', '.join(map(str, found_matches))}."
         else:
-            message = f"Output does not contain any of: {', '.join(map(str, contains_list))}"
+            message = f"Output does not contain any of: {', '.join(map(str, contains_list))}. Command output: {output_text}"
         
         return TestResult(test_id, "output_contains", passed, score, message, execution_time)
     
@@ -222,7 +243,7 @@ class DockerfileEvaluator:
         """Test if files exist in the container"""
         start_time = time.time()
         params = test.get('params', {})
-        file_paths = params.get('path', [])
+        file_paths = params.get('paths', [])
         test_id = test.get('id', f"files_exist_{hash(tuple(file_paths))}")
         test_score = test.get('score', 1)
 
@@ -243,7 +264,7 @@ class DockerfileEvaluator:
         """Test if a directory exists in the container"""
         start_time = time.time()
         params = test.get('params', {})
-        dir_paths = params.get('path', [])
+        dir_paths = params.get('paths', [])
         test_id = test.get('id', f"dirs_exist_{hash(tuple(dir_paths))}")
         test_score = test.get('score', 1)
 
@@ -329,10 +350,18 @@ class DockerfileEvaluator:
         passed = success
         score = test_score if passed else 0
         
+        # Truncate output for logging (first 200 chars)
+        output_text = stdout + stderr
+        '''
+        output_preview = output_text.replace('\n', ' ').strip()[:200]
+        if len(output_text) > 200:
+            output_preview += "..."
+        '''
+        
         if passed:
-            message = f"Command executed successfully"
+            message = f"Command executed successfully."
         else:
-            message = f"Command failed: {stderr[:100]}..."  # Truncate long error messages
+            message = f"Command failed. Output: {output_text}"
         
         return TestResult(test_id, "run_command", passed, score, message, execution_time)
     
@@ -352,7 +381,7 @@ class DockerfileEvaluator:
         test_type = test.get('type', '')
         
         test_methods = {
-            'command_exists': self.test_command_exists,
+            'commands_exist': self.test_commands_exist,
             'output_contains': self.test_output_contains,
             'files_exist': self.test_files_exist,
             'dirs_exist': self.test_dirs_exist,
