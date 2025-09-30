@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Clone Dockerfiles to be evaluated
+git clone https://github.com/EaminC/ENVGYM-baseline.git
+
 # Dataset list generated from Excel file
 repos=(
 "RelTR|https://github.com/yrcong/RelTR"
