@@ -172,3 +172,4 @@ data/large/
 
 # Benchmark files
 benchmark/data/*
+benchmark/reports-by-model
