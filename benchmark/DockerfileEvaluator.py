@@ -41,7 +41,11 @@ class DockerfileEvaluator:
         self.repo_name = repo_name
         self.dockerfile_path = Path(dockerfile_path)
         self.rubric_path = Path(rubric_path) if rubric_path else Path(f"rubrics/{repo_name}.json")
-        self.container_name = f"eval_{repo_name}_{int(time.time())}"
+        # Use more precise timestamp + random suffix to avoid conflicts
+        import random
+        timestamp = int(time.time() * 1000)  # milliseconds for better precision
+        random_suffix = random.randint(1000, 9999)
+        self.container_name = f"eval_{repo_name}_{timestamp}_{random_suffix}"
         self.image_name = f"eval_{repo_name}:latest"
         self.results: List[TestResult] = []
         self.tests: List[Dict[str, Any]] = []
@@ -114,19 +118,19 @@ class DockerfileEvaluator:
             result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600)
             
             if result.returncode == 0:
-                print("✓ Docker image built successfully")
+                print("PASS: Docker image built successfully")
                 return True
             else:
-                print(f"✗ Failed to build Docker image:")
+                print(f"FAIL: Failed to build Docker image:")
                 print(f"STDOUT: {result.stdout}")
                 print(f"STDERR: {result.stderr}")
                 return False
                 
         except subprocess.TimeoutExpired:
-            print("✗ Docker build timed out (10 minutes)")
+            print("FAIL: Docker build timed out (10 minutes)")
             return False
         except Exception as e:
-            print(f"✗ Error building Docker image: {e}")
+            print(f"FAIL: Error building Docker image: {e}")
             return False
         finally:
             # Clean up temporary dockerfile
@@ -440,12 +444,29 @@ class DockerfileEvaluator:
     def cleanup(self):
         """Clean up Docker resources"""
         try:
+            # Stop and remove any containers with our name pattern
+            subprocess.run(["docker", "stop", self.container_name], 
+                         capture_output=True, check=False)
+            subprocess.run(["docker", "rm", self.container_name], 
+                         capture_output=True, check=False)
+            
+            # Also clean up any leftover containers from previous runs
+            result = subprocess.run(["docker", "ps", "-a", "--filter", f"name=eval_{self.repo_name}_", "--format", "{{.Names}}"], 
+                                  capture_output=True, text=True, check=False)
+            if result.stdout.strip():
+                leftover_containers = result.stdout.strip().split('\n')
+                for container in leftover_containers:
+                    if container.strip():
+                        subprocess.run(["docker", "stop", container.strip()], capture_output=True, check=False)
+                        subprocess.run(["docker", "rm", container.strip()], capture_output=True, check=False)
+                        print(f"Cleaned up leftover container: {container.strip()}")
+            
             # Remove image
             subprocess.run(["docker", "rmi", self.image_name], 
                          capture_output=True, check=False)
-            print(f"Cleaned up Docker image: {self.image_name}")
+            print(f"Cleaned up Docker resources for: {self.repo_name}")
         except Exception as e:
-            print(f"Warning: Could not clean up Docker image: {e}")
+            print(f"Warning: Could not clean up Docker resources: {e}")
     
     def generate_report(self) -> Dict[str, Any]:
         """Generate a summary report of all test results"""
@@ -558,7 +579,7 @@ def main():
             print("\nDETAILED RESULTS:")
             print("-" * 50)
             for result in report["test_results"]:
-                status = "✓" if result["passed"] else "✗"
+                status = "PASS" if result["passed"] else "FAIL"
                 print(f"{status} [{result['test_type']}] {result['message']} ({result['execution_time']:.2f}s)")
         
         # Exit with appropriate code

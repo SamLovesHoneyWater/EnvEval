@@ -60,6 +60,25 @@ def create_report_path(relative_dockerfile_path: str, reports_dir: str = "report
     return str(report_path)
 
 
+def cleanup_docker_containers(repo_name: str) -> None:
+    """Clean up any leftover Docker containers for this repo"""
+    try:
+        # Find and clean up any existing containers with this repo name
+        result = subprocess.run(
+            ["docker", "ps", "-a", "--filter", f"name=eval_{repo_name}_", "--format", "{{.Names}}"],
+            capture_output=True, text=True, check=False
+        )
+        if result.stdout.strip():
+            containers = result.stdout.strip().split('\n')
+            for container in containers:
+                if container.strip():
+                    print(f"Cleaning up existing container: {container.strip()}")
+                    subprocess.run(["docker", "stop", container.strip()], capture_output=True, check=False)
+                    subprocess.run(["docker", "rm", container.strip()], capture_output=True, check=False)
+    except Exception as e:
+        print(f"Warning: Could not clean up containers: {e}")
+
+
 def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbose: bool = False) -> bool:
     """
     Run DockerfileEvaluator.py on a single dockerfile.
@@ -87,18 +106,18 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
         result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
         
         if result.returncode == 0:
-            print(f"✓ Successfully evaluated: {dockerfile_path}")
+            print(f"SUCCESS: Successfully evaluated: {dockerfile_path}")
             print(f"  Report saved to: {report_path}")
             return True
         else:
-            print(f"✗ Failed to evaluate: {dockerfile_path}")
+            print(f"FAIL: Failed to evaluate: {dockerfile_path}")
             if verbose:
                 print(f"  STDOUT: {result.stdout}")
                 print(f"  STDERR: {result.stderr}")
             return False
             
     except Exception as e:
-        print(f"✗ Error evaluating {dockerfile_path}: {e}")
+        print(f"ERROR: Error evaluating {dockerfile_path}: {e}")
         return False
 
 
@@ -224,8 +243,8 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
             f.write(f"(Score: {best['total_score']}/{best['max_score']}, ")
             f.write(f"Success: {best['success_rate']:.1%})\n")
     
-    print(f"✓ Created repo summary: {json_path}")
-    print(f"✓ Created comparison table: {table_path}")
+    print(f"SUCCESS: Created repo summary: {json_path}")
+    print(f"SUCCESS: Created comparison table: {table_path}")
     return True
 
 
@@ -270,6 +289,10 @@ def main():
     for dockerfile_path, relative_path in dockerfiles:
         print(f"  {relative_path}")
     print()
+    
+    # Clean up any existing Docker containers for this repo before starting
+    print(f"Cleaning up any existing Docker containers for {args.repo}...")
+    cleanup_docker_containers(args.repo)
     
     # Run evaluations
     successful = 0

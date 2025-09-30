@@ -1,0 +1,324 @@
+{
+  "repo": "facebook_zstd",
+  "dockerfile": "ENVGYM-baseline\\claude\\claude35haiku\\facebook_zstd\\envgym.dockerfile",
+  "rubric": "rubrics\\facebook_zstd.json",
+  "summary": {
+    "total_tests": 34,
+    "passed_tests": 5,
+    "failed_tests": 7,
+    "skipped_tests": 22,
+    "executed_tests": 12,
+    "total_score": 17,
+    "max_score": 19,
+    "success_rate": 0.4166666666666667,
+    "total_execution_time": 51.182613134384155
+  },
+  "test_results": [
+    {
+      "test_id": "check_build_tools",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 4,
+      "message": "Found 4/6 commands. Found: gcc, g++, make, cmake. Missing: ninja, pkg-config",
+      "execution_time": 23.500983953475952
+    },
+    {
+      "test_id": "check_python3_available",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 0,
+      "message": "No commands found. Missing: python3",
+      "execution_time": 0.9573569297790527
+    },
+    {
+      "test_id": "check_python_available",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 0,
+      "message": "No commands found. Missing: python",
+      "execution_time": 0.7446491718292236
+    },
+    {
+      "test_id": "check_pip3_available",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 0,
+      "message": "No commands found. Missing: pip3",
+      "execution_time": 0.7542791366577148
+    },
+    {
+      "test_id": "check_pip_available",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 0,
+      "message": "No commands found. Missing: pip",
+      "execution_time": 0.8327479362487793
+    },
+    {
+      "test_id": "check_network_tools",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 0,
+      "message": "No commands found. Missing: git, curl, wget",
+      "execution_time": 2.333894968032837
+    },
+    {
+      "test_id": "check_compression_tools",
+      "test_type": "commands_exist",
+      "passed": false,
+      "skipped": false,
+      "score": 1,
+      "message": "Found 1/3 commands. Found: gzip. Missing: lz4, brotli",
+      "execution_time": 2.653486490249634
+    },
+    {
+      "test_id": "dirs_exist_-4315383100506055165",
+      "test_type": "dirs_exist",
+      "passed": true,
+      "skipped": false,
+      "score": 3,
+      "message": "Directories 'lib, programs, tests, examples, doc, contrib, zlibWrapper' exist",
+      "execution_time": 5.651392459869385
+    },
+    {
+      "test_id": "files_exist_-8173795715342596133",
+      "test_type": "files_exist",
+      "passed": true,
+      "skipped": false,
+      "score": 2,
+      "message": "Files 'Makefile, README.md, LICENSE, COPYING, CHANGELOG, Package.swift' exist",
+      "execution_time": 4.776776313781738
+    },
+    {
+      "test_id": "files_exist_4511282102430392429",
+      "test_type": "files_exist",
+      "passed": true,
+      "skipped": false,
+      "score": 3,
+      "message": "Files 'lib/zstd.h, lib/zdict.h, lib/zstd_errors.h, lib/Makefile' exist",
+      "execution_time": 3.5430757999420166
+    },
+    {
+      "test_id": "files_exist_360166503569083362",
+      "test_type": "files_exist",
+      "passed": true,
+      "skipped": false,
+      "score": 2,
+      "message": "Files 'programs/zstdcli.c, programs/Makefile, programs/benchzstd.c, programs/datagen.c' exist",
+      "execution_time": 3.0642082691192627
+    },
+    {
+      "test_id": "files_exist_-6141358270635762624",
+      "test_type": "files_exist",
+      "passed": true,
+      "skipped": false,
+      "score": 2,
+      "message": "Files 'tests/Makefile, tests/playTests.sh, tests/fullbench.c' exist",
+      "execution_time": 2.3697617053985596
+    },
+    {
+      "test_id": "test_gcc_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_gpp_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_make_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_cmake_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_python3_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_python3_available' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_python_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_python_available' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_git_version",
+      "test_type": "output_contains",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_network_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_c_compilation",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_cpp_compilation",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_make_help",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_cmake_help",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_python3_execution",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_python3_available' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_python_execution",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_python_available' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_pip3_list",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_pip3_available' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_pip_list",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_pip_available' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_zstd_header_compilation",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_lib_build",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_lib_exists_after_build",
+      "test_type": "files_exist",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'test_lib_build' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_zstd_build",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'check_build_tools' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_zstd_binary_exists",
+      "test_type": "files_exist",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'test_zstd_build' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_zstd_version",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'test_zstd_binary_exists' failed or was skipped",
+      "execution_time": 0.0
+    },
+    {
+      "test_id": "test_zstd_help",
+      "test_type": "run_command",
+      "passed": false,
+      "skipped": true,
+      "score": 0,
+      "message": "SKIPPED: Required test 'test_zstd_binary_exists' failed or was skipped",
+      "execution_time": 0.0
+    }
+  ]
+}
