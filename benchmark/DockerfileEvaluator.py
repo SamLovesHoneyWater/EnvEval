@@ -80,19 +80,19 @@ class DockerfileEvaluator:
             # If repo data exists and Dockerfile uses generic copy patterns, create a modified version
             if repo_data_path.exists() and repo_data_path.is_dir():
                 print(f"Found source code directory: {repo_data_path}")
-                
-                # Replace common generic copy patterns with specific path
                 modified_content = dockerfile_content
-                
-                # Replace "COPY . ." with "COPY data/{repo}/ ."
-                if "COPY . ." in modified_content and f"data/{self.repo_name}" not in modified_content:
-                    modified_content = modified_content.replace("COPY . .", f"COPY data/{self.repo_name}/ .")
-                    print(f"Modified Dockerfile to copy from data/{self.repo_name}/")
-                
-                # Replace "ADD . ." with "ADD data/{repo}/ ."  
-                if "ADD . ." in modified_content and f"data/{self.repo_name}" not in modified_content:
-                    modified_content = modified_content.replace("ADD . .", f"ADD data/{self.repo_name}/ .")
-                    print(f"Modified Dockerfile to add from data/{self.repo_name}/")
+                # Handle all COPY . <dest>
+                modified_content = re.sub(
+                    r"(?i)COPY\s+\.\s+([^\s]+)", 
+                    f"COPY data/{self.repo_name}/ \\1",
+                    modified_content
+                )
+                # Handle all ADD . <dest>
+                modified_content = re.sub(
+                    r"(?i)ADD\s+\.\s+([^\s]+)", 
+                    f"ADD data/{self.repo_name}/ \\1",
+                    modified_content
+                )
                 
                 # If content was modified, create a temporary Dockerfile
                 if modified_content != dockerfile_content:
@@ -101,7 +101,7 @@ class DockerfileEvaluator:
                     temp_dockerfile.write(modified_content)
                     temp_dockerfile.close()
                     dockerfile_to_use = temp_dockerfile.name
-                    print(f"Using temporary modified Dockerfile: {dockerfile_to_use}")
+                    print(f"Modified Dockerfile to copy/add from data/{self.repo_name}/")
                 else:
                     dockerfile_to_use = str(self.dockerfile_path)
             else:

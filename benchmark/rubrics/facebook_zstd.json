@@ -30,6 +30,102 @@
       }
     },
     {
+      "id": "check_cc_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "CC"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_cxx_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "CXX"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_cflags_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "CFLAGS"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_cxxflags_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "CXXFLAGS"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_ldflags_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "LDFLAGS"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_gcc_in_path",
+      "type": "output_contains",
+      "params": {
+        "command": "echo $PATH",
+        "contains": ["gcc"]
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_make_in_path",
+      "type": "output_contains",
+      "params": {
+        "command": "echo $PATH",
+        "contains": ["make"]
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_zlib_dev",
+      "type": "run_command",
+      "params": {
+        "command": "pkg-config --exists zlib"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_lz4_dev",
+      "type": "run_command",
+      "params": {
+        "command": "pkg-config --exists liblz4"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_snappy_dev",
+      "type": "run_command",
+      "params": {
+        "command": "pkg-config --exists snappy"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_lzo2_dev",
+      "type": "run_command",
+      "params": {
+        "command": "pkg-config --exists lzo2"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
       "type": "dirs_exist",
       "params": {
         "paths": [
