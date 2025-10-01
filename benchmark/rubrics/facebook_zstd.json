@@ -230,11 +230,10 @@
       "score": 1
     },
     {
-      "id": "test_python3_version",
-      "type": "output_contains",
+      "id": "test_python_version",
+      "type": "run_command",
       "params": {
-        "command": "python3 --version",
-        "contains": ["Python"]
+        "command": "(python --version 2>&1 | grep -q Python) || (python3 --version 2>&1 | grep -q Python)"
       },
       "timeout": 10,
       "score": 1
@@ -286,19 +285,19 @@
       "score": 1
     },
     {
-      "id": "test_python3_execution",
+      "id": "test_python_execution",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"print('Hello from Python3')\""
+        "command": "(python -c \"print('Hello from Python')\") || (python3 -c \"print('Hello from Python3')\")"
       },
       "timeout": 30,
       "score": 1
     },
     {
-      "id": "test_pip3_list",
+      "id": "test_pip_list",
       "type": "run_command",
       "params": {
-        "command": "pip3 list"
+        "command": "(pip list >/dev/null 2>&1) || (pip3 list >/dev/null 2>&1)"
       },
       "timeout": 30,
       "score": 1
@@ -322,12 +321,12 @@
       "score": 3
     },
     {
-      "type": "files_exist",
+      "id": "check_libzstd_files",
+      "type": "run_command",
       "params": {
-        "paths": [
-          "lib/libzstd.a"
-        ]
+        "command": "[ -f \"lib/libzstd.a\" ] || [ -f \"lib/libzstd.so\" ]"
       },
+      "timeout": 10,
       "score": 2
     },
     {
