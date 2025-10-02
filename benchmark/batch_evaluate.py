@@ -159,6 +159,7 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
     # Find all evaluation reports for this repo
     reports_by_model_path = Path(reports_by_model_dir)
     repo_reports = list(reports_by_model_path.rglob(f"*/{repo_name}/evaluation_report.json"))
+    repo_reports += list(reports_by_model_path.rglob(f"*/{repo_name}/envgym/evaluation_report.json"))
     print(f"Found {len(repo_reports)} reports for repository {repo_name}: {repo_reports}")
     
     if not repo_reports:
