@@ -29,10 +29,11 @@ class TestResult:
     """Represents the result of a single test"""
     test_id: str
     test_type: str
-    passed: bool
-    score: int
+    n_passed: int
+    score: float
     message: str
     execution_time: float
+    n_tests: int = 1  # Default to 1 test per result
 
 
 class DockerfileEvaluator:
@@ -184,7 +185,7 @@ class DockerfileEvaluator:
         
         if not command_names:
             execution_time = time.time() - start_time
-            return TestResult(test_id, "commands_exist", False, 0, 
+            return TestResult(test_id, "commands_exist", 0, 0, 
                             "No commands specified", execution_time)
         
         found_commands = []
@@ -198,17 +199,17 @@ class DockerfileEvaluator:
                 missing_commands.append(command_name)
         
         execution_time = time.time() - start_time
-        score = len(found_commands)  # Each command scores 1 point
-        passed = len(found_commands) == len(command_names)
+        score = test.get('score', 1) * (len(found_commands) / len(command_names))
+        n_passed = len(found_commands)
         
-        if passed:
+        if n_passed == len(command_names):
             message = f"All commands found: {', '.join(found_commands)}"
         elif found_commands:
             message = f"Found {len(found_commands)}/{len(command_names)} commands. Found: {', '.join(found_commands)}. Missing: {', '.join(missing_commands)}"
         else:
             message = f"No commands found. Missing: {', '.join(missing_commands)}"
         
-        return TestResult(test_id, "commands_exist", passed, score, message, execution_time)
+        return TestResult(test_id, "commands_exist", n_passed, score, message, execution_time, n_tests=len(command_names))
     
     def test_output_contains(self, test: Dict[str, Any]) -> TestResult:
         """Test if command output contains specific strings"""
@@ -227,8 +228,8 @@ class DockerfileEvaluator:
         # Check if any of the required strings are in the output
         output_text = stdout + stderr
         found_matches = [item for item in contains_list if str(item) in output_text]
-        passed = len(found_matches) > 0
-        score = test_score if passed else 0
+        n_passed = int(len(found_matches) > 0)
+        score = test_score if n_passed else 0
         
         '''
         # Truncate output for logging (first 200 chars)
@@ -237,12 +238,12 @@ class DockerfileEvaluator:
             output_preview += "..."
         '''
         
-        if passed:
+        if n_passed:
             message = f"Output contains: {', '.join(map(str, found_matches))}."
         else:
             message = f"Output does not contain any of: {', '.join(map(str, contains_list))}. Command output: {output_text}"
         
-        return TestResult(test_id, "output_contains", passed, score, message, execution_time)
+        return TestResult(test_id, "output_contains", n_passed, score, message, execution_time)
     
     def test_files_exist(self, test: Dict[str, Any]) -> TestResult:
         """Test if files exist in the container"""
@@ -252,18 +253,28 @@ class DockerfileEvaluator:
         test_id = test.get('id', f"files_exist_{hash(tuple(file_paths))}")
         test_score = test.get('score', 1)
 
-        passed = True
+        found_files = []
+        missing_files = []
+        
         for file_path in file_paths:
             success, stdout, stderr = self.run_docker_command(f"test -f '{file_path}'")
-            if not success:
-                passed = False
-                break
+            if success:
+                found_files.append(file_path)
+            else:
+                missing_files.append(file_path)
         
         execution_time = time.time() - start_time
-        score = test_score if passed else 0
-        message = f"Files '{', '.join(file_paths)}' {'exist' if passed else 'do not exist'}"
+        n_passed = len(found_files)
+        score = test_score * (n_passed / len(file_paths)) if file_paths else 0
+        
+        if n_passed == len(file_paths):
+            message = f"All files found: {', '.join(found_files)}"
+        elif found_files:
+            message = f"Found {len(found_files)}/{len(file_paths)} files. Found: {', '.join(found_files)}. Missing: {', '.join(missing_files)}"
+        else:
+            message = f"No files found. Missing: {', '.join(missing_files)}"
 
-        return TestResult(test_id, "files_exist", passed, score, message, execution_time)
+        return TestResult(test_id, "files_exist", n_passed, score, message, execution_time, n_tests=len(file_paths))
 
     def test_dirs_exist(self, test: Dict[str, Any]) -> TestResult:
         """Test if a directory exists in the container"""
@@ -273,18 +284,28 @@ class DockerfileEvaluator:
         test_id = test.get('id', f"dirs_exist_{hash(tuple(dir_paths))}")
         test_score = test.get('score', 1)
 
-        passed = True
+        found_dirs = []
+        missing_dirs = []
+        
         for dir_path in dir_paths:
             success, stdout, stderr = self.run_docker_command(f"test -d '{dir_path}'")
-            if not success:
-                passed = False
-                break
-
+            if success:
+                found_dirs.append(dir_path)
+            else:
+                missing_dirs.append(dir_path)
+        
         execution_time = time.time() - start_time
-        score = test_score if passed else 0
-        message = f"Directories '{', '.join(dir_paths)}' {'exist' if passed else 'do not exist'}"
+        n_passed = len(found_dirs)
+        score = test_score * (n_passed / len(dir_paths)) if dir_paths else 0
+        
+        if n_passed == len(dir_paths):
+            message = f"All directories found: {', '.join(found_dirs)}"
+        elif found_dirs:
+            message = f"Found {len(found_dirs)}/{len(dir_paths)} directories. Found: {', '.join(found_dirs)}. Missing: {', '.join(missing_dirs)}"
+        else:
+            message = f"No directories found. Missing: {', '.join(missing_dirs)}"
 
-        return TestResult(test_id, "dirs_exist", passed, score, message, execution_time)
+        return TestResult(test_id, "dirs_exist", n_passed, score, message, execution_time, n_tests=len(dir_paths))
 
     def test_envvar_set(self, test: Dict[str, Any]) -> TestResult:
         """Test if an environment variable is set"""
@@ -324,7 +345,7 @@ class DockerfileEvaluator:
         execution_time = time.time() - start_time
         
         if not success:
-            return TestResult(test_id, "file_contains", False, 0, 
+            return TestResult(test_id, "file_contains", 0, 0, 
                             f"Could not read file '{file_path}': {stderr}", execution_time)
         
         # Check if any of the required strings are in the file
@@ -338,7 +359,7 @@ class DockerfileEvaluator:
         else:
             message = f"File does not contain any of: {', '.join(map(str, contains_list))}"
         
-        return TestResult(test_id, "file_contains", passed, score, message, execution_time)
+        return TestResult(test_id, "file_contains", int(passed), score, message, execution_time)
     
     def test_run_command(self, test: Dict[str, Any]) -> TestResult:
         """Test if a command runs successfully"""
@@ -368,7 +389,7 @@ class DockerfileEvaluator:
         else:
             message = f"Command failed. Output: {output_text}"
         
-        return TestResult(test_id, "run_command", passed, score, message, execution_time)
+        return TestResult(test_id, "run_command", int(passed), score, message, execution_time)
     
     def can_run_test(self, test: Dict[str, Any], completed_tests: Dict[str, TestResult]) -> bool:
         """Check if a test's requirements are met"""
@@ -377,7 +398,7 @@ class DockerfileEvaluator:
             return True
         
         for req_id in requires:
-            if req_id not in completed_tests or not completed_tests[req_id].passed:
+            if req_id not in completed_tests or not completed_tests[req_id].n_passed:
                 return False
         return True
     
@@ -422,7 +443,7 @@ class DockerfileEvaluator:
                     tests_to_remove.append(i)
                     
                     # Print result
-                    status = "✓" if result.passed else "✗"
+                    status = "✓" if result.n_passed else "✗"
                     print(f"  {status} {result.message} ({result.execution_time:.2f}s)")
             
             # Remove completed tests (in reverse order to maintain indices)
@@ -471,8 +492,8 @@ class DockerfileEvaluator:
     
     def generate_report(self) -> Dict[str, Any]:
         """Generate a summary report of all test results"""
-        total_tests = len(self.results)
-        passed_tests = sum(1 for r in self.results if r.passed)
+        total_tests = sum(r.n_tests for r in self.results)
+        passed_tests = sum(r.n_passed for r in self.results)
         total_score = sum(r.score for r in self.results)
         max_score = sum(test.get('score', 1) for test in self.tests)
         total_time = sum(r.execution_time for r in self.results)
@@ -494,7 +515,7 @@ class DockerfileEvaluator:
                 {
                     "test_id": r.test_id,
                     "test_type": r.test_type,
-                    "passed": r.passed,
+                    "passed": r.n_passed,
                     "score": r.score,
                     "message": r.message,
                     "execution_time": r.execution_time
