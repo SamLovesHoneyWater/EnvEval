@@ -74,6 +74,7 @@ class DockerfileEvaluator:
         # Check if there's source code in data/{repo} directory
         repo_data_path = Path(f"data/{self.repo_name}")
         copied_repo_path = None
+        copied_dockerfile_path = None
         
         try:
             # Get dockerfile directory
@@ -83,6 +84,14 @@ class DockerfileEvaluator:
             if repo_data_path.exists() and repo_data_path.is_dir():
                 print(f"Found source code directory: {repo_data_path}")
                 
+                # Create the nested structure:
+                # folder/
+                # └── repo_name/
+                #     ├── repo files...
+                #     ├── envgym.dockerfile
+                #     └── repo_name/
+                #         └── repo files...
+                
                 # Define destination path in dockerfile directory
                 copied_repo_path = dockerfile_dir / self.repo_name
                 
@@ -90,18 +99,29 @@ class DockerfileEvaluator:
                 if copied_repo_path.exists():
                     shutil.rmtree(copied_repo_path)
                 
-                # Copy the entire repo directory
+                # Copy the entire repo directory to the outer repo_name folder
                 shutil.copytree(repo_data_path, copied_repo_path)
                 print(f"Copied {repo_data_path} to {copied_repo_path}")
+                
+                # Create nested repo directory inside the copied repo directory
+                nested_repo_path = copied_repo_path / self.repo_name
+                shutil.copytree(repo_data_path, nested_repo_path)
+                print(f"Created nested repo structure at {nested_repo_path}")
+                
+                # Copy dockerfile into the repo directory
+                copied_dockerfile_path = copied_repo_path / self.dockerfile_path.name
+                shutil.copy2(self.dockerfile_path, copied_dockerfile_path)
+                print(f"Copied dockerfile to {copied_dockerfile_path}")
+                
             else:
                 if not repo_data_path.exists():
                     raise FileNotFoundError(f"Error: Source code directory not found at {repo_data_path}. Please check that the repo parameter '{self.repo_name}' is correct.")
             
-            # Use the original dockerfile
-            dockerfile_to_use = str(self.dockerfile_path)
+            # Use the copied dockerfile
+            dockerfile_to_use = str(copied_dockerfile_path)
             
-            # Set build context to dockerfile directory
-            build_context = str(dockerfile_dir)
+            # Set build context to the copied repo directory
+            build_context = str(copied_repo_path)
             
             cmd = [
                 "docker", "build", 
@@ -127,13 +147,15 @@ class DockerfileEvaluator:
             print(f"FAIL: Error building Docker image: {e}")
             return False
         finally:
-            # Clean up copied repo directory
+            # Clean up copied repo directory and dockerfile
             if copied_repo_path and copied_repo_path.exists():
                 try:
                     shutil.rmtree(copied_repo_path)
                     print(f"Cleaned up copied repo directory: {copied_repo_path}")
                 except Exception as e:
                     print(f"Warning: Could not clean up copied repo directory: {e}")
+            
+            # Note: copied_dockerfile_path cleanup is handled by removing the parent directory
     
     def run_docker_command(self, command: str, timeout: int = -1) -> tuple[bool, str, str]:
         """Run a command inside the Docker container"""
