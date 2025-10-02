@@ -19,6 +19,7 @@ import tempfile
 import time
 import os
 import re
+import shutil
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from pathlib import Path
@@ -73,29 +74,45 @@ class DockerfileEvaluator:
         # Check if there's source code in data/{repo} directory
         repo_data_path = Path(f"data/{self.repo_name}")
         temp_dockerfile = None
+        copied_repo_path = None
         
         try:
-            # Read the original Dockerfile
-            with open(self.dockerfile_path, 'r', encoding='utf-8') as f:
-                dockerfile_content = f.read()
+            # Get dockerfile directory
+            dockerfile_dir = self.dockerfile_path.parent
             
-            # If repo data exists and Dockerfile uses generic copy patterns, create a modified version
+            # Copy repo directory to dockerfile directory if it exists
             if repo_data_path.exists() and repo_data_path.is_dir():
                 print(f"Found source code directory: {repo_data_path}")
+                
+                # Define destination path in dockerfile directory
+                copied_repo_path = dockerfile_dir / self.repo_name
+                
+                # Remove existing directory if it exists
+                if copied_repo_path.exists():
+                    shutil.rmtree(copied_repo_path)
+                
+                # Copy the entire repo directory
+                shutil.copytree(repo_data_path, copied_repo_path)
+                print(f"Copied {repo_data_path} to {copied_repo_path}")
+                
+                '''
+                # Read the original Dockerfile
+                with open(self.dockerfile_path, 'r', encoding='utf-8') as f:
+                    dockerfile_content = f.read()
+                # Modify dockerfile to use the copied repo directory
                 modified_content = dockerfile_content
-                # Handle all COPY . <dest>
+                # Handle all COPY . <dest> - change to use the repo name
                 modified_content = re.sub(
                     r"(?i)COPY\s+\.\s+([^\s]+)", 
-                    f"COPY data/{self.repo_name}/ \\1",
+                    f"COPY {self.repo_name}/ \\1",
                     modified_content
                 )
-                # Handle all ADD . <dest>
+                # Handle all ADD . <dest> - change to use the repo name
                 modified_content = re.sub(
                     r"(?i)ADD\s+\.\s+([^\s]+)", 
-                    f"ADD data/{self.repo_name}/ \\1",
+                    f"ADD {self.repo_name}/ \\1",
                     modified_content
                 )
-                
                 # If content was modified, create a temporary Dockerfile
                 if modified_content != dockerfile_content:
                     temp_dockerfile = tempfile.NamedTemporaryFile(mode='w', suffix='.dockerfile', 
@@ -103,19 +120,23 @@ class DockerfileEvaluator:
                     temp_dockerfile.write(modified_content)
                     temp_dockerfile.close()
                     dockerfile_to_use = temp_dockerfile.name
-                    print(f"Modified Dockerfile to copy/add from data/{self.repo_name}/")
+                    print(f"Modified Dockerfile to copy/add from {self.repo_name}/")
                 else:
                     dockerfile_to_use = str(self.dockerfile_path)
+                '''
             else:
-                dockerfile_to_use = str(self.dockerfile_path)
                 if not repo_data_path.exists():
-                    print(f"Warning: No source code directory found at {repo_data_path}")
+                    raise FileNotFoundError(f"Error: Source code directory not found at {repo_data_path}. Please check that the repo parameter '{self.repo_name}' is correct.")
+                dockerfile_to_use = str(self.dockerfile_path)
+            
+            # Set build context to dockerfile directory
+            build_context = str(dockerfile_dir)
             
             cmd = [
                 "docker", "build", 
                 "-t", self.image_name,
                 "-f", dockerfile_to_use,
-                "."
+                build_context
             ]
             result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600)
             
@@ -141,6 +162,14 @@ class DockerfileEvaluator:
                     os.unlink(temp_dockerfile.name)
                 except Exception:
                     pass  # Ignore cleanup errors
+            
+            # Clean up copied repo directory
+            if copied_repo_path and copied_repo_path.exists():
+                try:
+                    shutil.rmtree(copied_repo_path)
+                    print(f"Cleaned up copied repo directory: {copied_repo_path}")
+                except Exception as e:
+                    print(f"Warning: Could not clean up copied repo directory: {e}")
     
     def run_docker_command(self, command: str, timeout: int = -1) -> tuple[bool, str, str]:
         """Run a command inside the Docker container"""
