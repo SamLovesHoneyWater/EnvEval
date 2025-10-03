@@ -173,6 +173,7 @@ class DockerfileEvaluator:
                 "-f", dockerfile_to_use,
                 build_context
             ]
+            print(f"Running command: {' '.join(cmd)}")
             result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600)
             
             if result.returncode == 0:
