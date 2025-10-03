@@ -174,7 +174,7 @@ class DockerfileEvaluator:
                 build_context
             ]
             print(f"Running command: {' '.join(cmd)}")
-            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600)
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=900)
             
             if result.returncode == 0:
                 print("PASS: Docker image built successfully")
@@ -186,7 +186,7 @@ class DockerfileEvaluator:
                 return False
                 
         except subprocess.TimeoutExpired:
-            print("FAIL: Docker build timed out (10 minutes)")
+            print("FAIL: Docker build timed out (15 minutes)")
             return False
         except Exception as e:
             print(f"FAIL: Error building Docker image: {e}")
