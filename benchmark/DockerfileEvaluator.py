@@ -40,10 +40,11 @@ class TestResult:
 class DockerfileEvaluator:
     """Main class for evaluating Dockerfiles using JSON rubrics"""
 
-    def __init__(self, repo_name: str, dockerfile_path: str, rubric_path: Optional[str] = None):
+    def __init__(self, repo_name: str, dockerfile_path: str, rubric_path: Optional[str] = None, skip_warnings: bool = False):
         self.repo_name = repo_name
         self.dockerfile_path = Path(dockerfile_path)
         self.rubric_path = Path(rubric_path) if rubric_path else Path(f"rubrics/{repo_name}.json")
+        self.skip_warnings = skip_warnings
         # Use more precise timestamp + random suffix to avoid conflicts
         import random
         timestamp = int(time.time() * 1000)  # milliseconds for better precision
@@ -95,15 +96,30 @@ class DockerfileEvaluator:
                     target_dir = dockerfile_dir.parent  # Go up from envgym/ to get path/
                     print(f"Scenario 2: Copying repo files to {target_dir} (outside envgym/)")
                     
+                    # Issue warning and ask for permission before clearing directory
+                    if not self.skip_warnings:
+                        print(f"\nWARNING: About to clear directory '{target_dir}' while preserving the 'envgym/' folder.")
+                        print("This will remove all existing files and directories in the target location except 'envgym/'.")
+                        response = input("Do you want to proceed? (y/N): ").strip().lower()
+                        
+                        if response not in ['y', 'yes']:
+                            print("Operation cancelled by user.")
+                            return False
+                    else:
+                        print(f"\nSkipping warnings: Clearing directory '{target_dir}' while preserving the 'envgym/' folder.")
+                    
+                    # First, clear out the parent directory except the envgym folder
+                    print(f"Clearing target directory while preserving envgym/ folder")
+                    for item in target_dir.iterdir():
+                        if item.name != "envgym":  # Preserve the envgym folder
+                            if item.is_dir():
+                                shutil.rmtree(item)
+                            else:
+                                item.unlink()
+                    
                     # Copy all files from data/repo_name/* to target_dir/
                     for item in repo_data_path.iterdir():
                         dest_path = target_dir / item.name
-                        if dest_path.exists():
-                            if dest_path.is_dir():
-                                shutil.rmtree(dest_path)
-                            else:
-                                dest_path.unlink()
-                        
                         if item.is_dir():
                             shutil.copytree(item, dest_path)
                         else:
@@ -180,7 +196,7 @@ class DockerfileEvaluator:
                 try:
                     if is_scenario_2:
                         # Scenario 2: Clean up individual files/folders copied to target_dir
-                        # Only remove items that were copied from repo_data_path
+                        # Only remove items that were copied from repo_data_path, making it safer
                         for item in repo_data_path.iterdir():
                             item_to_remove = copied_repo_path / item.name
                             if item_to_remove.exists():
@@ -623,11 +639,12 @@ def main():
     parser.add_argument("--rubric", help="Path to the rubric JSON file (default: rubrics/<repo>.json)")
     parser.add_argument("--output", help="Path to save the evaluation report JSON")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument("--skip-warnings", action="store_true", help="Skip user confirmation prompts for potentially destructive operations, turn on with caution!")
     
     args = parser.parse_args()
     
     # Create evaluator
-    evaluator = DockerfileEvaluator(args.repo, args.dockerfile, args.rubric)
+    evaluator = DockerfileEvaluator(args.repo, args.dockerfile, args.rubric, args.skip_warnings)
 
     try:
         # Run evaluation

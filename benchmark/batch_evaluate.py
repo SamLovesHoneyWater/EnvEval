@@ -79,7 +79,7 @@ def cleanup_docker_containers(repo_name: str) -> None:
         print(f"Warning: Could not clean up containers: {e}")
 
 
-def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbose: bool = False) -> bool:
+def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbose: bool = False, skip_warnings: bool = False) -> bool:
     """
     Run DockerfileEvaluator.py on a single dockerfile.
     
@@ -99,6 +99,10 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
     
     if verbose:
         cmd.append("--verbose")
+    if skip_warnings:
+        cmd.append("--skip-warnings")
+        
+    if verbose:
         print(f"Running: {' '.join(cmd)}")
     
     try:
@@ -263,6 +267,8 @@ def main():
                        help="Skip evaluation if report already exists")
     parser.add_argument("--summary-only", action="store_true",
                        help="Only create repo summary (skip individual evaluations)")
+    parser.add_argument("--skip-warnings", action="store_true",
+                       help="Skip user confirmation prompts for potentially destructive operations, turn on with caution!")
     parser.add_argument("--verbose", action="store_true", 
                        help="Enable verbose output")
     
@@ -313,7 +319,7 @@ def main():
         
         # Run evaluation
         print(f"🔄 Evaluating: {relative_path}")
-        if run_evaluation(dockerfile_path, args.repo, report_path, args.verbose):
+        if run_evaluation(dockerfile_path, args.repo, report_path, args.verbose, args.skip_warnings):
             successful += 1
         else:
             failed += 1
