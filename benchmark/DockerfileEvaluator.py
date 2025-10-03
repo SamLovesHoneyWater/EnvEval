@@ -80,48 +80,76 @@ class DockerfileEvaluator:
             # Get dockerfile directory
             dockerfile_dir = self.dockerfile_path.parent
             
+            # Determine scenario based on dockerfile path structure
+            # Scenario 1: path/envgym.dockerfile
+            # Scenario 2: path/envgym/envgym.dockerfile
+            is_scenario_2 = self.dockerfile_path.parent.name == "envgym"
+            
             # Copy repo directory to dockerfile directory if it exists
             if repo_data_path.exists() and repo_data_path.is_dir():
                 print(f"Found source code directory: {repo_data_path}")
                 
-                # Create the nested structure:
-                # folder/
-                # └── repo_name/
-                #     ├── repo files...
-                #     ├── envgym.dockerfile
-                #     └── repo_name/
-                #         └── repo files...
-                
-                # Define destination path in dockerfile directory
-                copied_repo_path = dockerfile_dir / self.repo_name
-                
-                # Remove existing directory if it exists
-                if copied_repo_path.exists():
-                    shutil.rmtree(copied_repo_path)
-                
-                # Copy the entire repo directory to the outer repo_name folder
-                shutil.copytree(repo_data_path, copied_repo_path)
-                print(f"Copied {repo_data_path} to {copied_repo_path}")
-                
-                # Create nested repo directory inside the copied repo directory
-                nested_repo_path = copied_repo_path / self.repo_name
-                shutil.copytree(repo_data_path, nested_repo_path)
-                print(f"Created nested repo structure at {nested_repo_path}")
-                
-                # Copy dockerfile into the repo directory
-                copied_dockerfile_path = copied_repo_path / self.dockerfile_path.name
-                shutil.copy2(self.dockerfile_path, copied_dockerfile_path)
-                print(f"Copied dockerfile to {copied_dockerfile_path}")
+                if is_scenario_2:
+                    # Scenario 2: Flatten structure
+                    # Copy repo files directly to parent of envgym/ directory
+                    target_dir = dockerfile_dir.parent  # Go up from envgym/ to get path/
+                    print(f"Scenario 2: Copying repo files to {target_dir} (outside envgym/)")
+                    
+                    # Copy all files from data/repo_name/* to target_dir/
+                    for item in repo_data_path.iterdir():
+                        dest_path = target_dir / item.name
+                        if dest_path.exists():
+                            if dest_path.is_dir():
+                                shutil.rmtree(dest_path)
+                            else:
+                                dest_path.unlink()
+                        
+                        if item.is_dir():
+                            shutil.copytree(item, dest_path)
+                        else:
+                            shutil.copy2(item, dest_path)
+                    
+                    print(f"Copied repo files from {repo_data_path} to {target_dir}")
+                    
+                    # Use original dockerfile path and set build context to parent of envgym/
+                    dockerfile_to_use = str(self.dockerfile_path)
+                    build_context = str(target_dir)
+                    copied_repo_path = target_dir  # For cleanup tracking
+                    
+                else:
+                    # Scenario 1: Create nested structure (existing logic)
+                    print(f"Scenario 1: Creating nested structure")
+                    
+                    # Define destination path in dockerfile directory
+                    copied_repo_path = dockerfile_dir / self.repo_name
+                    
+                    # Remove existing directory if it exists
+                    if copied_repo_path.exists():
+                        shutil.rmtree(copied_repo_path)
+                    
+                    # Copy the entire repo directory to the outer repo_name folder
+                    shutil.copytree(repo_data_path, copied_repo_path)
+                    print(f"Copied {repo_data_path} to {copied_repo_path}")
+                    
+                    # Create nested repo directory inside the copied repo directory
+                    nested_repo_path = copied_repo_path / self.repo_name
+                    shutil.copytree(repo_data_path, nested_repo_path)
+                    print(f"Created nested repo structure at {nested_repo_path}")
+                    
+                    # Copy dockerfile into the repo directory
+                    copied_dockerfile_path = copied_repo_path / self.dockerfile_path.name
+                    shutil.copy2(self.dockerfile_path, copied_dockerfile_path)
+                    print(f"Copied dockerfile to {copied_dockerfile_path}")
+                    
+                    # Use the copied dockerfile
+                    dockerfile_to_use = str(copied_dockerfile_path)
+                    
+                    # Set build context to the copied repo directory
+                    build_context = str(copied_repo_path)
                 
             else:
                 if not repo_data_path.exists():
                     raise FileNotFoundError(f"Error: Source code directory not found at {repo_data_path}. Please check that the repo parameter '{self.repo_name}' is correct.")
-            
-            # Use the copied dockerfile
-            dockerfile_to_use = str(copied_dockerfile_path)
-            
-            # Set build context to the copied repo directory
-            build_context = str(copied_repo_path)
             
             cmd = [
                 "docker", "build", 
@@ -150,8 +178,21 @@ class DockerfileEvaluator:
             # Clean up copied repo directory and dockerfile
             if copied_repo_path and copied_repo_path.exists():
                 try:
-                    shutil.rmtree(copied_repo_path)
-                    print(f"Cleaned up copied repo directory: {copied_repo_path}")
+                    if is_scenario_2:
+                        # Scenario 2: Clean up individual files/folders copied to target_dir
+                        # Only remove items that were copied from repo_data_path
+                        for item in repo_data_path.iterdir():
+                            item_to_remove = copied_repo_path / item.name
+                            if item_to_remove.exists():
+                                if item_to_remove.is_dir():
+                                    shutil.rmtree(item_to_remove)
+                                else:
+                                    item_to_remove.unlink()
+                        print(f"Cleaned up copied repo files from: {copied_repo_path}")
+                    else:
+                        # Scenario 1: Remove the entire copied repo directory
+                        shutil.rmtree(copied_repo_path)
+                        print(f"Cleaned up copied repo directory: {copied_repo_path}")
                 except Exception as e:
                     print(f"Warning: Could not clean up copied repo directory: {e}")
             
