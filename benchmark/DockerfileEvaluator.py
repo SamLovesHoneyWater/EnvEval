@@ -191,7 +191,7 @@ class DockerfileEvaluator:
                 "error_message": None
             }
             
-            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=900)
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=1800)
             
             # Store detailed build results
             self.build_log["build_returncode"] = result.returncode
