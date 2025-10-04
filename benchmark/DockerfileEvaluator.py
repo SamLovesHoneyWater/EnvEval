@@ -53,12 +53,6 @@ class DockerfileEvaluator:
         self.image_name = f"eval_{repo_name}:latest"
         self.results: List[TestResult] = []
         self.tests: List[Dict[str, Any]] = []
-        # Build status tracking
-        self.build_success = False
-        self.build_error_details: Optional[Dict[str, Any]] = None
-        self.build_stdout = ""
-        self.build_stderr = ""
-        self.build_execution_time = 0.0
         
     def load_rubric(self) -> Dict[str, Any]:
         """Load and parse the JSON rubric file"""
@@ -77,7 +71,6 @@ class DockerfileEvaluator:
     def build_docker_image(self) -> bool:
         """Build Docker image from the provided Dockerfile"""
         print(f"Building Docker image: {self.image_name}")
-        build_start_time = time.time()
         
         # Check if there's source code in data/{repo} directory
         repo_data_path = Path(f"data/{self.repo_name}")
@@ -183,46 +176,19 @@ class DockerfileEvaluator:
             print(f"Running command: {' '.join(cmd)}")
             result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=900)
             
-            # Capture build timing and output regardless of success/failure
-            self.build_execution_time = time.time() - build_start_time
-            self.build_stdout = result.stdout
-            self.build_stderr = result.stderr
-            
             if result.returncode == 0:
                 print("PASS: Docker image built successfully")
-                self.build_success = True
                 return True
             else:
                 print(f"FAIL: Failed to build Docker image:")
                 print(f"STDOUT: {result.stdout}")
                 print(f"STDERR: {result.stderr}")
-                self.build_success = False
-                self.build_error_details = {
-                    "type": "build_failure",
-                    "return_code": result.returncode,
-                    "command": ' '.join(cmd),
-                    "message": f"Docker build failed with return code {result.returncode}"
-                }
                 return False
                 
         except subprocess.TimeoutExpired:
-            self.build_execution_time = time.time() - build_start_time
-            self.build_success = False
-            self.build_error_details = {
-                "type": "timeout",
-                "message": "Docker build timed out (15 minutes)",
-                "timeout_seconds": 900
-            }
             print("FAIL: Docker build timed out (15 minutes)")
             return False
         except Exception as e:
-            self.build_execution_time = time.time() - build_start_time
-            self.build_success = False
-            self.build_error_details = {
-                "type": "exception",
-                "message": str(e),
-                "exception_type": type(e).__name__
-            }
             print(f"FAIL: Error building Docker image: {e}")
             return False
         finally:
@@ -609,13 +575,6 @@ class DockerfileEvaluator:
             "repo": self.repo_name,
             "dockerfile": str(self.dockerfile_path),
             "rubric": str(self.rubric_path),
-            "build_info": {
-                "success": self.build_success,
-                "execution_time": self.build_execution_time,
-                "stdout": self.build_stdout,
-                "stderr": self.build_stderr,
-                "error_details": self.build_error_details
-            },
             "summary": {
                 "total_tests": total_tests,
                 "passed_tests": passed_tests,
@@ -697,18 +656,7 @@ def main():
         print("EVALUATION SUMMARY")
         print("=" * 50)
         summary = report["summary"]
-        build_info = report["build_info"]
         print(f"Repository: {report['repo']}")
-        print(f"Docker Build: {'SUCCESS' if build_info['success'] else 'FAILED'} ({build_info['execution_time']:.2f}s)")
-        
-        # Show build error details if build failed
-        if not build_info['success'] and build_info['error_details']:
-            error_details = build_info['error_details']
-            print(f"Build Error Type: {error_details.get('type', 'unknown')}")
-            print(f"Build Error: {error_details.get('message', 'Unknown error')}")
-            if error_details.get('return_code'):
-                print(f"Return Code: {error_details['return_code']}")
-        
         print(f"Total Tests: {summary['total_tests']}")
         print(f"Passed: {summary['passed_tests']}")
         print(f"Failed: {summary['failed_tests']}")
@@ -724,19 +672,7 @@ def main():
         
         # Print detailed results if verbose
         if args.verbose:
-            # Show build details if verbose
-            print("\nBUILD DETAILS:")
-            print("-" * 50)
-            print(f"Build Success: {build_info['success']}")
-            print(f"Build Time: {build_info['execution_time']:.2f}s")
-            if build_info['error_details']:
-                print(f"Error Details: {json.dumps(build_info['error_details'], indent=2)}")
-            if build_info['stdout']:
-                print(f"Build STDOUT:\n{build_info['stdout']}")
-            if build_info['stderr']:
-                print(f"Build STDERR:\n{build_info['stderr']}")
-            
-            print("\nTEST RESULTS:")
+            print("\nDETAILED RESULTS:")
             print("-" * 50)
             for result in report["test_results"]:
                 status = "PASS" if result["passed"] else "FAIL"
