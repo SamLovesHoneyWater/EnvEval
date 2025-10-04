@@ -112,12 +112,34 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
         if result.returncode == 0:
             print(f"SUCCESS: Successfully evaluated: {dockerfile_path}")
             print(f"  Report saved to: {report_path}")
+            
+            # Check for build failures even when evaluation "succeeds"
+            try:
+                if os.path.exists(report_path):
+                    with open(report_path, 'r') as f:
+                        report = json.load(f)
+                    build_info = report.get('build_info', {})
+                    if not build_info.get('success', True):
+                        print(f"  WARNING: Docker build failed for {dockerfile_path}")
+                        if build_info.get('error_details'):
+                            error_details = build_info['error_details']
+                            print(f"    Build Error: {error_details.get('message', 'Unknown error')}")
+                            if verbose and build_info.get('stderr'):
+                                print(f"    Build STDERR: {build_info['stderr']}")
+            except Exception as e:
+                if verbose:
+                    print(f"  Warning: Could not read report to check build status: {e}")
+            
             return True
         else:
             print(f"FAIL: Failed to evaluate: {dockerfile_path}")
             if verbose:
                 print(f"  STDOUT: {result.stdout}")
                 print(f"  STDERR: {result.stderr}")
+            else:
+                # Even in non-verbose mode, show key error information
+                if "Error building Docker image" in result.stdout or "FAIL: Failed to build Docker image" in result.stdout:
+                    print(f"  Docker build failed for {dockerfile_path}")
             return False
             
     except Exception as e:
@@ -184,6 +206,7 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
             
             # Extract key metrics
             summary = report.get('summary', {})
+            build_info = report.get('build_info', {})
             model_data.append({
                 'model': model_id,
                 'total_score': summary.get('total_score', 0),
@@ -191,7 +214,10 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
                 'success_rate': summary.get('success_rate', 0.0),
                 'total_time': summary.get('total_execution_time', 0.0),
                 'passed_tests': summary.get('passed_tests', 0),
-                'total_tests': summary.get('total_tests', 0)
+                'total_tests': summary.get('total_tests', 0),
+                'build_success': build_info.get('success', False),
+                'build_time': build_info.get('execution_time', 0.0),
+                'build_error': build_info.get('error_details', {}).get('message', '') if not build_info.get('success', False) else ''
             })
             
         except Exception as e:
@@ -230,19 +256,29 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
         f.write("=" * 80 + "\n\n")
         
         # Table header
-        f.write(f"{'Model':<25} {'Score':<12} {'Success %':<10} {'Time (s)':<10} {'Tests':<10}\n")
-        f.write("-" * 80 + "\n")
+        f.write(f"{'Model':<25} {'Build':<7} {'Score':<12} {'Success %':<10} {'Time (s)':<10} {'Tests':<10}\n")
+        f.write("-" * 85 + "\n")
         
         # Table rows
         for data in model_data:
+            build_status = "✓" if data['build_success'] else "✗"
             score_str = f"{data['total_score']}/{data['max_score']}"
             success_pct = f"{data['success_rate']:.1%}"
             time_str = f"{data['total_time']:.1f}"
             tests_str = f"{data['passed_tests']}/{data['total_tests']}"
             
-            f.write(f"{data['model']:<25} {score_str:<12} {success_pct:<10} {time_str:<10} {tests_str:<10}\n")
+            f.write(f"{data['model']:<25} {build_status:<7} {score_str:<12} {success_pct:<10} {time_str:<10} {tests_str:<10}\n")
         
         f.write("\n")
+        
+        # Build failure summary
+        failed_builds = [data for data in model_data if not data['build_success']]
+        if failed_builds:
+            f.write("BUILD FAILURES:\n")
+            f.write("-" * 40 + "\n")
+            for data in failed_builds:
+                f.write(f"{data['model']}: {data['build_error']}\n")
+            f.write("\n")
         if model_data:
             best = model_data[0]
             f.write(f"Best Performer: {best['model']} ")
