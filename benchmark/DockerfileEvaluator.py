@@ -53,6 +53,7 @@ class DockerfileEvaluator:
         self.image_name = f"eval_{repo_name}:latest"
         self.results: List[TestResult] = []
         self.tests: List[Dict[str, Any]] = []
+        self.build_log: Dict[str, Any] = {}  # Store detailed build information
         
     def load_rubric(self) -> Dict[str, Any]:
         """Load and parse the JSON rubric file"""
@@ -174,21 +175,47 @@ class DockerfileEvaluator:
                 build_context
             ]
             print(f"Running command: {' '.join(cmd)}")
+            
+            # Store build command and context info in build_log
+            self.build_log = {
+                "command": " ".join(cmd),
+                "dockerfile_path": dockerfile_to_use,
+                "build_context": build_context,
+                "scenario": "scenario_2" if is_scenario_2 else "scenario_1",
+                "repo_data_exists": repo_data_path.exists(),
+                "build_success": False,
+                "build_stdout": "",
+                "build_stderr": "",
+                "build_returncode": None,
+                "build_timeout": False,
+                "error_message": None
+            }
+            
             result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=900)
             
+            # Store detailed build results
+            self.build_log["build_returncode"] = result.returncode
+            self.build_log["build_stdout"] = result.stdout
+            self.build_log["build_stderr"] = result.stderr
+            
             if result.returncode == 0:
+                self.build_log["build_success"] = True
                 print("PASS: Docker image built successfully")
                 return True
             else:
+                self.build_log["error_message"] = f"Docker build failed with return code {result.returncode}"
                 print(f"FAIL: Failed to build Docker image:")
                 print(f"STDOUT: {result.stdout}")
                 print(f"STDERR: {result.stderr}")
                 return False
                 
         except subprocess.TimeoutExpired:
+            self.build_log["build_timeout"] = True
+            self.build_log["error_message"] = "Docker build timed out (15 minutes)"
             print("FAIL: Docker build timed out (15 minutes)")
             return False
         except Exception as e:
+            self.build_log["error_message"] = f"Error building Docker image: {str(e)}"
             print(f"FAIL: Error building Docker image: {e}")
             return False
         finally:
@@ -575,6 +602,7 @@ class DockerfileEvaluator:
             "repo": self.repo_name,
             "dockerfile": str(self.dockerfile_path),
             "rubric": str(self.rubric_path),
+            "build_log": self.build_log,  # Include detailed build information
             "summary": {
                 "total_tests": total_tests,
                 "passed_tests": passed_tests,
