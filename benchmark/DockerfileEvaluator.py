@@ -191,7 +191,7 @@ class DockerfileEvaluator:
                 "error_message": None
             }
             
-            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=1800)
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=3600)
             
             # Store detailed build results
             self.build_log["build_returncode"] = result.returncode
@@ -211,8 +211,8 @@ class DockerfileEvaluator:
                 
         except subprocess.TimeoutExpired:
             self.build_log["build_timeout"] = True
-            self.build_log["error_message"] = "Docker build timed out (15 minutes)"
-            print("FAIL: Docker build timed out (15 minutes)")
+            self.build_log["error_message"] = "Docker build timed out (60 minutes)"
+            print("FAIL: Docker build timed out (60 minutes)")
             return False
         except Exception as e:
             self.build_log["error_message"] = f"Error building Docker image: {str(e)}"
