@@ -242,7 +242,7 @@ class DockerfileEvaluator:
             
             # Note: copied_dockerfile_path cleanup is handled by removing the parent directory
     
-    def run_docker_command(self, command: str, timeout: int = -1) -> tuple[bool, str, str]:
+    def run_docker_command(self, command: str, timeout: int = -1):
         """Run a command inside the Docker container"""
         try:
             cmd = [
