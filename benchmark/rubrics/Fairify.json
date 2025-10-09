@@ -1,0 +1,350 @@
+{
+  "repo": "Fairify",
+  "tests": [
+    {
+      "id": "check_system_tools",
+      "type": "commands_exist",
+      "params": {
+        "names": ["python3", "pip3", "git", "bash", "curl", "wget"]
+      },
+      "score": 2
+    },
+    {
+      "id": "check_conda",
+      "type": "commands_exist",
+      "params": {
+        "names": ["conda"]
+      },
+      "score": 1
+    },
+    {
+      "id": "check_python_version",
+      "type": "output_contains",
+      "params": {
+        "command": "python3 --version",
+        "contains": ["Python 3."]
+      },
+      "timeout": 10,
+      "score": 2
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "requirements.txt",
+          "README.md", 
+          "INSTALL.md",
+          "LICENSE",
+          "STATUS.md"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "src",
+          "models", 
+          "data",
+          "utils",
+          "stress",
+          "relaxed",
+          "targeted",
+          "targeted2"
+        ]
+      },
+      "score": 3
+    },
+    {
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "src/GC",
+          "src/AC",
+          "src/BM"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "models/german",
+          "models/adult",
+          "models/bank"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "data/german",
+          "data/adult", 
+          "data/bank"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "id": "check_pythonpath_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "PYTHONPATH"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_virtual_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "VIRTUAL_ENV"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_conda_env",
+      "type": "envvar_set",
+      "params": {
+        "name": "CONDA_DEFAULT_ENV"
+      },
+      "score": 1
+    },
+    {
+      "id": "check_python_in_path",
+      "type": "output_contains",
+      "params": {
+        "command": "echo $PATH",
+        "contains": ["python"]
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_pip_in_path",
+      "type": "output_contains",
+      "params": {
+        "command": "echo $PATH",
+        "contains": ["pip"]
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "check_conda_in_path",
+      "type": "output_contains",
+      "params": {
+        "command": "echo $PATH",
+        "contains": ["conda"]
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_python3_execution",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"print('Hello from Python3')\""
+      },
+      "timeout": 30,
+      "score": 1
+    },
+    {
+      "id": "test_python3_import_system",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys; print('Python path:', sys.path[0])\""
+      },
+      "timeout": 30,
+      "score": 1
+    },
+    {
+      "id": "test_pip3_version",
+      "type": "run_command",
+      "params": {
+        "command": "pip3 --version"
+      },
+      "timeout": 30,
+      "score": 1
+    },
+    {
+      "id": "test_pip3_list",
+      "type": "run_command",
+      "params": {
+        "command": "pip3 list"
+      },
+      "timeout": 30,
+      "score": 1
+    },
+    {
+      "id": "test_conda_version",
+      "type": "run_command",
+      "params": {
+        "command": "conda --version"
+      },
+      "timeout": 30,
+      "score": 1
+    },
+    {
+      "id": "test_conda_list",
+      "type": "run_command",
+      "params": {
+        "command": "conda list"
+      },
+      "timeout": 30,
+      "score": 1
+    },
+    {
+      "id": "test_requirements_install",
+      "type": "run_command",
+      "params": {
+        "command": "pip3 install -r requirements.txt --dry-run"
+      },
+      "timeout": 60,
+      "score": 2
+    },
+    {
+      "id": "test_z3_solver",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import z3; print('Z3 version:', z3.get_version_string())\""
+      },
+      "timeout": 30,
+      "score": 3
+    },
+    {
+      "id": "test_tensorflow",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import tensorflow as tf; print('TensorFlow version:', tf.__version__)\""
+      },
+      "timeout": 30,
+      "score": 3
+    },
+    {
+      "id": "test_aif360",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import aif360; print('AIF360 version:', aif360.__version__)\""
+      },
+      "timeout": 30,
+      "score": 3
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "src/fairify.sh"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "id": "test_fairify_script_executable",
+      "type": "run_command",
+      "params": {
+        "command": "[ -x \"src/fairify.sh\" ] || chmod +x src/fairify.sh"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "stress/fairify-stress.sh",
+          "relaxed/fairify-relaxed.sh",
+          "targeted/fairify-targeted.sh",
+          "targeted2/fairify-targeted.sh"
+        ]
+      },
+      "score": 2
+    },
+    {
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "src/GC/Verify-GC.py",
+          "src/AC/Verify-AC.py",
+          "src/BM/Verify-BM.py"
+        ]
+      },
+      "score": 3
+    },
+    {
+      "id": "test_verify_gc_execution", 
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys; sys.path.append('src/GC'); exec(open('src/GC/Verify-GC.py').read())\""
+      },
+      "timeout": 30,
+      "score": 2
+    },
+    {
+      "id": "test_models_german_files",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \"models/german\" ] && [ \"$(ls -A models/german 2>/dev/null)\" ]"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_models_adult_files",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \"models/adult\" ] && [ \"$(ls -A models/adult 2>/dev/null)\" ]"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_models_bank_files",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \"models/bank\" ] && [ \"$(ls -A models/bank 2>/dev/null)\" ]"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_data_german_files",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \"data/german\" ] && [ \"$(ls -A data/german 2>/dev/null)\" ]"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_data_adult_files",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \"data/adult\" ] && [ \"$(ls -A data/adult 2>/dev/null)\" ]"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_data_bank_files",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \"data/bank\" ] && [ \"$(ls -A data/bank 2>/dev/null)\" ]"
+      },
+      "timeout": 10,
+      "score": 1
+    },
+    {
+      "id": "test_virtual_environment_creation",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -m venv test_venv && rm -rf test_venv"
+      },
+      "timeout": 60,
+      "score": 2
+    }
+  ]
+}
