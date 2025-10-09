@@ -1,9 +1,14 @@
-# SetupBench
-Benchmark for Environment Setup
+# EnvEval Benchmark
 
-# Dockerfile Evaluation Script
+Evaluation framework for machine-generated Dockerfiles that validates environment setup through automated testing.
 
-The Python script evaluates machine-generated Dockerfiles using JSON-based rubrics. It builds Docker containers from Dockerfiles and runs tests inside them to validate the setup.
+## Overview
+
+EnvEval consists of two main tools:
+1. **DockerfileEvaluator.py** - Evaluates individual Dockerfiles using JSON-based rubrics
+2. **batch_evaluate.py** - Batch evaluates multiple Dockerfiles and generates comparison reports
+
+The evaluation process builds Docker containers from provided Dockerfiles and runs comprehensive tests inside them to validate the environment setup.
 
 ## Features
 
@@ -15,10 +20,10 @@ The Python script evaluates machine-generated Dockerfiles using JSON-based rubri
 
 ## Supported Test Types
 
-1. **`command_exists`**: Check if a command is available
+1. **`commands_exist`**: Check if commands are available
 2. **`envvar_set`**: Check if an environment variable is set
-3. **`dirs_exist`**: Check if a directory exists
-4. **`files_exist`**: Check if a file exists
+3. **`dirs_exist`**: Check if directories exist
+4. **`files_exist`**: Check if files exist
 5. **`file_contains`**: Check if a file contains specific strings
 6. **`run_command`**: Run a command and check if it succeeds
 7. **`output_contains`**: Run a command and check if output contains specific strings
@@ -35,6 +40,7 @@ python DockerfileEvaluator.py --dockerfile artifacts/example.dockerfile --repo e
 - `--repo` (required): Repository name (used to find rubric file)
 - `--rubric` (optional): Path to custom rubric JSON file (default: `rubrics/<repo>.json`)
 - `--output` (optional): Path to save evaluation report JSON
+- `--skip-warnings` (optional): Skip user confirmation prompts for potentially destructive operations
 - `--verbose` (optional): Enable detailed output
 
 ## Rubric JSON Format
@@ -70,12 +76,12 @@ The rubric file should follow this structure:
 
 ### Test Parameters by Type
 
-#### `command_exists`
+#### `commands_exist`
 ```json
 {
-  "type": "command_exists",
+  "type": "commands_exist",
   "params": {
-    "name": "java"
+    "names": ["java", "javac"]
   },
   "score": 2
 }
@@ -157,8 +163,8 @@ Tests can depend on other tests using the `requires` field:
 ```json
 {
   "id": "check_java",
-  "type": "command_exists",
-  "params": {"name": "java"}
+  "type": "commands_exist",
+  "params": {"names": ["java"]}
 },
 {
   "type": "output_contains",
@@ -179,6 +185,19 @@ The script generates a comprehensive JSON report:
   "repo": "project_name",
   "dockerfile": "/path/to/Dockerfile",
   "rubric": "/path/to/rubric.json",
+  "build_log": {
+    "command": "docker build -t eval_project:latest -f /path/to/Dockerfile /build/context",
+    "dockerfile_path": "/path/to/Dockerfile",
+    "build_context": "/build/context",
+    "scenario": "scenario_1",
+    "repo_data_exists": true,
+    "build_success": true,
+    "build_stdout": "...",
+    "build_stderr": "...",
+    "build_returncode": 0,
+    "build_timeout": false,
+    "error_message": null
+  },
   "summary": {
     "total_tests": 5,
     "passed_tests": 4,
@@ -191,15 +210,78 @@ The script generates a comprehensive JSON report:
   "test_results": [
     {
       "test_id": "check_java",
-      "test_type": "command_exists",
-      "passed": true,
+      "test_type": "commands_exist",
+      "passed": 1,
       "score": 1,
-      "message": "Command 'Java' found",
+      "message": "All commands found: java",
       "execution_time": 0.5
     }
   ]
 }
 ```
+
+## Batch Evaluation
+
+The `batch_evaluate.py` script automates the evaluation of multiple Dockerfiles for a given repository, creating organized reports for comparison across different models.
+
+### Usage
+
+```bash
+# Evaluate all dockerfiles for a repository
+python batch_evaluate.py --repo facebook_zstd
+
+# Skip existing reports to avoid re-evaluation
+python batch_evaluate.py --repo facebook_zstd --skip-existing
+
+# Only generate repository summary from existing reports
+python batch_evaluate.py --repo facebook_zstd --summary-only
+
+# Use custom directories
+python batch_evaluate.py --repo facebook_zstd --baseline-dir ./ENVGYM-baseline --reports-by-model-dir ./my-reports
+```
+
+### Command Line Arguments
+
+- `--repo` (required): Repository name to evaluate
+- `--baseline-dir` (optional): Path to ENVGYM-baseline directory (default: "ENVGYM-baseline")
+- `--reports-by-model-dir` (optional): Directory for individual model reports (default: "reports-by-model")
+- `--reports-by-repo-dir` (optional): Directory for repository summary reports (default: "reports-by-repo")
+- `--skip-existing` (optional): Skip evaluation if report already exists
+- `--summary-only` (optional): Only create repo summary, skip individual evaluations
+- `--skip-warnings` (optional): Skip user confirmation prompts for potentially destructive operations
+- `--verbose` (optional): Enable verbose output
+
+### Output Structure
+
+The batch evaluator creates two types of reports:
+
+#### 1. Individual Model Reports (`reports-by-model/`)
+Mirrors the ENVGYM-baseline directory structure:
+```
+reports-by-model/
+├── claude/
+│   └── claude35haiku/
+│       └── facebook_zstd/
+│           └── evaluation_report.json
+├── codex/
+│   └── gpt4.1/
+│       └── facebook_zstd/
+│           └── evaluation_report.json
+└── ours/
+    └── claude/
+        └── 35haiku/
+            └── facebook_zstd/
+                └── evaluation_report.json
+```
+
+#### 2. Repository Summary Reports (`reports-by-repo/`)
+Comparative analysis across all models for a repository:
+```
+reports-by-repo/
+├── facebook_zstd_summary.json       # Detailed JSON comparison
+└── facebook_zstd_comparison.txt     # Human-readable table
+```
+
 
 ## Requirements
 
@@ -209,14 +291,28 @@ The script generates a comprehensive JSON report:
 
 ## Example
 
-See `example_usage.py` for a complete usage example and `rubrics/example.json` for a sample rubric file.
+See `rubrics/example.json` for a sample rubric file and `artifacts/example.dockerfile` for a sample Dockerfile.
+
+### Quick Start
+
+1. Create a rubric file for your repository in `rubrics/<repo_name>.json`
+2. Place your source code in `data/<repo_name>/`
+3. Run the evaluator:
+   ```bash
+   python DockerfileEvaluator.py --dockerfile artifacts/example.dockerfile --repo example --output reports/example_report.json --verbose
+   ```
+4. For batch evaluation:
+   ```bash
+   python batch_evaluate.py --repo example --verbose
+   ```
 
 ## Error Handling
 
 - **Build Failures**: If Docker build fails, no tests are run
-- **Timeout Handling**: Commands have configurable timeouts
+- **Build Timeout**: Docker builds timeout after 60 minutes (3600 seconds)
+- **Command Timeout**: Individual test commands have configurable timeouts (default: 30 seconds)
 - **Dependency Resolution**: Tests with unresolvable dependencies are marked as failed
-- **Resource Cleanup**: Docker images are always cleaned up, even on failure
+- **Resource Cleanup**: Docker images and containers are always cleaned up, even on failure
 
 ## Exit Codes
 
