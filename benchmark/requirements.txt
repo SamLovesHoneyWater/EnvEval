@@ -1,0 +1,2 @@
+# No external dependencies required - uses only Python standard library
+# The script requires Docker to be installed and accessible via command line
