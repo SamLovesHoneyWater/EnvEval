@@ -5,7 +5,7 @@ git clone https://github.com/EaminC/ENVGYM-baseline.git
 
 # Dataset list generated from Excel file
 repos=(
-"anvil|https://github.com/anvil-verifier/anvil"
+"Fairify|https://github.com/sumonbis/Fairify.git"
 "facebook_zstd|https://github.com/facebook/zstd"
 )
 
