@@ -76,7 +76,7 @@
           "models/bank"
         ]
       },
-      "score": 2
+      "score": 1
     },
     {
       "type": "dirs_exist",
@@ -87,7 +87,7 @@
           "data/bank"
         ]
       },
-      "score": 2
+      "score": 1
     },
     {
       "id": "check_pythonpath_env",
@@ -273,6 +273,15 @@
         ]
       },
       "score": 3
+    },
+    {
+      "id": "test_verify_ac_execution", 
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys, os; sys.path.append('../../'); code=open('src/AC/Verify-AC.py').read(); patch=\"\"\"\\nPARTITION_THRESHOLD=2\\nSOFT_TIMEOUT=15\\nHARD_TIMEOUT=120\\nsim_size=100\\nprint('⚡ FAST TEST MODE ENABLED ⚡')\\norig_model_files=model_files\\nmodel_files=[orig_model_files[0]] if len(orig_model_files)>0 else []\\ndef one_partition(p_list): yield p_list[0]\\np_list=list(one_partition(p_list))\\n\"\"\"; code=code.replace('print(\\'Number of partitions:', 'print(\\'Number of partitions:\\', len(p_list));'+patch); exec(compile(code,'src/AC/Verify-AC.py','exec'))\""
+      },
+      "timeout": 30,
+      "score": 2
     },
     {
       "id": "test_verify_gc_execution", 
