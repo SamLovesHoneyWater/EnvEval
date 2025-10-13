@@ -49,8 +49,8 @@ class DockerfileEvaluator:
         import random
         timestamp = int(time.time() * 1000)  # milliseconds for better precision
         random_suffix = random.randint(1000, 9999)
-        self.container_name = f"eval_{repo_name}_{timestamp}_{random_suffix}"
-        self.image_name = f"eval_{repo_name}:latest"
+        self.container_name = f"eval_{repo_name.lower()}_{timestamp}_{random_suffix}"
+        self.image_name = f"eval_{repo_name.lower()}:latest"
         self.results: List[TestResult] = []
         self.tests: List[Dict[str, Any]] = []
         self.build_log: Dict[str, Any] = {}  # Store detailed build information
@@ -573,7 +573,7 @@ class DockerfileEvaluator:
                          capture_output=True, check=False)
             
             # Also clean up any leftover containers from previous runs
-            result = subprocess.run(["docker", "ps", "-a", "--filter", f"name=eval_{self.repo_name}_", "--format", "{{.Names}}"], 
+            result = subprocess.run(["docker", "ps", "-a", "--filter", f"name=eval_{self.repo_name.lower()}_", "--format", "{{.Names}}"], 
                                   capture_output=True, text=True, check=False)
             if result.stdout.strip():
                 leftover_containers = result.stdout.strip().split('\n')

@@ -65,7 +65,7 @@ def cleanup_docker_containers(repo_name: str) -> None:
     try:
         # Find and clean up any existing containers with this repo name
         result = subprocess.run(
-            ["docker", "ps", "-a", "--filter", f"name=eval_{repo_name}_", "--format", "{{.Names}}"],
+            ["docker", "ps", "-a", "--filter", f"name=eval_{repo_name.lower()}_", "--format", "{{.Names}}"],
             capture_output=True, text=True, check=False
         )
         if result.stdout.strip():
