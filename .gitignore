@@ -173,4 +173,5 @@ data/large/
 # Benchmark files
 benchmark/data/*
 benchmark/reports-by-model/*
+benchmark/reports-by-repo/*
 benchmark/rubrics/*.sh
