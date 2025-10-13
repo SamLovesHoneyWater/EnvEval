@@ -7,6 +7,7 @@ git clone https://github.com/EaminC/ENVGYM-baseline.git
 repos=(
 "Fairify|https://github.com/sumonbis/Fairify.git"
 "facebook_zstd|https://github.com/facebook/zstd"
+"Baleen|https://github.com/wonglkd/Baleen-FAST24"
 )
 
 # Create data directory if it doesn't exist
@@ -21,7 +22,7 @@ for entry in "${repos[@]}"; do
     echo "[SKIP] $name already exists"
   else
     echo "[CLONE] $name ..."
-    git clone "$url" "./data/$name"
+    git clone --recurse-submodules "$url" "./data/$name"
   fi
 done
 
