@@ -236,6 +236,7 @@
       "score": 2
     },
     {
+      "id": "check_main_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [

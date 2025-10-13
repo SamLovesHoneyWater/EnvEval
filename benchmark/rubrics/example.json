@@ -9,6 +9,7 @@
       }
     },
     {
+      "id": "check_java_version",
       "type": "output_contains",
       "params": {
         "command": "java -version",
@@ -19,6 +20,7 @@
       "score": 2
     },
     {
+      "id": "check_build_file",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -28,6 +30,7 @@
       "score": 1
     },
     {
+      "id": "check_spec_dir",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -37,6 +40,7 @@
       "score": 1
     },
     {
+      "id": "check_java_home",
       "type": "envvar_set",
       "params": {
         "name": "JAVA_HOME"
@@ -44,6 +48,7 @@
       "score": 2
     },
     {
+      "id": "check_ruby_version",
       "type": "file_contains",
       "params": {
         "path": ".ruby-version",
@@ -52,6 +57,7 @@
       "score": 1
     },
     {
+      "id": "check_jruby_gem",
       "type": "run_command",
       "params": {
         "command": "jruby -S gem -v"

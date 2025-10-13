@@ -28,6 +28,7 @@
       "score": 2
     },
     {
+      "id": "check_core_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -41,6 +42,7 @@
       "score": 2
     },
     {
+      "id": "check_main_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -57,6 +59,7 @@
       "score": 3
     },
     {
+      "id": "check_src_subdirs",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -68,6 +71,7 @@
       "score": 2
     },
     {
+      "id": "check_model_subdirs",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -79,6 +83,7 @@
       "score": 1
     },
     {
+      "id": "check_data_subdirs",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -234,6 +239,7 @@
       "score": 3
     },
     {
+      "id": "check_fairify_script",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -252,6 +258,7 @@
       "score": 1
     },
     {
+      "id": "check_variant_scripts",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -264,6 +271,7 @@
       "score": 2
     },
     {
+      "id": "check_verification_scripts",
       "type": "files_exist",
       "params": {
         "paths": [

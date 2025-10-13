@@ -126,6 +126,7 @@
       "score": 1
     },
     {
+      "id": "check_main_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -141,6 +142,7 @@
       "score": 3
     },
     {
+      "id": "check_root_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -155,6 +157,7 @@
       "score": 2
     },
     {
+      "id": "check_lib_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -167,6 +170,7 @@
       "score": 3
     },
     {
+      "id": "check_program_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -179,6 +183,7 @@
       "score": 2
     },
     {
+      "id": "check_test_files",
       "type": "files_exist",
       "params": {
         "paths": [

@@ -87,6 +87,7 @@
       "requires": ["check_kubernetes_tools"]
     },
     {
+      "id": "check_cargo_files",
       "type": "files_exist",
       "params": {
         "paths": [
