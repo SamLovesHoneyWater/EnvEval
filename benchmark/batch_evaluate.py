@@ -18,6 +18,7 @@ import subprocess
 import json
 import os
 import sys
+import csv
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
@@ -110,9 +111,16 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
         result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
         
         if result.returncode == 0:
-            print(f"SUCCESS: Successfully evaluated: {dockerfile_path}")
-            print(f"  Report saved to: {report_path}")
-            return True
+            # Check if the evaluation actually succeeded by inspecting the report
+            if _validate_evaluation_success(report_path):
+                print(f"SUCCESS: Successfully evaluated: {dockerfile_path}")
+                print(f"  Report saved to: {report_path}")
+                return True
+            else:
+                print(f"FAIL: Evaluation completed but failed (check report): {dockerfile_path}")
+                if verbose:
+                    print(f"  Report: {report_path}")
+                return False
         else:
             print(f"FAIL: Failed to evaluate: {dockerfile_path}")
             if verbose:
@@ -122,6 +130,40 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
             
     except Exception as e:
         print(f"ERROR: Error evaluating {dockerfile_path}: {e}")
+        return False
+
+
+def _validate_evaluation_success(report_path: str) -> bool:
+    """
+    Validate that the evaluation actually succeeded by checking the report content.
+    
+    Returns:
+        True if the evaluation was successful, False if it failed
+    """
+    try:
+        if not os.path.exists(report_path):
+            return False
+            
+        with open(report_path, 'r', encoding='utf-8') as f:
+            report = json.load(f)
+        
+        # Check for build errors
+        build_log = report.get('build_log', {})
+        if 'error_message' in build_log:
+            return False
+        
+        # Check total score - if it's zero or missing, consider it a failure
+        summary = report.get('summary', {})
+        total_score = summary.get('total_score', 0)
+        
+        # If total_score is 0 or not found, evaluation failed
+        if total_score == 0:
+            return False
+        
+        return True
+        
+    except Exception:
+        # If we can't read or parse the report, consider it a failure
         return False
 
 
@@ -145,6 +187,131 @@ def extract_model_info(relative_dockerfile_path: str) -> str:
             # claude/claude35haiku/repo -> "claude/claude35haiku"
             return f"{path_parts[0]}/{path_parts[1]}"
     return "unknown"
+
+
+def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-model",
+                    reports_by_repo_dir: str = "reports-by-repo") -> bool:
+    """
+    Create a CSV file comparing test performance across all models for a repository.
+    
+    Args:
+        repo_name: Repository name
+        reports_by_model_dir: Directory containing individual model reports
+        reports_by_repo_dir: Directory to save repo CSV
+    
+    Returns:
+        True if CSV created successfully, False otherwise
+    """
+    # Find all evaluation reports for this repo
+    reports_by_model_path = Path(reports_by_model_dir)
+    repo_reports = list(reports_by_model_path.rglob(f"*/{repo_name}/evaluation_report.json"))
+    repo_reports += list(reports_by_model_path.rglob(f"*/{repo_name}/envgym/evaluation_report.json"))
+    
+    if not repo_reports:
+        print(f"No reports found for repository: {repo_name}")
+        return False
+    
+    # Load the rubric to get test metadata and params
+    rubric_path = Path(f"rubrics/{repo_name}.json")
+    if not rubric_path.exists():
+        raise FileNotFoundError(f"Rubric file not found: {rubric_path}")
+    
+    try:
+        with open(rubric_path, 'r') as rf:
+            rubric = json.load(rf)
+    except Exception as e:
+        raise ValueError(f"Failed to parse rubric file {rubric_path}: {e}")
+    
+    # Create mapping from test_id to rubric test info
+    rubric_test_info = {}
+    for test in rubric.get('tests', []):
+        test_id = test.get('id', f"{test.get('type', 'unknown')}_{hash(str(test.get('params', {})))}")
+        rubric_test_info[test_id] = {
+            'test_type': test.get('type', ''),
+            'max_score': test.get('score', 1),
+            'params': json.dumps(test.get('params', {}), separators=(',', ':'))  # Compact JSON string
+        }
+    
+    # Collect all test data from reports
+    models_data: Dict[str, Dict[str, float]] = {}  # model_id -> {test_id -> score}
+    all_test_ids: set = set()
+    test_info: Dict[str, Dict[str, Any]] = {}  # test_id -> {test_type, max_score, params}
+    
+    for report_path in repo_reports:
+        try:
+            with open(report_path, 'r') as f:
+                report = json.load(f)
+            
+            # Extract model info from path
+            relative_path = report_path.relative_to(reports_by_model_path)
+            model_id = extract_model_info(str(relative_path))
+            
+            # Extract test results
+            test_results = report.get('test_results', [])
+            models_data[model_id] = {}
+            
+            for test_result in test_results:
+                test_id = test_result.get('test_id', '')
+                test_type = test_result.get('test_type', '')
+                score = test_result.get('score', 0)
+                
+                if test_id:
+                    all_test_ids.add(test_id)
+                    models_data[model_id][test_id] = score
+                    
+                    # Store test metadata from rubric
+                    if test_id not in test_info:
+                        if test_id in rubric_test_info:
+                            test_info[test_id] = rubric_test_info[test_id]
+                        else:
+                            # Fallback if test_id not found in rubric
+                            test_info[test_id] = {
+                                'test_type': test_type,
+                                'max_score': 1,
+                                'params': '{}'  # Empty params
+                            }
+                        
+        except Exception as e:
+            print(f"Warning: Could not process report {report_path}: {e}")
+            continue
+    
+    if not models_data or not all_test_ids:
+        print(f"No valid test data found for repository: {repo_name}")
+        return False
+    
+    # Sort test IDs and model IDs for consistent ordering
+    sorted_test_ids = sorted(all_test_ids)
+    sorted_model_ids = sorted(models_data.keys())
+    
+    # Create output directory
+    os.makedirs(reports_by_repo_dir, exist_ok=True)
+    
+    # Create CSV file
+    csv_path = Path(reports_by_repo_dir) / f"{repo_name}_test_comparison.csv"
+    
+    with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
+        # Prepare header
+        fieldnames = ['test_id', 'test_type', 'max_score'] + sorted_model_ids + ['params']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        # Write data rows
+        for test_id in sorted_test_ids:
+            row = {
+                'test_id': test_id,
+                'test_type': test_info.get(test_id, {}).get('test_type', ''),
+                'max_score': test_info.get(test_id, {}).get('max_score', 1),
+                'params': test_info.get(test_id, {}).get('params', '{}')
+            }
+            
+            # Add scores for each model (0 if test not found for that model)
+            for model_id in sorted_model_ids:
+                row[model_id] = models_data.get(model_id, {}).get(test_id, 0)
+            
+            writer.writerow(row)
+    
+    print(f"SUCCESS: Created test comparison CSV: {csv_path}")
+    return True
 
 
 def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-model", 
@@ -249,9 +416,12 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
             f.write(f"(Score: {best['total_score']}/{best['max_score']}, ")
             f.write(f"Success: {best['success_rate']:.1%})\n")
     
+    # Create CSV comparison
+    csv_success = create_repo_csv(repo_name, reports_by_model_dir, reports_by_repo_dir)
+    
     print(f"SUCCESS: Created repo summary: {json_path}")
     print(f"SUCCESS: Created comparison table: {table_path}")
-    return True
+    return True and csv_success
 
 
 def main():
@@ -346,6 +516,7 @@ def main():
     if summary_success:
         print(f"Repository summary: {args.reports_by_repo_dir}/{args.repo}_summary.json")
         print(f"Comparison table: {args.reports_by_repo_dir}/{args.repo}_comparison.txt")
+        print(f"Test comparison CSV: {args.reports_by_repo_dir}/{args.repo}_test_comparison.csv")
     
     # Exit with appropriate code
     sys.exit(0 if failed == 0 else 1)
