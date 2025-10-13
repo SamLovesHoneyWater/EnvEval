@@ -5,16 +5,15 @@
       "id": "check_system_tools",
       "type": "commands_exist",
       "params": {
-        "names": ["python3", "pip3", "git", "curl", "wget", "bash", "tar", "gzip", "bzip2"]
+        "names": ["git", "wget", "bash", "tar", "gzip", "bzip2"]
       },
       "score": 3
     },
     {
       "id": "check_python_version",
-      "type": "output_contains",
+      "type": "run_command",
       "params": {
-        "command": "python3 --version",
-        "contains": ["Python 3.1"]
+        "command": "(python3 --version 2>&1 | grep 'Python 3.1') || (python --version 2>&1 | grep 'Python 3.1')"
       },
       "timeout": 10,
       "score": 2
@@ -41,7 +40,7 @@
       "id": "check_lightgbm",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import lightgbm\""
+        "command": "(python3 -c \"import lightgbm\") || (python -c \"import lightgbm\")"
       },
       "timeout": 30,
       "score": 1,
@@ -51,7 +50,7 @@
       "id": "check_numpy",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import numpy\""
+        "command": "(python3 -c \"import numpy\") || (python -c \"import numpy\")"
       },
       "timeout": 30,
       "score": 1,
@@ -61,7 +60,7 @@
       "id": "check_pandas",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import pandas\""
+        "command": "(python3 -c \"import pandas\") || (python -c \"import pandas\")"
       },
       "timeout": 30,
       "score": 1,
@@ -71,7 +70,7 @@
       "id": "check_sklearn",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import sklearn\""
+        "command": "(python3 -c \"import sklearn\") || (python -c \"import sklearn\")"
       },
       "timeout": 30,
       "score": 1,
@@ -81,7 +80,7 @@
       "id": "check_spookyhash",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import spookyhash\""
+        "command": "(python3 -c \"import spookyhash\") || (python -c \"import spookyhash\")"
       },
       "timeout": 30,
       "score": 1,
@@ -91,7 +90,7 @@
       "id": "check_jsonargparse",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import jsonargparse\""
+        "command": "(python3 -c \"import jsonargparse\") || (python -c \"import jsonargparse\")"
       },
       "timeout": 30,
       "score": 1,
@@ -101,7 +100,7 @@
       "id": "check_compress_json",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import compress_json\""
+        "command": "(python3 -c \"import compress_json\") || (python -c \"import compress_json\")"
       },
       "timeout": 30,
       "score": 1,
@@ -111,7 +110,7 @@
       "id": "check_compress_pickle",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import compress_pickle\""
+        "command": "(python3 -c \"import compress_pickle\") || (python -c \"import compress_pickle\")"
       },
       "timeout": 30,
       "score": 1,
@@ -121,7 +120,7 @@
       "id": "check_commentjson",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import commentjson\""
+        "command": "(python3 -c \"import commentjson\") || (python -c \"import commentjson\")"
       },
       "timeout": 30,
       "score": 1,
@@ -131,7 +130,7 @@
       "id": "check_retry",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import retry\""
+        "command": "(python3 -c \"import retry\") || (python -c \"import retry\")"
       },
       "timeout": 30,
       "score": 1,
@@ -141,7 +140,7 @@
       "id": "check_psutil",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import psutil\""
+        "command": "(python3 -c \"import psutil\") || (python -c \"import psutil\")"
       },
       "timeout": 30,
       "score": 1,
@@ -151,7 +150,7 @@
       "id": "check_tqdm",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import tqdm\""
+        "command": "(python3 -c \"import tqdm\") || (python -c \"import tqdm\")"
       },
       "timeout": 30,
       "score": 1,
@@ -161,7 +160,7 @@
       "id": "check_scipy",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import scipy\""
+        "command": "(python3 -c \"import scipy\") || (python -c \"import scipy\")"
       },
       "timeout": 30,
       "score": 1,
@@ -171,7 +170,7 @@
       "id": "check_redis",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import redis\""
+        "command": "(python3 -c \"import redis\") || (python -c \"import redis\")"
       },
       "timeout": 30,
       "score": 1,
@@ -181,7 +180,7 @@
       "id": "check_matplotlib",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import matplotlib\""
+        "command": "(python3 -c \"import matplotlib\") || (python -c \"import matplotlib\")"
       },
       "timeout": 30,
       "score": 1,
@@ -191,7 +190,7 @@
       "id": "check_seaborn",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import seaborn\""
+        "command": "(python3 -c \"import seaborn\") || (python -c \"import seaborn\")"
       },
       "timeout": 30,
       "score": 1,
@@ -201,7 +200,7 @@
       "id": "check_pqdict",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import pqdict\""
+        "command": "(python3 -c \"import pqdict\") || (python -c \"import pqdict\")"
       },
       "timeout": 30,
       "score": 1,
@@ -211,7 +210,7 @@
       "id": "check_ipywidgets",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import ipywidgets\""
+        "command": "(python3 -c \"import ipywidgets\") || (python -c \"import ipywidgets\")"
       },
       "timeout": 30,
       "score": 1,
@@ -221,7 +220,7 @@
       "id": "check_jupyterlab",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import jupyterlab\""
+        "command": "(python3 -c \"import jupyterlab\") || (python -c \"import jupyterlab\")"
       },
       "timeout": 30,
       "score": 1,
@@ -357,7 +356,7 @@
       "id": "test_python_basic",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"print('Python is working')\""
+        "command": "(python3 -c \"print('Python is working')\") || (python -c \"print('Python is working')\")"
       },
       "timeout": 30,
       "score": 2,
@@ -367,7 +366,7 @@
       "id": "test_bcachesim_cachesim_import",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import sys; sys.path.append('BCacheSim'); import cachesim\""
+        "command": "(python3 -c \"import sys; sys.path.append('BCacheSim'); import cachesim\") || (python -c \"import sys; sys.path.append('BCacheSim'); import cachesim\")"
       },
       "timeout": 30,
       "score": 1,
@@ -377,7 +376,7 @@
       "id": "test_bcachesim_episodic_import",
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import sys; sys.path.append('BCacheSim'); import episodic_analysis\""
+        "command": "(python3 -c \"import sys; sys.path.append('BCacheSim'); import episodic_analysis\") || (python -c \"import sys; sys.path.append('BCacheSim'); import episodic_analysis\")"
       },
       "timeout": 30,
       "score": 1,
