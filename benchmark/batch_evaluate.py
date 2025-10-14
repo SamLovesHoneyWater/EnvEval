@@ -167,6 +167,45 @@ def _validate_evaluation_success(report_path: str) -> bool:
         return False
 
 
+def _copy_model_reports(repo_reports: List[Path], reports_by_model_path: Path, models_dir: Path) -> None:
+    """
+    Copy individual model reports to models directory with flattened names.
+    
+    Args:
+        repo_reports: List of report file paths
+        reports_by_model_path: Base path for reports-by-model directory
+        models_dir: Target models directory
+    """
+    for report_path in repo_reports:
+        try:
+            # Get relative path from reports-by-model to the report file
+            relative_path = report_path.relative_to(reports_by_model_path)
+            
+            # Remove the filename (evaluation_report.json) and any envgym directory
+            path_parts = list(relative_path.parts[:-1])  # Remove evaluation_report.json
+            if path_parts and path_parts[-1] == "envgym":
+                path_parts = path_parts[:-1]  # Remove envgym if present
+            
+            # Remove the repo name (last directory)
+            if path_parts:
+                path_parts = path_parts[:-1]
+            
+            # Join with dashes to create flattened model name
+            if path_parts:
+                model_name = "-".join(path_parts)
+                flattened_name = f"{model_name}_report.json"
+            else:
+                flattened_name = "unknown_report.json"
+            
+            # Copy the report file
+            target_path = models_dir / flattened_name
+            import shutil
+            shutil.copy2(report_path, target_path)
+            
+        except Exception as e:
+            print(f"Warning: Could not copy report {report_path}: {e}")
+
+
 def extract_model_info(relative_dockerfile_path: str) -> str:
     """
     Extract model identifier from dockerfile path.
@@ -283,11 +322,16 @@ def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-mode
     sorted_test_ids = sorted(all_test_ids)
     sorted_model_ids = sorted(models_data.keys())
     
-    # Create output directory
-    os.makedirs(reports_by_repo_dir, exist_ok=True)
+    # Create output directory structure
+    repo_output_dir = Path(reports_by_repo_dir) / repo_name
+    models_dir = repo_output_dir / "models"
+    os.makedirs(models_dir, exist_ok=True)
+    
+    # Copy individual model reports to the models directory with flattened names
+    _copy_model_reports(repo_reports, reports_by_model_path, models_dir)
     
     # Create CSV file
-    csv_path = Path(reports_by_repo_dir) / f"{repo_name}_test_comparison.csv"
+    csv_path = repo_output_dir / f"{repo_name}_test_comparison.csv"
     
     with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
         # Prepare header
@@ -306,7 +350,8 @@ def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-mode
             
             # Add scores for each model (0 if test not found for that model)
             for model_id in sorted_model_ids:
-                row[model_id] = models_data.get(model_id, {}).get(test_id, 0)
+                score = models_data.get(model_id, {}).get(test_id, 0)
+                row[model_id] = round(score, 2) if isinstance(score, (int, float)) else score
             
             writer.writerow(row)
     
@@ -353,10 +398,10 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
             summary = report.get('summary', {})
             model_data.append({
                 'model': model_id,
-                'total_score': summary.get('total_score', 0),
-                'max_score': summary.get('max_score', 0),
-                'success_rate': summary.get('success_rate', 0.0),
-                'total_time': summary.get('total_execution_time', 0.0),
+                'total_score': round(summary.get('total_score', 0), 2),
+                'max_score': round(summary.get('max_score', 0), 2),
+                'success_rate': round(summary.get('success_rate', 0.0), 4),
+                'total_time': round(summary.get('total_execution_time', 0.0), 2),
                 'passed_tests': summary.get('passed_tests', 0),
                 'total_tests': summary.get('total_tests', 0)
             })
@@ -382,23 +427,23 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
         'model_comparison': model_data
     }
     
-    # Create output directory
-    os.makedirs(reports_by_repo_dir, exist_ok=True)
+    # Create output directory structure
+    repo_output_dir = Path(reports_by_repo_dir) / repo_name
+    os.makedirs(repo_output_dir, exist_ok=True)
     
     # Save JSON summary
-    json_path = Path(reports_by_repo_dir) / f"{repo_name}_summary.json"
+    json_path = repo_output_dir / f"{repo_name}_summary.json"
     with open(json_path, 'w') as f:
         json.dump(summary_report, f, indent=2)
     
-    # Create human-readable table
-    table_path = Path(reports_by_repo_dir) / f"{repo_name}_comparison.txt"
+    # Create markdown comparison table
+    table_path = repo_output_dir / f"{repo_name}_comparison.md"
     with open(table_path, 'w') as f:
-        f.write(f"Repository: {repo_name}\n")
-        f.write("=" * 80 + "\n\n")
+        f.write(f"# Repository: {repo_name}\n\n")
         
-        # Table header
-        f.write(f"{'Model':<25} {'Score':<12} {'Success %':<10} {'Time (s)':<10} {'Tests':<10}\n")
-        f.write("-" * 80 + "\n")
+        # Markdown table header
+        f.write("| Model | Score | Success % | Time (s) | Tests |\n")
+        f.write("|-------|-------|-----------|----------|-------|\n")
         
         # Table rows
         for data in model_data:
@@ -407,12 +452,12 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
             time_str = f"{data['total_time']:.1f}"
             tests_str = f"{data['passed_tests']}/{data['total_tests']}"
             
-            f.write(f"{data['model']:<25} {score_str:<12} {success_pct:<10} {time_str:<10} {tests_str:<10}\n")
+            f.write(f"| {data['model']} | {score_str} | {success_pct} | {time_str} | {tests_str} |\n")
         
         f.write("\n")
         if model_data:
             best = model_data[0]
-            f.write(f"Best Performer: {best['model']} ")
+            f.write(f"**Best Performer:** {best['model']} ")
             f.write(f"(Score: {best['total_score']}/{best['max_score']}, ")
             f.write(f"Success: {best['success_rate']:.1%})\n")
     
@@ -420,7 +465,7 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
     csv_success = create_repo_csv(repo_name, reports_by_model_dir, reports_by_repo_dir)
     
     print(f"SUCCESS: Created repo summary: {json_path}")
-    print(f"SUCCESS: Created comparison table: {table_path}")
+    print(f"SUCCESS: Created comparison table (markdown): {table_path}")
     return True and csv_success
 
 
@@ -514,9 +559,10 @@ def main():
         print("(Directory structure mirrors ENVGYM-baseline)")
     
     if summary_success:
-        print(f"Repository summary: {args.reports_by_repo_dir}/{args.repo}_summary.json")
-        print(f"Comparison table: {args.reports_by_repo_dir}/{args.repo}_comparison.txt")
-        print(f"Test comparison CSV: {args.reports_by_repo_dir}/{args.repo}_test_comparison.csv")
+        print(f"Repository summary: {args.reports_by_repo_dir}/{args.repo}/{args.repo}_summary.json")
+        print(f"Comparison table (markdown): {args.reports_by_repo_dir}/{args.repo}/{args.repo}_comparison.md")
+        print(f"Test comparison CSV: {args.reports_by_repo_dir}/{args.repo}/{args.repo}_test_comparison.csv")
+        print(f"Individual model reports: {args.reports_by_repo_dir}/{args.repo}/models/")
     
     # Exit with appropriate code
     sys.exit(0 if failed == 0 else 1)
