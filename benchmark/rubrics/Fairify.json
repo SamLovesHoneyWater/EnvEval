@@ -10,14 +10,6 @@
       "score": 2
     },
     {
-      "id": "check_conda",
-      "type": "commands_exist",
-      "params": {
-        "names": ["conda"]
-      },
-      "score": 1
-    },
-    {
       "id": "check_python_version",
       "type": "output_contains",
       "params": {
@@ -111,44 +103,6 @@
       "score": 1
     },
     {
-      "id": "check_conda_env",
-      "type": "envvar_set",
-      "params": {
-        "name": "CONDA_DEFAULT_ENV"
-      },
-      "score": 1
-    },
-    {
-      "id": "check_python_in_path",
-      "type": "output_contains",
-      "params": {
-        "command": "echo $PATH",
-        "contains": ["python"]
-      },
-      "timeout": 10,
-      "score": 1
-    },
-    {
-      "id": "check_pip_in_path",
-      "type": "output_contains",
-      "params": {
-        "command": "echo $PATH",
-        "contains": ["pip"]
-      },
-      "timeout": 10,
-      "score": 1
-    },
-    {
-      "id": "check_conda_in_path",
-      "type": "output_contains",
-      "params": {
-        "command": "echo $PATH",
-        "contains": ["conda"]
-      },
-      "timeout": 10,
-      "score": 1
-    },
-    {
       "id": "test_python3_execution",
       "type": "run_command",
       "params": {
@@ -180,24 +134,6 @@
       "type": "run_command",
       "params": {
         "command": "pip3 list"
-      },
-      "timeout": 30,
-      "score": 1
-    },
-    {
-      "id": "test_conda_version",
-      "type": "run_command",
-      "params": {
-        "command": "conda --version"
-      },
-      "timeout": 30,
-      "score": 1
-    },
-    {
-      "id": "test_conda_list",
-      "type": "run_command",
-      "params": {
-        "command": "conda list"
       },
       "timeout": 30,
       "score": 1
