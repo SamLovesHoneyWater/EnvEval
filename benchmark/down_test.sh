@@ -11,6 +11,7 @@ repos=(
 "BurntSushi_ripgrep|https://github.com/BurntSushi/ripgrep"
 "CrossPrefetch|https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts"
 "ELECT|https://github.com/tinoryj/ELECT"
+"CrossPrefetch|https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts"
 )
 
 # Create data directory if it doesn't exist
