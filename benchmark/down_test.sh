@@ -8,6 +8,9 @@ repos=(
 "Fairify|https://github.com/sumonbis/Fairify.git"
 "facebook_zstd|https://github.com/facebook/zstd"
 "Baleen|https://github.com/wonglkd/Baleen-FAST24"
+"BurntSushi_ripgrep|https://github.com/BurntSushi/ripgrep"
+"CrossPrefetch|https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts"
+"ELECT|https://github.com/tinoryj/ELECT"
 )
 
 # Create data directory if it doesn't exist
