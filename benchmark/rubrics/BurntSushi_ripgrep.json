@@ -374,7 +374,7 @@
         "command": "cargo test --all"
       },
       "timeout": 900,
-      "score": 7
+      "score": 10
     }
   ]
 }
