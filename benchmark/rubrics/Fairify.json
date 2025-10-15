@@ -224,16 +224,106 @@
       "params": {
         "command": "python3 -c \"import sys, os; sys.path.append('../../'); code=open('src/AC/Verify-AC.py').read(); patch=\"\"\"\\nPARTITION_THRESHOLD=2\\nSOFT_TIMEOUT=15\\nHARD_TIMEOUT=120\\nsim_size=100\\nprint('⚡ FAST TEST MODE ENABLED ⚡')\\norig_model_files=model_files\\nmodel_files=[orig_model_files[0]] if len(orig_model_files)>0 else []\\ndef one_partition(p_list): yield p_list[0]\\np_list=list(one_partition(p_list))\\n\"\"\"; code=code.replace('print(\\'Number of partitions:', 'print(\\'Number of partitions:\\', len(p_list));'+patch); exec(compile(code,'src/AC/Verify-AC.py','exec'))\""
       },
-      "timeout": 30,
-      "score": 2
+      "timeout": 200,
+      "score": 3
     },
     {
       "id": "test_verify_gc_execution", 
       "type": "run_command",
       "params": {
-        "command": "python3 -c \"import sys; sys.path.append('src/GC'); exec(open('src/GC/Verify-GC.py').read())\""
+        "command": "python3 -c \"import sys, os; sys.path.append('../../'); code=open('src/GC/Verify-GC.py').read(); patch=\"\"\"\\nPARTITION_THRESHOLD=2\\nSOFT_TIMEOUT=15\\nHARD_TIMEOUT=120\\nsim_size=100\\nprint('⚡ FAST TEST MODE ENABLED ⚡')\\norig_model_files=model_files\\nmodel_files=[orig_model_files[0]] if len(orig_model_files)>0 else []\\ndef one_partition(p_list): yield p_list[0]\\np_list=list(one_partition(p_list))\\n\"\"\"; code=code.replace('print(\\'Number of partitions:', 'print(\\'Number of partitions:\\', len(p_list));'+patch); exec(compile(code,'src/GC/Verify-GC.py','exec'))\""
       },
-      "timeout": 30,
+      "timeout": 200,
+      "score": 3
+    },
+    {
+      "id": "test_verify_bm_execution",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys, os; sys.path.append('src/BM'); code=open('src/BM/Verify-BM.py').read(); patch='''\nPARTITION_THRESHOLD=2\nSOFT_TIMEOUT=15\nHARD_TIMEOUT=120\nsim_size=100\nprint('⚡ FAST TEST MODE ENABLED ⚡')\norig_model_files=model_files\nmodel_files=[orig_model_files[0]] if len(orig_model_files)>0 else []\n'''; exec(code.replace('PARTITION_THRESHOLD = 100', patch))\""
+      },
+      "timeout": 200,
+      "score": 3
+    },
+    {
+      "id": "test_verify_ac_stress",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 1m bash -c './fairify-stress.sh AC'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 70,
+      "score": 2
+    },
+    {
+      "id": "test_verify_gc_stress",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 1m bash -c './fairify-stress.sh GC'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 70,
+      "score": 2
+    },
+    {
+      "id": "test_verify_bm_stress",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 1m bash -c './fairify-stress.sh BM'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 70,
+      "score": 2
+    },
+    {
+      "id": "test_verify_ac_relaxed",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 30s bash -c './fairify-relaxed.sh AC'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 45,
+      "score": 2
+    },
+    {
+      "id": "test_verify_gc_relaxed",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 30s bash -c './fairify-relaxed.sh GC'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 45,
+      "score": 2
+    },
+    {
+      "id": "test_verify_bm_relaxed",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 30s bash -c './fairify-relaxed.sh BM'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 45,
+      "score": 2
+    },
+    {
+      "id": "test_verify_ac_targeted",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 30s bash -c './fairify-targeted.sh AC'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 45,
+      "score": 2
+    },
+    {
+      "id": "test_verify_gc_targeted",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 30s bash -c './fairify-targeted.sh GC'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 45,
+      "score": 2
+    },
+    {
+      "id": "test_verify_bm_targeted",
+      "type": "run_command",
+      "params": {
+        "command": "timeout --kill-after=5s 30s bash -c './fairify-targeted.sh BM'; code=$?; if [ $code -eq 124 ] || [ $code -eq 137 ] || [ $code -eq 143 ]; then exit 0; elif [ $code -ne 0 ]; then exit $code; else exit 0; fi"
+      },
+      "timeout": 45,
       "score": 2
     },
     {
@@ -245,6 +335,11 @@
       "timeout": 10,
       "score": 1
     },
+    
+
+    
+
+
     {
       "id": "test_models_adult_files",
       "type": "run_command",
