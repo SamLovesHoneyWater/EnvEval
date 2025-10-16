@@ -108,7 +108,8 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
     
     try:
         # Run the evaluation with UTF-8 encoding to handle Unicode characters
-        result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
+        # Add timeout slightly longer than DockerfileEvaluator's internal timeout (3600s + 300s buffer)
+        result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=3900)
         
         if result.returncode == 0:
             # Check if the evaluation actually succeeded by inspecting the report
@@ -128,6 +129,10 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
                 print(f"  STDERR: {result.stderr}")
             return False
             
+    except subprocess.TimeoutExpired:
+        print(f"TIMEOUT: Evaluation timed out after 65 minutes: {dockerfile_path}")
+        print(f"  This indicates the Docker build or evaluation process is stuck")
+        return False
     except Exception as e:
         print(f"ERROR: Error evaluating {dockerfile_path}: {e}")
         return False
