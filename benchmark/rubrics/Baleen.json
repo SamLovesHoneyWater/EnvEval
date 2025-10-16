@@ -5,9 +5,17 @@
       "id": "check_system_tools",
       "type": "commands_exist",
       "params": {
-        "names": ["git", "wget", "bash", "tar", "gzip", "bzip2"]
+        "names": [
+          "git",
+          "wget",
+          "bash",
+          "tar",
+          "gzip",
+          "bzip2"
+        ]
       },
-      "score": 3
+      "score": 3,
+      "category": "configuration"
     },
     {
       "id": "check_python_version",
@@ -16,7 +24,8 @@
         "command": "(python3 --version 2>&1 | grep 'Python 3.1') || (python --version 2>&1 | grep 'Python 3.1')"
       },
       "timeout": 10,
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_pip_version",
@@ -25,7 +34,8 @@
         "command": "pip3 --version | grep -E 'pip (2[0-9]|[3-9][0-9])'"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_conda_mamba",
@@ -34,7 +44,8 @@
         "command": "command -v conda || command -v mamba || command -v micromamba"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_lightgbm",
@@ -44,7 +55,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_numpy",
@@ -54,7 +68,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_pandas",
@@ -64,7 +81,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_sklearn",
@@ -74,7 +94,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_spookyhash",
@@ -84,7 +107,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_jsonargparse",
@@ -94,7 +120,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_compress_json",
@@ -104,7 +133,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_compress_pickle",
@@ -114,7 +146,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_commentjson",
@@ -124,7 +159,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_retry",
@@ -134,7 +172,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_psutil",
@@ -144,17 +185,23 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
-      "id": "check_tqdm",
+      "id": "check_lightgbm",
       "type": "run_command",
       "params": {
-        "command": "(python3 -c \"import tqdm\") || (python -c \"import tqdm\")"
+        "command": "(python3 -c \"import lightgbm\") || (python -c \"import lightgbm\")"
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_scipy",
@@ -164,7 +211,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_redis",
@@ -174,7 +224,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_matplotlib",
@@ -184,7 +237,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_seaborn",
@@ -194,7 +250,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_pqdict",
@@ -204,7 +263,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_ipywidgets",
@@ -214,7 +276,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_jupyterlab",
@@ -224,16 +289,22 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_baleen_readme",
       "type": "file_contains",
       "params": {
         "path": "README.md",
-        "contains": ["Baleen"]
+        "contains": [
+          "Baleen"
+        ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_main_directories",
@@ -242,12 +313,13 @@
         "paths": [
           "BCacheSim",
           "data",
-          "notebooks", 
+          "notebooks",
           "runs",
           "chameleon"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_bcachesim_structure",
@@ -260,7 +332,10 @@
         ]
       },
       "score": 3,
-      "requires": ["check_bcachesim_dir"]
+      "requires": [
+        "check_bcachesim_dir"
+      ],
+      "category": "structure"
     },
     {
       "id": "check_bcachesim_dir",
@@ -270,7 +345,8 @@
           "BCacheSim"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_bcachesim_run_script",
@@ -281,7 +357,10 @@
         ]
       },
       "score": 2,
-      "requires": ["check_bcachesim_dir"]
+      "requires": [
+        "check_bcachesim_dir"
+      ],
+      "category": "structure"
     },
     {
       "id": "check_bcachesim_script_executable",
@@ -291,7 +370,10 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_bcachesim_run_script"]
+      "requires": [
+        "check_bcachesim_run_script"
+      ],
+      "category": "functionality"
     },
     {
       "id": "check_data_scripts",
@@ -301,7 +383,8 @@
           "data/get-tectonic.sh"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_data_script_executable",
@@ -311,7 +394,10 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_data_scripts"]
+      "requires": [
+        "check_data_scripts"
+      ],
+      "category": "functionality"
     },
     {
       "id": "check_notebooks_structure",
@@ -321,7 +407,8 @@
           "notebooks"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_runs_structure",
@@ -331,7 +418,8 @@
           "runs"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_getting_started",
@@ -341,7 +429,8 @@
           "getting-started.sh"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_getting_started_executable",
@@ -351,7 +440,10 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_getting_started"]
+      "requires": [
+        "check_getting_started"
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_python_basic",
@@ -361,7 +453,10 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["check_system_tools"]
+      "requires": [
+        "check_system_tools"
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_bcachesim_cachesim_import",
@@ -371,7 +466,10 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_bcachesim_structure"]
+      "requires": [
+        "check_bcachesim_structure"
+      ],
+      "category": "configuration"
     },
     {
       "id": "test_bcachesim_episodic_import",
@@ -381,25 +479,34 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_bcachesim_structure"]
+      "requires": [
+        "check_bcachesim_structure"
+      ],
+      "category": "configuration"
     },
     {
       "id": "check_jupyter_command",
       "type": "commands_exist",
       "params": {
-        "names": ["jupyter"]
+        "names": [
+          "jupyter"
+        ]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_git_version",
       "type": "output_contains",
       "params": {
         "command": "git --version",
-        "contains": ["git"]
+        "contains": [
+          "git"
+        ]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_git_repository",
@@ -409,7 +516,8 @@
           ".git"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_gitmodules",
@@ -419,9 +527,9 @@
           ".gitmodules"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
-    
     {
       "id": "check_trace_files_downloaded",
       "type": "files_exist",
@@ -431,7 +539,10 @@
         ]
       },
       "score": 2,
-      "requires": ["check_data_scripts"]
+      "requires": [
+        "check_data_scripts"
+      ],
+      "category": "structure"
     },
     {
       "id": "check_trace_files_extracted",
@@ -443,7 +554,10 @@
         ]
       },
       "score": 4,
-      "requires": ["check_trace_files_downloaded"]
+      "requires": [
+        "check_trace_files_downloaded"
+      ],
+      "category": "structure"
     },
     {
       "id": "test_bcachesim_simulation",
@@ -453,7 +567,11 @@
       },
       "timeout": 400,
       "score": 5,
-      "requires": ["check_bcachesim_run_script", "check_bcachesim_structure"]
+      "requires": [
+        "check_bcachesim_run_script",
+        "check_bcachesim_structure"
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_bcachesim_episodic_training",
@@ -463,7 +581,11 @@
       },
       "timeout": 100,
       "score": 5,
-      "requires": ["check_bcachesim_run_script", "check_bcachesim_structure"]
+      "requires": [
+        "check_bcachesim_run_script",
+        "check_bcachesim_structure"
+      ],
+      "category": "functionality"
     }
   ]
 }
