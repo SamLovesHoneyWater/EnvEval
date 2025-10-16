@@ -11,7 +11,11 @@ repos=(
 "BurntSushi_ripgrep|https://github.com/BurntSushi/ripgrep"
 "CrossPrefetch|https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts"
 "ELECT|https://github.com/tinoryj/ELECT"
-"CrossPrefetch|https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts"
+"Lottory|https://github.com/rahulvigneswaran/Lottery-Ticket-Hypothesis-in-Pytorch"
+"RSNN|https://github.com/fmi-basel/neural-decoding-RSNN"
+"P4Ctl|https://github.com/peng-gao-lab/p4control"
+"Metis|https://github.com/sbu-fsl/Metis"
+"Kong_insomnia|https://github.com/Kong/insomnia"
 )
 
 # Create data directory if it doesn't exist
