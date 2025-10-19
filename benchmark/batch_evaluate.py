@@ -256,7 +256,7 @@ def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-mode
         return False
     
     # Load the rubric to get test metadata and params
-    rubric_path = Path(f"rubrics/{repo_name}.json")
+    rubric_path = Path(f"rubrics/manual/{repo_name}.json")
     if not rubric_path.exists():
         raise FileNotFoundError(f"Rubric file not found: {rubric_path}")
     

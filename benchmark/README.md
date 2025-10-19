@@ -98,7 +98,7 @@ python DockerfileEvaluator.py --dockerfile artifacts/example.dockerfile --repo e
 
 - `--dockerfile` (required): Path to the Dockerfile to evaluate
 - `--repo` (required): Repository name (used to find rubric file)
-- `--rubric` (optional): Path to custom rubric JSON file (default: `rubrics/<repo>.json`)
+- `--rubric` (optional): Path to custom rubric JSON file (default: `rubrics/manual/<repo>.json`)
 - `--output` (optional): Path to save evaluation report JSON
 - `--skip-warnings` (optional): Skip user confirmation prompts for potentially destructive operations
 - `--verbose` (optional): Enable detailed output
@@ -428,11 +428,11 @@ pip install -r requirements.txt
 
 ## Example
 
-See `rubrics/example.json` for a sample rubric file and `artifacts/example.dockerfile` for a sample Dockerfile.
+See `rubrics/manual/example.json` for a sample rubric file and `artifacts/example.dockerfile` for a sample Dockerfile.
 
 ### Quick Start
 
-1. Create a rubric file for your repository in `rubrics/<repo_name>.json`
+1. Create a rubric file for your repository in `rubrics/manual/<repo_name>.json`
 2. Place your source code in `data/<repo_name>/`
 3. Run the evaluator:
    ```bash

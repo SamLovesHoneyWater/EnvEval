@@ -45,7 +45,7 @@ def discover_available_repos(reports_dir: str = "reports-by-repo") -> List[str]:
     return sorted(repos)
 
 
-def load_rubric_categories(repo_name: str, rubrics_dir: str = "rubrics") -> Tuple[Dict[str, str], Dict[str, int]]:
+def load_rubric_categories(repo_name: str, rubrics_dir: str = "rubrics/manual") -> Tuple[Dict[str, str], Dict[str, int]]:
     """
     Load rubric file and extract test_id to category mapping and max scores.
     
@@ -772,8 +772,8 @@ Examples:
     
     parser.add_argument("--reports-dir", default="reports-by-repo",
                        help="Directory containing repository reports (default: reports-by-repo)")
-    parser.add_argument("--rubrics-dir", default="rubrics",
-                       help="Directory containing rubric files (default: rubrics)")
+    parser.add_argument("--rubrics-dir", default="rubrics/manual",
+                       help="Directory containing rubric files (default: rubrics/manual)")
     parser.add_argument("--output-dir", default="overview-stats",
                        help="Output directory for statistics and visualizations (default: overview-stats)")
     parser.add_argument("--verbose", action="store_true",

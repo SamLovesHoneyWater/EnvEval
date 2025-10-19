@@ -6,7 +6,8 @@
       "type": "commands_exist",
       "params": {
         "names": ["python3.7", "pip"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_python37_version",
@@ -16,21 +17,24 @@
         "contains": ["3.7"]
       },
       "timeout": 10,
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_build_tools",
       "type": "commands_exist",
       "params": {
         "names": ["gcc", "make", "git", "curl", "wget"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_python3",
       "type": "commands_exist",
       "params": {
         "names": ["python3"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_project_structure",
@@ -43,7 +47,8 @@
           "archs/cifar100"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_key_files",
@@ -58,7 +63,8 @@
           ".gitignore"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_mnist_architectures",
@@ -72,7 +78,8 @@
           "archs/mnist/resnet.py"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_cifar10_architectures",
@@ -87,7 +94,8 @@
           "archs/cifar10/densenet.py"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_cifar100_architectures",
@@ -101,7 +109,8 @@
           "archs/cifar100/resnet.py"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_python_env",
@@ -109,7 +118,8 @@
       "params": {
         "name": "PYTHONPATH"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_virtual_env",
@@ -117,7 +127,8 @@
       "params": {
         "name": "VIRTUAL_ENV"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_python37_in_path",
@@ -127,7 +138,8 @@
         "contains": ["python3.7"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python37_execution",
@@ -136,7 +148,8 @@
         "command": "python3.7 -c \"print('Python 3.7 works')\""
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_pip_functionality",
@@ -145,7 +158,8 @@
         "command": "pip --version"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_requirements_dependencies",
@@ -154,7 +168,8 @@
         "path": "requirements.txt",
         "contains": ["torch==1.2.0", "torchvision==0.4.0", "numpy==1.17.2", "matplotlib==3.1.1", "seaborn==0.9.0", "tensorboardX==1.8", "tqdm==4.36.1"]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "test_main_py_syntax",
@@ -163,7 +178,8 @@
         "command": "python3.7 -m py_compile main.py"
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_main_py_imports",
@@ -172,7 +188,8 @@
         "path": "main.py",
         "contains": ["import torch", "import torchvision", "import matplotlib", "import seaborn"]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "test_utils_py_syntax",
@@ -181,7 +198,8 @@
         "command": "python3.7 -m py_compile utils.py"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_combine_plots_syntax",
@@ -190,7 +208,8 @@
         "command": "python3.7 -m py_compile combine_plots.py"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_readme_content",
@@ -199,7 +218,8 @@
         "path": "README.md",
         "contains": ["Lottery Ticket Hypothesis", "Requirements", "How to run", "Datasets and Architectures"]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "test_gitignore_content",
@@ -208,7 +228,8 @@
         "path": ".gitignore",
         "contains": ["*.pyc", "__pycache__"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_pytorch_import",
@@ -217,7 +238,8 @@
         "command": "python3.7 -c \"import torch; print('PyTorch works')\""
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "test_torchvision_import",
@@ -226,7 +248,8 @@
         "command": "python3.7 -c \"import torchvision; print('torchvision works')\""
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "test_matplotlib_import",
@@ -235,7 +258,8 @@
         "command": "python3.7 -c \"import matplotlib; print('matplotlib works')\""
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_seaborn_import",
@@ -244,7 +268,8 @@
         "command": "python3.7 -c \"import seaborn; print('seaborn works')\""
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_numpy_import",
@@ -253,7 +278,8 @@
         "command": "python3.7 -c \"import numpy; print('numpy works')\""
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_pandas_import",
@@ -262,7 +288,8 @@
         "command": "python3.7 -c \"import pandas; print('pandas works')\""
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     }
   ]
 }

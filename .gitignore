@@ -175,4 +175,4 @@ benchmark/data/*
 benchmark/reports-by-model/*
 benchmark/reports-by-repo/*
 benchmark/rubrics/*.sh
-benchmark/overview-stats
+benchmark/overview-stats*
