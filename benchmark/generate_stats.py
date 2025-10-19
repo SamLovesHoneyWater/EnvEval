@@ -260,8 +260,12 @@ def create_model_average_chart(model_stats: Dict[str, Any], output_dir: Path) ->
     """
     Create bar chart showing average percentage score for each model.
     """
-    models = list(model_stats.keys())
-    percentages = [model_stats[model]['overall_percentage'] for model in models]
+    # Sort models by accuracy from worst to best (ascending order)
+    model_performance = [(model, stats['overall_percentage']) for model, stats in model_stats.items()]
+    model_performance.sort(key=lambda x: x[1])  # Sort by percentage (ascending)
+    
+    models = [item[0] for item in model_performance]
+    percentages = [item[1] for item in model_performance]
     
     plt.figure(figsize=(12, 6))
     bars = plt.bar(models, percentages, color='steelblue', alpha=0.8)
@@ -433,6 +437,202 @@ def create_error_pie_charts(model_stats: Dict[str, Any], output_dir: Path) -> No
         plt.tight_layout()
         plt.savefig(model_dir / 'error_distribution.png', dpi=300, bbox_inches='tight')
         plt.close()
+
+
+def create_repo_composition_comparison(model_stats: Dict[str, Any], repos: List[str], output_dir: Path) -> None:
+    """
+    Create ring pie charts comparing original vs modified score compositions for specific repositories.
+    """
+    # Original score compositions (hardcoded reference values)
+    original_compositions = {
+        'BurntSushi_ripgrep': {
+            'structure': 36,
+            'configuration': 40,
+            'functionality': 5
+        },
+        'Baleen': {
+            'structure': 25,
+            'configuration': 33,
+            'functionality': 12
+        },
+        'Fairify': {
+            'structure': 41,
+            'configuration': 18,
+            'functionality': 13
+        }
+    }
+    
+    target_repos = ['BurntSushi_ripgrep', 'Baleen', 'Fairify']
+    available_repos = [repo for repo in target_repos if repo in repos]
+    
+    if not available_repos:
+        print(f"  Warning: None of the target repos {target_repos} found in analysis")
+        return
+    
+    # Create figure with subplots for each repo pair
+    n_repos = len(available_repos)
+    fig, axes = plt.subplots(2, n_repos, figsize=(6*n_repos, 10))
+    
+    # Handle single repo case
+    if n_repos == 1:
+        axes = axes.reshape(2, 1)
+    
+    categories = ['structure', 'configuration', 'functionality']
+    category_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']
+    
+    for col, repo in enumerate(available_repos):
+        # Calculate current (modified) composition from any available model
+        # Use the first available model's data for this repo
+        current_composition = {'structure': 0, 'configuration': 0, 'functionality': 0}
+        
+        # Find a model that has data for this repo
+        sample_model = None
+        for model_name, stats in model_stats.items():
+            if repo in stats['repos']:
+                sample_model = model_name
+                break
+        
+        if sample_model:
+            repo_data = model_stats[sample_model]['repos'][repo]['category_data']
+            for category in categories:
+                current_composition[category] = repo_data[category]['max_score']
+        else:
+            print(f"  Warning: No model data found for repo {repo}")
+            continue
+        
+        # Original composition
+        original = original_compositions[repo]
+        orig_values = [original[cat] for cat in categories]
+        orig_total = sum(orig_values)
+        
+        # Current composition  
+        current_values = [current_composition[cat] for cat in categories]
+        current_total = sum(current_values)
+        
+        # Create original pie chart (top row)
+        if orig_total > 0:
+            wedges, texts, autotexts = axes[0, col].pie(
+                orig_values, labels=categories, colors=category_colors,
+                autopct=lambda pct, allvals=orig_values: f'{int(pct/100*sum(allvals))}',
+                startangle=90, wedgeprops=dict(width=0.5)
+            )
+            axes[0, col].set_title(f'{repo}\nOriginal (Total: {orig_total})', 
+                                  fontsize=12, fontweight='bold')
+        
+        # Create current pie chart (bottom row)
+        if current_total > 0:
+            wedges, texts, autotexts = axes[1, col].pie(
+                current_values, labels=categories, colors=category_colors,
+                autopct=lambda pct, allvals=current_values: f'{int(pct/100*sum(allvals))}',
+                startangle=90, wedgeprops=dict(width=0.5)
+            )
+            axes[1, col].set_title(f'Modified (Total: {current_total})', 
+                                  fontsize=12, fontweight='bold')
+        
+        # Print comparison
+        print(f"\n  {repo} Score Composition:")
+        print(f"    Original  - Structure: {original['structure']}, Configuration: {original['configuration']}, Functionality: {original['functionality']} (Total: {orig_total})")
+        print(f"    Modified  - Structure: {current_composition['structure']}, Configuration: {current_composition['configuration']}, Functionality: {current_composition['functionality']} (Total: {current_total})")
+        
+        total_change = current_total - orig_total
+        print(f"    Change: {'+' if total_change >= 0 else ''}{total_change} points")
+    
+    plt.suptitle('Repository Score Composition: Original vs Modified', 
+                 fontsize=16, fontweight='bold', y=0.95)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+    
+    plt.savefig(output_dir / 'repo_composition_comparison.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+def create_ours_vs_baseline_comparison(model_stats: Dict[str, Any], output_dir: Path) -> None:
+    """
+    Create side-by-side comparison of "ours" methods vs baseline methods.
+    Compares error rates for models containing specific identifiers.
+    """
+    target_strings = ["35haiku", "opus4", "gpt41", "gpt41mini"]
+    comparison_pairs = {}
+    
+    # Find matching pairs
+    for target in target_strings:
+        ours_model = None
+        baseline_model = None
+        
+        for model_name in model_stats.keys():
+            if target in model_name:
+                if "ours" in model_name:
+                    ours_model = model_name
+                else:
+                    baseline_model = model_name
+        
+        if ours_model is None or baseline_model is None:
+            raise ValueError(f"Missing pair for '{target}': found ours='{ours_model}', baseline='{baseline_model}'. "
+                           f"Expected to find both 'ours' and non-'ours' models containing '{target}'.")
+        
+        comparison_pairs[target] = {
+            'ours': ours_model,
+            'baseline': baseline_model
+        }
+    
+    # Prepare data for plotting
+    targets = list(comparison_pairs.keys())
+    ours_accuracies = [model_stats[comparison_pairs[target]['ours']]['overall_percentage'] for target in targets]
+    baseline_accuracies = [model_stats[comparison_pairs[target]['baseline']]['overall_percentage'] for target in targets]
+    
+    # Create the comparison chart
+    x = np.arange(len(targets))
+    width = 0.35
+    
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    bars1 = ax.bar(x - width/2, baseline_accuracies, width, label='Baseline', color='#FF6B6B', alpha=0.8)
+    bars2 = ax.bar(x + width/2, ours_accuracies, width, label='Ours', color='#4ECDC4', alpha=0.8)
+    
+    # Add value labels on bars
+    for bars in [bars1, bars2]:
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height + 0.5,
+                   f'{height:.1f}%', ha='center', va='bottom')
+    
+    # Customize the chart
+    ax.set_xlabel('Model Type', fontsize=12)
+    ax.set_ylabel('Accuracy (%)', fontsize=12)
+    ax.set_title('Accuracy Comparison: Baseline vs Ours Methods', fontsize=16, fontweight='bold')
+    ax.set_xticks(x)
+    ax.set_xticklabels([target.upper() for target in targets])
+    ax.legend()
+    ax.grid(axis='y', alpha=0.3)
+    
+    # Add improvement annotations
+    for i, target in enumerate(targets):
+        baseline_acc = baseline_accuracies[i]
+        ours_acc = ours_accuracies[i]
+        improvement = ours_acc - baseline_acc
+        if improvement > 0:
+            ax.annotate(f'↑{improvement:.1f}pp', 
+                       xy=(i, max(baseline_acc, ours_acc) + 2),
+                       ha='center', va='bottom', 
+                       fontweight='bold', color='green')
+        elif improvement < 0:
+            ax.annotate(f'↓{abs(improvement):.1f}pp', 
+                       xy=(i, max(baseline_acc, ours_acc) + 2),
+                       ha='center', va='bottom', 
+                       fontweight='bold', color='red')
+    
+    plt.tight_layout()
+    plt.savefig(output_dir / 'ours_vs_baseline_comparison.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    # Print summary
+    print("\nOurs vs Baseline Comparison:")
+    for target in targets:
+        ours_acc = model_stats[comparison_pairs[target]['ours']]['overall_percentage']
+        baseline_acc = model_stats[comparison_pairs[target]['baseline']]['overall_percentage']
+        improvement = ours_acc - baseline_acc
+        print(f"  {target.upper()}: Baseline {baseline_acc:.1f}% vs Ours {ours_acc:.1f}% "
+              f"({'+'if improvement >= 0 else ''}{improvement:.1f}pp)")
 
 
 def create_combined_error_visualization(model_stats: Dict[str, Any], output_dir: Path) -> None:
@@ -631,6 +831,17 @@ Examples:
     print("  Creating combined error visualization...")
     create_combined_error_visualization(model_stats, output_dir)
     
+    # 6. Ours vs Baseline comparison
+    print("  Creating ours vs baseline comparison...")
+    try:
+        create_ours_vs_baseline_comparison(model_stats, output_dir)
+    except ValueError as e:
+        print(f"  Warning: Could not create ours vs baseline comparison: {e}")
+    
+    # 7. Repository composition comparison
+    print("  Creating repository composition comparison...")
+    create_repo_composition_comparison(model_stats, args.repos, output_dir)
+    
     # Generate summary report
     print("  Creating summary report...")
     generate_summary_report(model_stats, args.repos, output_dir)
@@ -639,6 +850,8 @@ Examples:
     print("Generated files:")
     print(f"  - model_average_scores.png")
     print(f"  - combined_error_distributions.png")
+    print(f"  - ours_vs_baseline_comparison.png")
+    print(f"  - repo_composition_comparison.png")
     print(f"  - summary_report.json")
     print(f"  - For each model: {output_dir}/[model_name]/")
     print(f"    - category_performance.png")
