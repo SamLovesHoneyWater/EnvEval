@@ -197,9 +197,9 @@ def run_agent_step(
     return None, new_scratchpad_json
 
 def main():
-    #model = build_model("openai/gpt-oss-120b")
+    model = build_model("openai/gpt-oss-120b")
     #model  = build_model("meta-llama/Meta-Llama-3.1-70B-Instruct")
-    model = build_model("gpt-5-nano", use_openai=True)
+    #model = build_model("gpt-5-nano", use_openai=True)
     print("Model loaded!")
     
     # Initialize conversation history

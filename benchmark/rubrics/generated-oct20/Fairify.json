@@ -191,7 +191,7 @@
       "id": "test_fairify_script_executable",
       "type": "run_command",
       "params": {
-        "command": "[ -x \"src/fairify.sh\" ] || chmod +x src/fairify.sh"
+        "command": "[ -x \"src/fairify.sh\" ]"
       },
       "timeout": 10,
       "score": 1,
