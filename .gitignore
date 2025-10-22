@@ -174,5 +174,5 @@ data/large/
 benchmark/data/*
 benchmark/reports-by-model/*
 benchmark/reports-by-repo/*
-benchmark/rubrics/*.sh
+benchmark/rubrics/deprecated/*.sh
 benchmark/overview-stats*
