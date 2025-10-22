@@ -1,0 +1,475 @@
+{
+  "repo": "Baleen",
+  "tests": [
+    {
+      "id": "check_system_tools",
+      "type": "commands_exist",
+      "params": {
+        "names": [
+          "git",
+          "bash",
+          "curl",
+          "wget",
+          "tar",
+          "gzip",
+          "bzip2"
+        ]
+      },
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "check_python_version",
+      "type": "run_command",
+      "params": {
+        "command": "python3 --version"
+      },
+      "timeout": 10,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "check_python311_or_higher",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys; assert sys.version_info >= (3, 11), f'Python 3.11+ required, got {sys.version_info}'; print('Python 3.11+ detected')\""
+      },
+      "timeout": 10,
+      "score": 2,
+      "category": "configuration",
+      "requires": ["check_python_version"]
+    },
+    {
+      "id": "check_core_files",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "README.md",
+          "getting-started.sh",
+          ".gitmodules"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "check_main_directories",
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "BCacheSim",
+          "data",
+          "notebooks",
+          "runs",
+          "chameleon"
+        ]
+      },
+      "score": 3,
+      "category": "structure"
+    },
+    {
+      "id": "check_bcachesim_subdirs",
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "BCacheSim/install",
+          "BCacheSim/cachesim",
+          "BCacheSim/episodic_analysis"
+        ]
+      },
+      "score": 2,
+      "category": "structure"
+    },
+    {
+      "id": "check_notebooks_subdirs",
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "notebooks/example",
+          "notebooks/paper-figs",
+          "notebooks/reproduce"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "check_data_scripts",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "data/get-tectonic.sh",
+          "data/clean.sh"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "check_runs_example_subdirs",
+      "type": "dirs_exist",
+      "params": {
+        "paths": [
+          "runs/example",
+          "runs/example/rejectx",
+          "runs/example/baleen"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "check_chameleon_notebooks",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "chameleon/1-getting-started.ipynb",
+          "chameleon/2-start-dedicated-server.ipynb"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "test_python3_execution",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"print('Python is working')\""
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_pip3_version",
+      "type": "run_command",
+      "params": {
+        "command": "pip3 --version"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "test_conda_available",
+      "type": "run_command",
+      "params": {
+        "command": "conda --version || mamba --version || micromamba --version"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "test_numpy_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import numpy; print('numpy version:', numpy.__version__)\""
+      },
+      "timeout": 30,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "test_pandas_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import pandas; print('pandas version:', pandas.__version__)\""
+      },
+      "timeout": 30,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "test_matplotlib_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import matplotlib; print('matplotlib version:', matplotlib.__version__)\""
+      },
+      "timeout": 30,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "test_sklearn_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sklearn; print('scikit-learn version:', sklearn.__version__)\""
+      },
+      "timeout": 30,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "test_jupyterlab_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import jupyterlab; print('JupyterLab installed')\""
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "test_jupyter_command",
+      "type": "run_command",
+      "params": {
+        "command": "jupyter --version"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "check_bcachesim_run_script",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "BCacheSim/run_py.sh"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "test_bcachesim_script_executable",
+      "type": "run_command",
+      "params": {
+        "command": "[ -x \"BCacheSim/run_py.sh\" ]"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_data_scripts_executable",
+      "type": "run_command",
+      "params": {
+        "command": "[ -x \"data/get-tectonic.sh\" ] && [ -x \"data/clean.sh\" ]"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_getting_started_executable",
+      "type": "run_command",
+      "params": {
+        "command": "[ -x \"getting-started.sh\" ]"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "check_rejectx_config",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "runs/example/rejectx/config.json"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "check_example_notebook",
+      "type": "files_exist",
+      "params": {
+        "paths": [
+          "notebooks/example/example.ipynb"
+        ]
+      },
+      "score": 1,
+      "category": "structure"
+    },
+    {
+      "id": "test_bcachesim_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys; sys.path.append('BCacheSim'); import cachesim; print('BCacheSim.cachesim imported successfully')\""
+      },
+      "timeout": 30,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "test_episodic_analysis_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import sys; sys.path.append('BCacheSim'); import episodic_analysis; print('BCacheSim.episodic_analysis imported successfully')\""
+      },
+      "timeout": 30,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "test_bcachesim_script_syntax",
+      "type": "run_command",
+      "params": {
+        "command": "bash -n BCacheSim/run_py.sh"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality",
+      "requires": ["check_bcachesim_run_script"]
+    },
+    {
+      "id": "test_data_script_syntax",
+      "type": "run_command",
+      "params": {
+        "command": "bash -n data/get-tectonic.sh && bash -n data/clean.sh"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality",
+      "requires": ["check_data_scripts"]
+    },
+    {
+      "id": "test_getting_started_syntax",
+      "type": "run_command",
+      "params": {
+        "command": "bash -n getting-started.sh"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality",
+      "requires": ["check_core_files"]
+    },
+    {
+      "id": "test_baleen_project_detection",
+      "type": "run_command",
+      "params": {
+        "command": "grep -q \"Baleen\" README.md"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality",
+      "requires": ["check_core_files"]
+    },
+    {
+      "id": "test_git_repository",
+      "type": "run_command",
+      "params": {
+        "command": "[ -d \".git\" ]"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_submodules_init",
+      "type": "run_command",
+      "params": {
+        "command": "git submodule status | head -n 1"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "functionality",
+      "requires": ["test_git_repository", "check_core_files"]
+    },
+    {
+      "id": "test_network_connectivity_cmu",
+      "type": "run_command",
+      "params": {
+        "command": "curl -s --head https://ftp.pdl.cmu.edu >/dev/null"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_network_connectivity_github",
+      "type": "run_command",
+      "params": {
+        "command": "curl -s --head https://github.com >/dev/null"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_bcachesim_basic_help",
+      "type": "run_command",
+      "params": {
+        "command": "timeout 30s bash -c './BCacheSim/run_py.sh py -B -m BCacheSim.cachesim.simulate_ap --help' | head -n 10"
+      },
+      "timeout": 45,
+      "score": 2,
+      "category": "functionality",
+      "requires": ["test_bcachesim_script_executable", "test_bcachesim_import"]
+    },
+    {
+      "id": "test_episodic_analysis_help",
+      "type": "run_command",
+      "params": {
+        "command": "timeout 30s bash -c './BCacheSim/run_py.sh py -B -m BCacheSim.episodic_analysis.train --help' | head -n 10"
+      },
+      "timeout": 45,
+      "score": 2,
+      "category": "functionality",
+      "requires": ["test_bcachesim_script_executable", "test_episodic_analysis_import"]
+    },
+    {
+      "id": "test_tmp_directory_creation",
+      "type": "run_command",
+      "params": {
+        "command": "mkdir -p tmp && [ -d \"tmp\" ]"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_notebooks_figs_directory_creation",
+      "type": "run_command",
+      "params": {
+        "command": "mkdir -p notebooks/figs && [ -d \"notebooks/figs\" ]"
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality"
+    },
+    {
+      "id": "test_optional_torch_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import torch; print('PyTorch version:', torch.__version__)\" || echo 'PyTorch not installed (optional)'"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "test_optional_tensorflow_import",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import tensorflow; print('TensorFlow version:', tensorflow.__version__)\" || echo 'TensorFlow not installed (optional)'"
+      },
+      "timeout": 30,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "test_environment_variable_setup",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import os; print('LANG:', os.environ.get('LANG', 'not set')); print('PATH contains python:', 'python' in os.environ.get('PATH', ''))\""
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "test_config_json_valid",
+      "type": "run_command",
+      "params": {
+        "command": "python3 -c \"import json; data = json.load(open('runs/example/rejectx/config.json')); print('Config JSON is valid')\""
+      },
+      "timeout": 10,
+      "score": 1,
+      "category": "functionality",
+      "requires": ["check_rejectx_config"]
+    }
+  ]
+}
