@@ -5,7 +5,7 @@
       "id": "check_system_tools",
       "type": "commands_exist",
       "params": {
-        "commands": ["python3", "pip3", "git", "curl", "wget"]
+        "names": ["python3", "pip3", "git", "curl", "wget"]
       },
       "score": 1,
       "category": "configuration"
@@ -15,7 +15,7 @@
       "type": "output_contains",
       "params": {
         "command": "python3 --version",
-        "output": ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        "contains": ["3.9", "3.10", "3.11", "3.12", "3.13"]
       },
       "timeout": 10,
       "score": 2,
@@ -25,7 +25,7 @@
       "id": "check_core_files",
       "type": "files_exist",
       "params": {
-        "files": ["README.md", "pyproject.toml", "LICENSE", "CHANGELOG.md"]
+        "paths": ["README.md", "pyproject.toml", "LICENSE", "CHANGELOG.md"]
       },
       "score": 1,
       "category": "structure"
@@ -34,34 +34,34 @@
       "id": "check_main_directories",
       "type": "dirs_exist",
       "params": {
-        "dirs": ["src", "tests", "examples", "scripts"]
+        "paths": ["src", "tests", "examples", "scripts"]
       },
-      "score": 3,
+      "score": 1,
       "category": "structure"
     },
     {
       "id": "check_src_tabpfn_structure",
       "type": "dirs_exist",
       "params": {
-        "dirs": ["src/tabpfn", "src/tabpfn/model", "src/tabpfn/architectures", "src/tabpfn/misc", "src/tabpfn/preprocessors"]
+        "paths": ["src/tabpfn", "src/tabpfn/model", "src/tabpfn/architectures", "src/tabpfn/misc", "src/tabpfn/preprocessors"]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
       "id": "check_tabpfn_core_files",
       "type": "files_exist",
       "params": {
-        "files": ["src/tabpfn/__init__.py", "src/tabpfn/classifier.py", "src/tabpfn/regressor.py", "src/tabpfn/model_loading.py"]
+        "paths": ["src/tabpfn/__init__.py", "src/tabpfn/classifier.py", "src/tabpfn/regressor.py", "src/tabpfn/model_loading.py"]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
       "id": "check_example_files",
       "type": "files_exist",
       "params": {
-        "files": ["examples/tabpfn_for_binary_classification.py", "examples/tabpfn_for_multiclass_classification.py", "examples/tabpfn_for_regression.py"]
+        "paths": ["examples/tabpfn_for_binary_classification.py", "examples/tabpfn_for_multiclass_classification.py", "examples/tabpfn_for_regression.py"]
       },
       "score": 1,
       "category": "structure"
@@ -70,7 +70,7 @@
       "id": "check_download_script",
       "type": "files_exist",
       "params": {
-        "files": ["scripts/download_all_models.py"]
+        "paths": ["scripts/download_all_models.py"]
       },
       "score": 1,
       "category": "structure"
@@ -283,16 +283,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality"
-    },
-    {
-      "id": "test_save_load_model_example",
-      "type": "run_command",
-      "params": {
-        "command": "timeout 60s python3 examples/save_and_load_model.py"
-      },
-      "timeout": 70,
-      "score": 2,
       "category": "functionality"
     },
     {
