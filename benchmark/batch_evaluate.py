@@ -234,7 +234,7 @@ def extract_model_info(relative_dockerfile_path: str) -> str:
 
 
 def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-model",
-                    reports_by_repo_dir: str = "reports-by-repo") -> bool:
+                    reports_by_repo_dir: str = "reports-by-repo", rubric_dir: str = "rubrics/manual") -> bool:
     """
     Create a CSV file comparing test performance across all models for a repository.
     
@@ -256,7 +256,7 @@ def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-mode
         return False
     
     # Load the rubric to get test metadata and params
-    rubric_path = Path(f"rubrics/manual/{repo_name}.json")
+    rubric_path = Path(f"{rubric_dir}/{repo_name}.json")
     if not rubric_path.exists():
         raise FileNotFoundError(f"Rubric file not found: {rubric_path}")
     
@@ -365,7 +365,7 @@ def create_repo_csv(repo_name: str, reports_by_model_dir: str = "reports-by-mode
 
 
 def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-model", 
-                       reports_by_repo_dir: str = "reports-by-repo") -> bool:
+                       reports_by_repo_dir: str = "reports-by-repo", rubric_dir: str = "rubrics/manual") -> bool:
     """
     Create a summary report for a repository comparing all models.
     
@@ -467,7 +467,7 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
             f.write(f"Success: {best['success_rate']:.1%})\n")
     
     # Create CSV comparison
-    csv_success = create_repo_csv(repo_name, reports_by_model_dir, reports_by_repo_dir)
+    csv_success = create_repo_csv(repo_name, reports_by_model_dir, reports_by_repo_dir, rubric_dir)
     
     print(f"SUCCESS: Created repo summary: {json_path}")
     print(f"SUCCESS: Created comparison table (markdown): {table_path}")
@@ -483,6 +483,8 @@ def main():
                        help="Directory to store individual model reports (mirrors baseline structure)")
     parser.add_argument("--reports-by-repo-dir", default="reports-by-repo",
                        help="Directory to store repository summary reports")
+    parser.add_argument("--rubric-dir", default="rubrics/manual",
+                       help="Directory containing rubric files")
     parser.add_argument("--skip-existing", action="store_true",
                        help="Skip evaluation if report already exists")
     parser.add_argument("--summary-only", action="store_true",
@@ -503,7 +505,7 @@ def main():
     # If summary-only mode, just create the repo summary
     if args.summary_only:
         print("Creating repository summary from existing reports...")
-        success = create_repo_summary(args.repo, args.reports_by_model_dir, args.reports_by_repo_dir)
+        success = create_repo_summary(args.repo, args.reports_by_model_dir, args.reports_by_repo_dir, args.rubric_dir)
         sys.exit(0 if success else 1)
     
     # Find all dockerfiles for the repo
@@ -547,7 +549,7 @@ def main():
     
     # Create repository summary
     print("Creating repository summary...")
-    summary_success = create_repo_summary(args.repo, args.reports_by_model_dir, args.reports_by_repo_dir)
+    summary_success = create_repo_summary(args.repo, args.reports_by_model_dir, args.reports_by_repo_dir, args.rubric_dir)
     
     # Print summary
     print("=" * 60)
