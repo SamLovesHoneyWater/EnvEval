@@ -556,21 +556,56 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
     """
     import matplotlib.colors as mcolors
     
-    # Generate distinct colors for models
-    model_names = list(model_stats.keys())
+    # Order models according to target_strings pairing and coloring scheme
+    target_strings = ["opus4", "35haiku", "gpt41", "gpt41mini"]
+    ordered_models = []
+    model_colors = {}
+    
+    # First, add paired models (baseline + ours) for each target string
+    base_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA726']  # Base colors for pairs
+    color_idx = 0
+    
+    for target in target_strings:
+        baseline_model = None
+        ours_model = None
+        
+        # Find matching pairs
+        for model_name in model_stats.keys():
+            if target in model_name:
+                if "ours" in model_name:
+                    ours_model = model_name
+                else:
+                    baseline_model = model_name
+        
+        # Add baseline model first (light color), then ours model (dark color)
+        if baseline_model and ours_model:
+            base_color = base_colors[color_idx % len(base_colors)]
+            
+            # Add baseline model with light color
+            ordered_models.append(baseline_model)
+            light_color = mcolors.to_rgba(base_color, alpha=0.6)  # Make it lighter
+            model_colors[baseline_model] = light_color
+            
+            # Add ours model with dark color
+            ordered_models.append(ours_model)
+            dark_color = mcolors.to_rgba(base_color, alpha=1.0)  # Keep it dark
+            model_colors[ours_model] = dark_color
+            
+            color_idx += 1
+    
+    # Then add all other models that don't contain target strings
+    other_models = [model for model in model_stats.keys() 
+                   if model not in ordered_models]
+    
+    # Generate colors for other models
+    other_colors = plt.cm.Set3(range(len(other_models)))
+    for i, model in enumerate(other_models):
+        ordered_models.append(model)
+        model_colors[model] = other_colors[i] if i < len(other_colors) else '#95A5A6'
+    
+    # Use ordered_models instead of model_names
+    model_names = ordered_models
     n_models = len(model_names)
-    
-    # Use a colormap to generate distinct colors
-    if n_models <= 10:
-        colors = plt.cm.tab10(range(n_models))
-    else:
-        colors = plt.cm.tab20(range(min(n_models, 20)))
-        if n_models > 20:
-            # Extend with additional colors if needed
-            additional_colors = plt.cm.Set3(range(n_models - 20))
-            colors = list(colors) + list(additional_colors)
-    
-    model_colors = {model: colors[i] for i, model in enumerate(model_names)}
     
     for repo in repos:
         print(f"  Creating detailed test comparison for repository: {repo}")
@@ -702,7 +737,7 @@ def create_ours_vs_baseline_comparison(model_stats: Dict[str, Any], output_dir: 
     Create side-by-side comparison of "ours" methods vs baseline methods.
     Compares error rates for models containing specific identifiers.
     """
-    target_strings = ["35haiku", "opus4", "gpt41", "gpt41mini"]
+    target_strings = ["opus4", "35haiku", "gpt41", "gpt41mini"]
     comparison_pairs = {}
     
     # Find matching pairs
