@@ -196,8 +196,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available", "check_main_crate_files"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_check",
@@ -207,8 +206,7 @@
       },
       "timeout": 120,
       "score": 3,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_tree",
@@ -218,8 +216,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "check_cargo_nextest",
@@ -229,8 +226,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "check_cargo_hack",
@@ -240,8 +236,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "check_cargo_audit",
@@ -251,8 +246,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "test_workspace_config",
@@ -312,8 +306,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_core_dependencies",
@@ -324,8 +317,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "configuration",
-      "requires": ["test_cargo_tree"]
+      "category": "configuration"
     },
     {
       "id": "test_main_crate_lib_rust_syntax",
@@ -335,8 +327,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available", "check_main_crate_files"]
+      "category": "functionality"
     },
     {
       "id": "test_core_crate_lib_rust_syntax",
@@ -346,8 +337,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available", "check_core_crate_files"]
+      "category": "functionality"
     },
     {
       "id": "test_subscriber_crate_lib_rust_syntax",
@@ -357,8 +347,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available", "check_subscriber_crate_files"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_clippy",
@@ -368,8 +357,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "test_basic_compile_tracing_crate",
@@ -379,8 +367,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_basic_compile_tracing_core",
@@ -390,8 +377,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_basic_compile_tracing_subscriber",
@@ -401,8 +387,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_test_list",
@@ -412,8 +397,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_nextest_list",
@@ -423,8 +407,7 @@
       },
       "timeout": 45,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_cargo_nextest"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_doc_check",
@@ -434,8 +417,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_benchmark_compilation",
@@ -445,8 +427,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_example_compilation",
@@ -456,8 +437,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_workspace_features",
@@ -467,8 +447,7 @@
       },
       "timeout": 90,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_no_std_support",
@@ -478,8 +457,7 @@
       },
       "timeout": 45,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_available"]
+      "category": "functionality"
     },
     {
       "id": "test_readme_accessibility",
