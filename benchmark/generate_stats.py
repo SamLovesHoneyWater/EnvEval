@@ -463,15 +463,8 @@ def create_repo_composition_comparison(model_stats: Dict[str, Any], repos: List[
         }
     }
     
-    target_repos = ['BurntSushi_ripgrep', 'Baleen', 'Fairify']
-    available_repos = [repo for repo in target_repos if repo in repos]
-    
-    if not available_repos:
-        print(f"  Warning: None of the target repos {target_repos} found in analysis")
-        return
-    
     # Create figure with subplots for each repo pair
-    n_repos = len(available_repos)
+    n_repos = len(repos)
     fig, axes = plt.subplots(2, n_repos, figsize=(6*n_repos, 10))
     
     # Handle single repo case
@@ -481,7 +474,7 @@ def create_repo_composition_comparison(model_stats: Dict[str, Any], repos: List[
     categories = ['structure', 'configuration', 'functionality']
     category_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']
     
-    for col, repo in enumerate(available_repos):
+    for col, repo in enumerate(repos):
         # Calculate current (modified) composition from any available model
         # Use the first available model's data for this repo
         current_composition = {'structure': 0, 'configuration': 0, 'functionality': 0}
