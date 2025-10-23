@@ -547,6 +547,163 @@ def create_repo_composition_comparison(model_stats: Dict[str, Any], repos: List[
     plt.close()
 
 
+def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str], 
+                                  reports_base_dir: str = "reports-by-repo", 
+                                  rubrics_dir: str = "rubrics/manual",
+                                  output_dir: Path = None) -> None:
+    """
+    Create detailed bar charts showing individual test performance for each model.
+    
+    Args:
+        model_stats: Model statistics dictionary
+        repos: List of repository names
+        reports_base_dir: Base directory for reports
+        rubrics_dir: Directory containing rubric files
+        output_dir: Output directory for charts
+    """
+    import matplotlib.colors as mcolors
+    
+    # Generate distinct colors for models
+    model_names = list(model_stats.keys())
+    n_models = len(model_names)
+    
+    # Use a colormap to generate distinct colors
+    if n_models <= 10:
+        colors = plt.cm.tab10(range(n_models))
+    else:
+        colors = plt.cm.tab20(range(min(n_models, 20)))
+        if n_models > 20:
+            # Extend with additional colors if needed
+            additional_colors = plt.cm.Set3(range(n_models - 20))
+            colors = list(colors) + list(additional_colors)
+    
+    model_colors = {model: colors[i] for i, model in enumerate(model_names)}
+    
+    for repo in repos:
+        print(f"  Creating detailed test comparison for repository: {repo}")
+        
+        try:
+            # Load rubric to get test information
+            categories, max_scores = load_rubric_categories(repo, rubrics_dir)
+        except (FileNotFoundError, ValueError) as e:
+            print(f"    Warning: Could not load rubric for {repo}: {e}")
+            continue
+        
+        # Collect test data from all models for this repo
+        test_data = {}  # test_id -> {model_name -> (score, max_score)}
+        all_test_ids = set()
+        
+        # Find model reports for this repo
+        model_reports = find_model_reports(repo, reports_base_dir)
+        
+        for model_name, report_path in model_reports:
+            try:
+                with open(report_path, 'r') as f:
+                    report = json.load(f)
+                
+                test_results = report.get('test_results', [])
+                
+                for test_result in test_results:
+                    test_id = test_result.get('test_id', '')
+                    actual_score = test_result.get('score', 0)
+                    test_max_score = max_scores.get(test_id, 1)
+                    
+                    if test_id not in test_data:
+                        test_data[test_id] = {}
+                    
+                    test_data[test_id][model_name] = (actual_score, test_max_score)
+                    all_test_ids.add(test_id)
+                    
+            except Exception as e:
+                print(f"    Warning: Could not process report {report_path}: {e}")
+                continue
+        
+        if not test_data:
+            print(f"    Warning: No test data found for repository {repo}")
+            continue
+        
+        # Sort test IDs for consistent ordering
+        sorted_test_ids = sorted(all_test_ids)
+        n_tests = len(sorted_test_ids)
+        
+        if n_tests == 0:
+            print(f"    Warning: No tests found for repository {repo}")
+            continue
+        
+        # Create the chart
+        fig_width = max(16, n_tests * 2)  # Minimum 16 inches, scale with number of tests
+        fig, ax = plt.subplots(figsize=(fig_width, 8))
+        
+        # Calculate bar positions
+        bar_width = 0.8 / n_models  # Total width of 0.8 per test group
+        group_spacing = 1.0  # Space between test groups
+        
+        x_positions = {}
+        test_positions = {}
+        
+        for i, test_id in enumerate(sorted_test_ids):
+            test_center = i * group_spacing
+            test_positions[test_id] = test_center
+            
+            for j, model_name in enumerate(model_names):
+                x_pos = test_center - (n_models - 1) * bar_width / 2 + j * bar_width
+                if test_id not in x_positions:
+                    x_positions[test_id] = {}
+                x_positions[test_id][model_name] = x_pos
+        
+        # Plot bars
+        for test_id in sorted_test_ids:
+            for model_name in model_names:
+                if model_name in test_data.get(test_id, {}):
+                    score, max_score = test_data[test_id][model_name]
+                    percentage = (score / max_score * 100) if max_score > 0 else 0
+                else:
+                    percentage = 0  # Model didn't have data for this test
+                
+                x_pos = x_positions[test_id][model_name]
+                color = model_colors[model_name]
+                
+                bar = ax.bar(x_pos, percentage, bar_width, 
+                           color=color, alpha=0.8, 
+                           label=model_name if test_id == sorted_test_ids[0] else "")
+                
+                # Add value labels on bars for better readability
+                if percentage > 5:  # Only show label if bar is tall enough
+                    ax.text(x_pos, percentage + 1, f'{percentage:.0f}%',
+                           ha='center', va='bottom', fontsize=8, rotation=90)
+        
+        # Customize the chart
+        ax.set_xlabel('Test ID', fontsize=12)
+        ax.set_ylabel('Score Percentage (%)', fontsize=12)
+        ax.set_title(f'Detailed Test Performance Comparison - {repo}', 
+                     fontsize=16, fontweight='bold')
+        
+        # Set x-axis ticks and labels
+        ax.set_xticks([test_positions[test_id] for test_id in sorted_test_ids])
+        ax.set_xticklabels(sorted_test_ids, rotation=45, ha='right')
+        
+        ax.set_ylim(0, 110)
+        ax.grid(axis='y', alpha=0.3)
+        
+        # Add legend
+        handles, labels = ax.get_legend_handles_labels()
+        if handles:
+            ax.legend(handles, labels, bbox_to_anchor=(1.05, 1), loc='upper left')
+        
+        # Adjust layout to prevent clipping
+        plt.tight_layout()
+        
+        # Save the chart
+        repo_output_dir = output_dir / repo
+        repo_output_dir.mkdir(exist_ok=True)
+        
+        plt.savefig(repo_output_dir / f'{repo}_detailed_test_comparison.png', 
+                   dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print(f"    Created detailed test comparison: {repo_output_dir / f'{repo}_detailed_test_comparison.png'}")
+
+
 def create_ours_vs_baseline_comparison(model_stats: Dict[str, Any], output_dir: Path) -> None:
     """
     Create side-by-side comparison of "ours" methods vs baseline methods.
@@ -844,6 +1001,10 @@ Examples:
     print("  Creating repository composition comparison...")
     create_repo_composition_comparison(model_stats, args.repos, output_dir)
     
+    # 8. Detailed test comparison for each repository
+    print("  Creating detailed test comparisons...")
+    create_detailed_test_comparison(model_stats, args.repos, args.reports_dir, args.rubrics_dir, output_dir)
+
     # Generate summary report
     print("  Creating summary report...")
     generate_summary_report(model_stats, args.repos, output_dir)
@@ -859,6 +1020,8 @@ Examples:
     print(f"    - category_performance.png")
     print(f"    - comprehensive_performance.png")
     print(f"    - error_distribution.png")
+    print(f"  - For each repository: {output_dir}/[repo_name]/")
+    print(f"    - [repo_name]_detailed_test_comparison.png")
 
 
 if __name__ == "__main__":
