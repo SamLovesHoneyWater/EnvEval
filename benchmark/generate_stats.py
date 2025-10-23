@@ -178,13 +178,14 @@ def parse_model_report(report_path: Path, categories: Dict[str, str], max_scores
     }
 
 
-def calculate_model_stats(repos: List[str], reports_base_dir: str = "reports-by-repo") -> Dict[str, Any]:
+def calculate_model_stats(repos: List[str], reports_base_dir: str = "reports-by-repo", rubrics_dir: str = "rubrics/manual") -> Dict[str, Any]:
     """
     Calculate comprehensive statistics for all models across given repositories.
     
     Args:
         repos: List of repository names
         reports_base_dir: Base directory for reports
+        rubrics_dir: Directory containing rubric files
         
     Returns:
         Dictionary with model statistics
@@ -200,7 +201,7 @@ def calculate_model_stats(repos: List[str], reports_base_dir: str = "reports-by-
         
         # Load rubric categories and max scores
         try:
-            categories, max_scores = load_rubric_categories(repo)
+            categories, max_scores = load_rubric_categories(repo, rubrics_dir)
         except (FileNotFoundError, ValueError) as e:
             print(f"Error processing repository {repo}: {e}")
             print(f"Skipping repository {repo} due to missing or invalid rubric.")
@@ -795,12 +796,13 @@ Examples:
     
     print(f"Analyzing repositories: {', '.join(args.repos)}")
     print(f"Reports directory: {args.reports_dir}")
+    print(f"Rubrics directory: {args.rubrics_dir}")
     print(f"Output directory: {output_dir}")
     print("-" * 60)
     
     # Calculate statistics
     print("Calculating model statistics...")
-    model_stats = calculate_model_stats(args.repos, args.reports_dir)
+    model_stats = calculate_model_stats(args.repos, args.reports_dir, args.rubrics_dir)
     
     if not model_stats:
         print("No model statistics found. Check that reports exist.")
