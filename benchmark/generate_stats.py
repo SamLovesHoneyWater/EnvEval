@@ -157,8 +157,15 @@ def parse_model_report(report_path: Path, categories: Dict[str, str], max_scores
         passed = test_result.get('passed', 0)
         
         # Determine category and max score from rubric
-        category = categories.get(test_id, 'configuration')  # Default to configuration if unknown
-        test_max_score = max_scores.get(test_id, 0)  # Get max score from rubric
+        if test_id not in categories:
+            raise ValueError(f"Test ID '{test_id}' not found in rubric for report {report_path}. "
+                           f"This indicates a mismatch between the evaluation report and rubric file.")
+        if test_id not in max_scores:
+            raise ValueError(f"Test ID '{test_id}' has no max score defined in rubric for report {report_path}. "
+                           f"This indicates a mismatch between the evaluation report and rubric file.")
+        
+        category = categories[test_id]
+        test_max_score = max_scores[test_id]
         
         if category in category_data:
             category_data[category]['score'] += actual_score
@@ -632,7 +639,13 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
                 for test_result in test_results:
                     test_id = test_result.get('test_id', '')
                     actual_score = test_result.get('score', 0)
-                    test_max_score = max_scores.get(test_id, 1)
+                    
+                    # Ensure test_id exists in rubric
+                    if test_id not in max_scores:
+                        raise ValueError(f"Test ID '{test_id}' not found in rubric for repository {repo}, model {model_name}. "
+                                       f"This indicates a mismatch between the evaluation report and rubric file.")
+                    
+                    test_max_score = max_scores[test_id]
                     
                     if test_id not in test_data:
                         test_data[test_id] = {}
