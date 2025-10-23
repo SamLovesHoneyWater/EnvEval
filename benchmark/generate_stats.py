@@ -386,7 +386,7 @@ def create_comprehensive_category_chart(model_stats: Dict[str, Any], repos: List
 
 def create_error_pie_charts(model_stats: Dict[str, Any], output_dir: Path) -> None:
     """
-    Create ring pie charts showing error composition for each model.
+    Create bar charts showing error composition for each model.
     """
     categories = ['structure', 'configuration', 'functionality']
     category_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']
@@ -396,44 +396,30 @@ def create_error_pie_charts(model_stats: Dict[str, Any], output_dir: Path) -> No
         model_dir.mkdir(exist_ok=True)
         
         # Calculate error percentages (percentage points lost in each category)
-        errors = []
-        labels = []
-        colors = []
+        error_percentages = []
+        for category in categories:
+            category_percentage = stats['category_percentages'][category]
+            error_percentage = 100 - category_percentage  # Points lost
+            error_percentages.append(error_percentage)
         
-        # Check if this is a perfect score (all categories at 100%)
-        category_percentages = [stats['category_percentages'][cat] for cat in categories]
-        is_perfect_score = all(p >= 99.9 for p in category_percentages)  # Account for floating point precision
+        # Create bar chart
+        fig, ax = plt.subplots(figsize=(10, 6))
         
-        if is_perfect_score:
-            # Perfect score - create a single segment
-            errors = [1]
-            labels = ['Perfect Score']
-            colors = ['#2ECC71']
-        else:
-            # Show actual errors for all other cases (including zero scores)
-            for i, category in enumerate(categories):
-                category_percentage = stats['category_percentages'][category]
-                error_percentage = 100 - category_percentage  # Points lost
-                if error_percentage > 0.1:  # Only show if significant error
-                    errors.append(error_percentage)
-                    labels.append(category.title())
-                    colors.append(category_colors[i])
+        bars = ax.bar(categories, error_percentages, color=category_colors, alpha=0.8)
         
-        # Fallback for edge cases
-        if not errors:
-            errors = [1]
-            labels = ['No Data']
-            colors = ['#95A5A6']
+        # Add value labels on bars
+        for bar, error_pct in zip(bars, error_percentages):
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height + 1,
+                   f'{error_pct:.1f}%', ha='center', va='bottom')
         
-        # Create ring pie chart
-        fig, ax = plt.subplots(figsize=(8, 8))
-        
-        wedges, texts, autotexts = ax.pie(errors, labels=labels, colors=colors,
-                                         autopct='%1.1f%%', startangle=90,
-                                         wedgeprops=dict(width=0.5))
-        
+        # Customize the chart
         ax.set_title(f'Error Distribution - {model_name}', 
-                     fontsize=16, fontweight='bold', pad=20)
+                     fontsize=16, fontweight='bold')
+        ax.set_xlabel('Category', fontsize=12)
+        ax.set_ylabel('Error Percentage (%)', fontsize=12)
+        ax.set_ylim(0, 110)
+        ax.grid(axis='y', alpha=0.3)
         
         plt.tight_layout()
         plt.savefig(model_dir / 'error_distribution.png', dpi=300, bbox_inches='tight')
@@ -583,18 +569,24 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
                 else:
                     baseline_model = model_name
         
-        # Add baseline model first (light color), then ours model (dark color)
+        # Add baseline model first (original color), then ours model (dark color)
         if baseline_model and ours_model:
             base_color = base_colors[color_idx % len(base_colors)]
             
-            # Add baseline model with light color
+            # Add baseline model with original color
             ordered_models.append(baseline_model)
-            light_color = mcolors.to_rgba(base_color, alpha=0.6)  # Make it lighter
-            model_colors[baseline_model] = light_color
+            baseline_color = mcolors.to_rgba(base_color, alpha=1.0)
+            model_colors[baseline_model] = baseline_color
             
-            # Add ours model with dark color
+            # Add ours model with darker color (blend with black)
             ordered_models.append(ours_model)
-            dark_color = mcolors.to_rgba(base_color, alpha=1.0)  # Keep it dark
+            dark_color = mcolors.to_rgba(base_color)
+            dark_color = (
+                dark_color[0] * 0.5,  # Blend red with black
+                dark_color[1] * 0.5,  # Blend green with black
+                dark_color[2] * 0.5,  # Blend blue with black
+                1.0  # Full opacity
+            )
             model_colors[ours_model] = dark_color
             
             color_idx += 1
@@ -712,9 +704,14 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
         ax.set_title(f'Detailed Test Performance Comparison - {repo}', 
                      fontsize=16, fontweight='bold')
         
-        # Set x-axis ticks and labels
+        # Set x-axis ticks and labels with category information
         ax.set_xticks([test_positions[test_id] for test_id in sorted_test_ids])
-        ax.set_xticklabels(sorted_test_ids, rotation=45, ha='right')
+        # Create labels with category in parentheses
+        test_labels = []
+        for test_id in sorted_test_ids:
+            category = categories.get(test_id, 'unknown')
+            test_labels.append(f"{test_id} ({category})")
+        ax.set_xticklabels(test_labels, rotation=45, ha='right')
         
         ax.set_ylim(0, 110)
         ax.grid(axis='y', alpha=0.3)
@@ -829,7 +826,7 @@ def create_ours_vs_baseline_comparison(model_stats: Dict[str, Any], output_dir: 
 
 def create_combined_error_visualization(model_stats: Dict[str, Any], output_dir: Path) -> None:
     """
-    Create a combined visualization with all model error pie charts.
+    Create a combined visualization with all model error bar charts.
     """
     models = list(model_stats.keys())
     n_models = len(models)
@@ -838,7 +835,7 @@ def create_combined_error_visualization(model_stats: Dict[str, Any], output_dir:
     cols = min(3, n_models)
     rows = (n_models + cols - 1) // cols
     
-    fig, axes = plt.subplots(rows, cols, figsize=(5*cols, 5*rows))
+    fig, axes = plt.subplots(rows, cols, figsize=(5*cols, 4*rows))
     
     # Handle different subplot configurations
     if n_models == 1:
@@ -859,47 +856,35 @@ def create_combined_error_visualization(model_stats: Dict[str, Any], output_dir:
         ax = axes[idx]
         
         # Calculate error percentages
-        errors = []
-        labels = []
-        colors = []
+        error_percentages = []
+        for category in categories:
+            category_percentage = stats['category_percentages'][category]
+            error_percentage = 100 - category_percentage  # Points lost
+            error_percentages.append(error_percentage)
         
-        # Check if this is a perfect score (all categories at 100%)
-        category_percentages = [stats['category_percentages'][cat] for cat in categories]
-        is_perfect_score = all(p >= 99.9 for p in category_percentages)  # Account for floating point precision
+        # Create bar chart
+        bars = ax.bar(categories, error_percentages, color=category_colors, alpha=0.8)
         
-        if is_perfect_score:
-            # Perfect score
-            errors = [1]
-            labels = ['Perfect']
-            colors = ['#2ECC71']
-        else:
-            # Show actual errors for all other cases (including zero scores)
-            for i, category in enumerate(categories):
-                category_percentage = stats['category_percentages'][category]
-                error_percentage = 100 - category_percentage  # Points lost
-                if error_percentage > 0.1:  # Only show if significant error
-                    errors.append(error_percentage)
-                    labels.append(category.title())
-                    colors.append(category_colors[i])
+        # Add value labels on bars (only if there's enough space)
+        for bar, error_pct in zip(bars, error_percentages):
+            height = bar.get_height()
+            if height > 5:  # Only show label if bar is tall enough
+                ax.text(bar.get_x() + bar.get_width()/2., height + 1,
+                       f'{error_pct:.0f}%', ha='center', va='bottom', fontsize=8)
         
-        if not errors:
-            errors = [1]
-            labels = ['No Data']
-            colors = ['#95A5A6']
-        
-        # Create pie chart
-        wedges, texts, autotexts = ax.pie(errors, labels=labels, colors=colors,
-                                         autopct='%1.1f%%', startangle=90,
-                                         wedgeprops=dict(width=0.5))
-        
-        ax.set_title(model_name, fontsize=14, fontweight='bold')
+        ax.set_title(model_name, fontsize=12, fontweight='bold')
+        ax.set_ylim(0, 105)
+        ax.set_ylabel('Error %', fontsize=10)
+        ax.grid(axis='y', alpha=0.3)
+        ax.tick_params(axis='x', labelsize=8)
+        ax.tick_params(axis='y', labelsize=8)
     
     # Hide empty subplots
     for idx in range(n_models, len(axes)):
         axes[idx].set_visible(False)
     
     plt.suptitle('Error Distribution Comparison Across Models', 
-                 fontsize=18, fontweight='bold', y=0.98)
+                 fontsize=16, fontweight='bold', y=0.95)
     plt.tight_layout()
     
     plt.savefig(output_dir / 'combined_error_distributions.png', 
