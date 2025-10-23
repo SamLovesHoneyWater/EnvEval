@@ -462,9 +462,15 @@ def create_repo_composition_comparison(model_stats: Dict[str, Any], repos: List[
             'functionality': 13
         }
     }
+
+    target_repos = list(original_compositions.keys())
+    available_repos = [repo for repo in repos if repo in target_repos]
+    if len(available_repos) < len(target_repos):
+        print(f"Warning: Some target repositories for composition comparison are missing reports. Found {len(available_repos)} / {len(target_repos)}")
+        return
     
     # Create figure with subplots for each repo pair
-    n_repos = len(repos)
+    n_repos = len(available_repos)
     fig, axes = plt.subplots(2, n_repos, figsize=(6*n_repos, 10))
     
     # Handle single repo case
@@ -474,7 +480,7 @@ def create_repo_composition_comparison(model_stats: Dict[str, Any], repos: List[
     categories = ['structure', 'configuration', 'functionality']
     category_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']
     
-    for col, repo in enumerate(repos):
+    for col, repo in enumerate(available_repos):
         # Calculate current (modified) composition from any available model
         # Use the first available model's data for this repo
         current_composition = {'structure': 0, 'configuration': 0, 'functionality': 0}
