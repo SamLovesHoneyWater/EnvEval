@@ -170,6 +170,7 @@ class DockerfileEvaluator:
             
             cmd = [
                 "docker", "build", 
+                "--no-cache",
                 "-t", self.image_name,
                 "-f", dockerfile_to_use,
                 build_context
