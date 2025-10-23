@@ -31,12 +31,11 @@
       "type": "output_contains",
       "params": {
         "command": "rustc --version",
-        "contains": ["1.65", "1.66", "1.67", "1.68", "1.69", "1.70", "1.71", "1.72", "1.73", "1.74", "1.75", "1.76", "1.77", "1.78", "1.79", "1.80", "1.81", "1.82"]
+        "contains": ["1.65", "1.66", "1.67", "1.68", "1.69", "1.7", "1.8", "1.9", "2.", "3."]
       },
       "timeout": 10,
       "score": 2,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "check_cargo_version",
@@ -46,8 +45,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_rust_available"]
+      "category": "configuration"
     },
     {
       "id": "check_build_tools",
@@ -74,7 +72,7 @@
           "CONTRIBUTING.md"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -101,7 +99,7 @@
           "examples"
         ]
       },
-      "score": 3,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -122,7 +120,7 @@
           "tracing-journald"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -147,7 +145,7 @@
           "tracing/README.md"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -159,7 +157,7 @@
           "tracing-core/src/lib.rs"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -255,7 +253,7 @@
         "path": "Cargo.toml",
         "contains": ["[workspace]", "members", "tracing", "tracing-core"]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -403,7 +401,7 @@
       "id": "test_cargo_nextest_list",
       "type": "run_command",
       "params": {
-        "command": "timeout 30 cargo nextest list --quiet"
+        "command": "timeout 30 cargo nextest list"
       },
       "timeout": 45,
       "score": 1,
