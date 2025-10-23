@@ -42,7 +42,7 @@
       "type": "output_contains",
       "params": {
         "command": "go version",
-        "expected_strings": [
+        "contains": [
           "go1.21",
           "go1.22",
           "go1.23"
@@ -50,8 +50,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "category": "configuration",
-      "requires": ["check_go_installed"]
+      "category": "configuration"
     },
     {
       "id": "check_build_tools",
@@ -191,8 +190,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "category": "configuration",
-      "requires": ["check_go_installed"]
+      "category": "configuration"
     },
     {
       "id": "test_go_mod_verify",
@@ -202,8 +200,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "category": "configuration",
-      "requires": ["check_core_files"]
+      "category": "configuration"
     },
     {
       "id": "test_go_mod_download",
@@ -213,8 +210,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "category": "configuration",
-      "requires": ["check_core_files"]
+      "category": "configuration"
     },
     {
       "id": "test_go_build_main",
@@ -224,8 +220,7 @@
       },
       "timeout": 180,
       "score": 3,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_goctl_build",
@@ -235,8 +230,7 @@
       },
       "timeout": 60,
       "score": 3,
-      "category": "functionality",
-      "requires": ["check_tools_goctl"]
+      "category": "functionality"
     },
     {
       "id": "test_goctl_help",
@@ -246,8 +240,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_goctl_build"]
+      "category": "functionality"
     },
     {
       "id": "test_goctl_api_generation",
@@ -257,15 +250,14 @@
       },
       "timeout": 30,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_goctl_build"]
+      "category": "functionality"
     },
     {
       "id": "test_go_module_name",
       "type": "file_contains",
       "params": {
         "path": "go.mod",
-        "expected_strings": [
+        "contains": [
           "module github.com/zeromicro/go-zero"
         ]
       },
@@ -277,7 +269,7 @@
       "type": "file_contains",
       "params": {
         "path": "go.mod",
-        "expected_strings": [
+        "contains": [
           "go 1.21"
         ]
       },
@@ -292,8 +284,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_grpc_dependencies",
@@ -303,8 +294,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_protobuf_dependencies",
@@ -314,8 +304,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_etcd_dependencies",
@@ -325,8 +314,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_redis_dependencies",
@@ -336,8 +324,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_go_test_compilation",
@@ -347,8 +334,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_go_build_main"]
+      "category": "functionality"
     },
     {
       "id": "test_go_vet",
@@ -358,8 +344,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_go_build_main"]
+      "category": "functionality"
     },
     {
       "id": "test_gofmt_check",
@@ -369,8 +354,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_go_installed"]
+      "category": "functionality"
     },
     {
       "id": "test_makefile_goctl",
@@ -380,8 +364,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_goctl_files"]
+      "category": "functionality"
     },
     {
       "id": "test_protoc_available",
@@ -391,8 +374,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "category": "configuration",
-      "requires": ["check_protobuf_tools"]
+      "category": "configuration"
     },
     {
       "id": "test_go_workspace_sum",
@@ -412,8 +394,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_prometheus_dependencies",
@@ -423,8 +404,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_build_specific_packages",
@@ -434,23 +414,21 @@
       },
       "timeout": 120,
       "score": 3,
-      "category": "functionality",
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_goctl_version_output",
       "type": "output_contains",
       "params": {
         "command": "cd tools/goctl && timeout 10s go run goctl.go version || true",
-        "expected_strings": [
+        "contains": [
           "goctl",
           "version"
         ]
       },
       "timeout": 15,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_goctl_build"]
+      "category": "functionality"
     },
     {
       "id": "test_workspace_has_go_files",
