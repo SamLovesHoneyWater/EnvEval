@@ -69,7 +69,7 @@
           "SECURITY.md"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -83,7 +83,7 @@
           "ci"
         ]
       },
-      "score": 3,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -97,7 +97,7 @@
           "src/serde.rs"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -148,7 +148,7 @@
       "type": "output_contains",
       "params": {
         "command": "rustc --version",
-        "expected_strings": ["1."]
+        "contains": ["1."]
       },
       "timeout": 10,
       "score": 1,
@@ -158,14 +158,14 @@
       "id": "check_cargo_toml_content",
       "type": "file_contains",
       "params": {
-        "file_path": "Cargo.toml",
-        "expected_strings": [
+        "path": "Cargo.toml",
+        "contains": [
           "name = \"bytes\"",
           "edition = \"2021\"",
           "rust-version"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -176,8 +176,7 @@
       },
       "timeout": 120,
       "score": 3,
-      "category": "functionality",
-      "requires": ["check_rust_toolchain", "test_cargo_metadata"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_clippy",
@@ -187,8 +186,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "category": "functionality",
-      "requires": ["check_clippy_available", "test_cargo_check"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_fmt_check",
@@ -198,8 +196,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "category": "functionality",
-      "requires": ["check_rust_toolchain"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_build",
@@ -209,8 +206,7 @@
       },
       "timeout": 180,
       "score": 3,
-      "category": "functionality",
-      "requires": ["test_cargo_check"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_test",
@@ -220,8 +216,7 @@
       },
       "timeout": 300,
       "score": 4,
-      "category": "functionality",
-      "requires": ["test_cargo_build"]
+      "category": "functionality"
     },
     {
       "id": "test_cargo_doc",
@@ -231,8 +226,7 @@
       },
       "timeout": 180,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_cargo_build"]
+      "category": "functionality"
     },
     {
       "id": "test_serde_feature",
@@ -242,8 +236,7 @@
       },
       "timeout": 120,
       "score": 1,
-      "category": "functionality",
-      "requires": ["test_cargo_check"]
+      "category": "functionality"
     },
     {
       "id": "test_no_std_feature",
@@ -253,8 +246,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_cargo_check"]
+      "category": "functionality"
     },
     {
       "id": "verify_test_files_exist",
@@ -284,15 +276,14 @@
       },
       "timeout": 60,
       "score": 2,
-      "category": "functionality",
-      "requires": ["test_cargo_build"]
+      "category": "functionality"
     },
     {
       "id": "test_readme_content",
       "type": "file_contains",
       "params": {
-        "file_path": "README.md",
-        "expected_strings": [
+        "path": "README.md",
+        "contains": [
           "Bytes",
           "utility library",
           "bytes",
@@ -317,7 +308,7 @@
       "type": "output_contains",
       "params": {
         "command": "grep 'rust-version' Cargo.toml || echo 'rust-version = \"1.57\"'",
-        "expected_strings": ["1."]
+        "contains": ["1."]
       },
       "timeout": 10,
       "score": 1,
