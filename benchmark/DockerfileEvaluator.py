@@ -50,7 +50,7 @@ class DockerfileEvaluator:
         timestamp = int(time.time() * 1000)  # milliseconds for better precision
         random_suffix = random.randint(1000, 9999)
         self.container_name = f"eval_{repo_name.lower()}_{timestamp}_{random_suffix}"
-        self.image_name = f"eval_{repo_name.lower()}:latest"
+        self.image_name = f"eval_{repo_name.lower()}:{timestamp}_{random_suffix}"
         self.results: List[TestResult] = []
         self.tests: List[Dict[str, Any]] = []
         self.build_log: Dict[str, Any] = {}  # Store detailed build information
