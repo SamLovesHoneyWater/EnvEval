@@ -80,7 +80,7 @@ def cleanup_docker_containers(repo_name: str) -> None:
         print(f"Warning: Could not clean up containers: {e}")
 
 
-def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbose: bool = False, skip_warnings: bool = False) -> bool:
+def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, rubric_dir: str = "rubrics/manual", verbose: bool = False, skip_warnings: bool = False) -> bool:
     """
     Run DockerfileEvaluator.py on a single dockerfile.
     
@@ -95,6 +95,7 @@ def run_evaluation(dockerfile_path: str, repo_name: str, report_path: str, verbo
         sys.executable, "DockerfileEvaluator.py",
         "--dockerfile", dockerfile_path,
         "--repo", repo_name,
+        "--rubric-dir", rubric_dir,
         "--output", report_path
     ]
     
@@ -541,7 +542,7 @@ def main():
         
         # Run evaluation
         print(f"🔄 Evaluating: {relative_path}")
-        if run_evaluation(dockerfile_path, args.repo, report_path, args.verbose, args.skip_warnings):
+        if run_evaluation(dockerfile_path, args.repo, report_path, args.rubric_dir, args.verbose, args.skip_warnings):
             successful += 1
         else:
             failed += 1

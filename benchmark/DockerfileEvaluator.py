@@ -40,10 +40,10 @@ class TestResult:
 class DockerfileEvaluator:
     """Main class for evaluating Dockerfiles using JSON rubrics"""
 
-    def __init__(self, repo_name: str, dockerfile_path: str, rubric_path: Optional[str] = None, skip_warnings: bool = False):
+    def __init__(self, repo_name: str, dockerfile_path: str, rubric_dir: str = "rubrics/manual", skip_warnings: bool = False):
         self.repo_name = repo_name
         self.dockerfile_path = Path(dockerfile_path)
-        self.rubric_path = Path(rubric_path) if rubric_path else Path(f"rubrics/manual/{repo_name}.json")
+        self.rubric_path = Path(f"{rubric_dir}/{repo_name}.json")
         self.skip_warnings = skip_warnings
         # Use more precise timestamp + random suffix to avoid conflicts
         import random
@@ -665,7 +665,7 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate Dockerfiles using JSON rubrics")
     parser.add_argument("--dockerfile", required=True, help="Path to the Dockerfile to evaluate")
     parser.add_argument("--repo", required=True, help="Repository name")
-    parser.add_argument("--rubric", help="Path to the rubric JSON file (default: rubrics/manual/<repo>.json)")
+    parser.add_argument("--rubric-dir", default="rubrics/manual", help="Directory containing rubric files")
     parser.add_argument("--output", help="Path to save the evaluation report JSON")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     parser.add_argument("--skip-warnings", action="store_true", help="Skip user confirmation prompts for potentially destructive operations, turn on with caution!")
@@ -673,7 +673,7 @@ def main():
     args = parser.parse_args()
     
     # Create evaluator
-    evaluator = DockerfileEvaluator(args.repo, args.dockerfile, args.rubric, args.skip_warnings)
+    evaluator = DockerfileEvaluator(args.repo, args.dockerfile, args.rubric_dir, args.skip_warnings)
 
     try:
         # Run evaluation
