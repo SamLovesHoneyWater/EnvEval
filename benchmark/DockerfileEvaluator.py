@@ -171,6 +171,7 @@ class DockerfileEvaluator:
             cmd = [
                 "docker", "build", 
                 "--no-cache",
+                "--label", f"uuid={self.container_name}",
                 "-t", self.image_name,
                 "-f", dockerfile_to_use,
                 build_context
@@ -248,6 +249,7 @@ class DockerfileEvaluator:
         try:
             cmd = [
                 "docker", "run", "--rm",
+                "--label", f"uuid={self.container_name}",
                 "--name", f"{self.container_name}_temp",
                 self.image_name,
                 "sh", "-c", command
@@ -566,27 +568,46 @@ class DockerfileEvaluator:
     
     def cleanup(self):
         """Clean up Docker resources"""
+        uuid_label = f"uuid={self.container_name}"
         try:
-            # Stop and remove any containers with our name pattern
+            # 1. Stop and remove any containers with our name pattern
             subprocess.run(["docker", "stop", self.container_name], 
                          capture_output=True, check=False)
             subprocess.run(["docker", "rm", self.container_name], 
                          capture_output=True, check=False)
             
-            # Also clean up any leftover containers from previous runs
-            result = subprocess.run(["docker", "ps", "-a", "--filter", f"name=eval_{self.repo_name.lower()}_", "--format", "{{.Names}}"], 
+            # 2. Also clean up any leftover containers from previous runs
+            result = subprocess.run(["docker", "ps", "-a", "--filter", "--filter", f"label={uuid_label}", "--format", "{{.ID}}"],
                                   capture_output=True, text=True, check=False)
-            if result.stdout.strip():
-                leftover_containers = result.stdout.strip().split('\n')
-                for container in leftover_containers:
-                    if container.strip():
-                        subprocess.run(["docker", "stop", container.strip()], capture_output=True, check=False)
-                        subprocess.run(["docker", "rm", container.strip()], capture_output=True, check=False)
-                        print(f"Cleaned up leftover container: {container.strip()}")
+            container_ids = result.stdout.strip().splitlines()
+            for cid in container_ids:
+                if cid.strip():
+                    subprocess.run(["docker", "stop", cid.strip()], capture_output=True, check=False)
+                    subprocess.run(["docker", "rm", cid.strip()], capture_output=True, check=False)
+                    print(f"  - Cleaned up leftover container: {cid.strip()}")
             
-            # Remove image
-            subprocess.run(["docker", "rmi", self.image_name], 
-                         capture_output=True, check=False)
+            # 3. Remove image
+            subprocess.run(
+                ["docker", "rmi", "-f", self.image_name],
+                capture_output=True, check=False
+            )
+
+            # 4. Remove volumes created by this job (if named or labeled)
+            vol_result = subprocess.run(
+                ["docker", "volume", "ls", "--filter", f"label={uuid_label}", "--format", "{{.Name}}"],
+                capture_output=True, text=True, check=False
+            )
+            for vol in vol_result.stdout.strip().splitlines():
+                if vol.strip():
+                    subprocess.run(["docker", "volume", "rm", "-f", vol.strip()], capture_output=True, check=False)
+                    print(f"  - Removed volume: {vol.strip()}")
+
+            # 5. Clean up build cache for this job only (via label)
+            subprocess.run(
+                ["docker", "builder", "prune", "-f", "--filter", f"label={uuid_label}"],
+                capture_output=True, check=False
+            )
+
             print(f"Cleaned up Docker resources for: {self.repo_name}")
         except Exception as e:
             print(f"Warning: Could not clean up Docker resources: {e}")
