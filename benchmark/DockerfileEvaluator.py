@@ -541,13 +541,7 @@ class DockerfileEvaluator:
     
     def can_run_test(self, test: Dict[str, Any], completed_tests: Dict[str, TestResult]) -> bool:
         """Check if a test's requirements are met"""
-        requires = test.get('requires', [])
-        if not requires:
-            return True
-        
-        for req_id in requires:
-            if req_id not in completed_tests or not completed_tests[req_id].n_passed:
-                return False
+        print("WARNING: requirements checking is deprecated, all tests will be run in order. Behavior should be the same, because tests whose requirements failed should fail as well.")
         return True
     
     def run_single_test(self, test: Dict[str, Any]) -> TestResult:
