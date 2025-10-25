@@ -671,6 +671,39 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
         # Plot heatmap
         im = ax.imshow(heatmap_data, cmap=cmap, aspect='auto', vmin=0, vmax=100)
         
+        # Add visual separators between model groups
+        separator_positions = []
+        
+        # Calculate separator positions based on pairing logic
+        current_pos = 0
+        for target in target_strings:
+            baseline_model = None
+            ours_model = None
+            
+            # Find matching pairs
+            for model_name in model_stats.keys():
+                if target in model_name:
+                    if "ours" in model_name:
+                        ours_model = model_name
+                    else:
+                        baseline_model = model_name
+            
+            # If we found a pair, move position by 2 and add separator
+            if baseline_model and ours_model:
+                current_pos += 2
+                separator_positions.append(current_pos - 0.5)
+        
+        # Add separator before individual models (if any exist)
+        other_models = [model for model in model_stats.keys() 
+                       if model not in ordered_models[:current_pos]]
+        if other_models:
+            separator_positions.append(current_pos - 0.5)
+        
+        # Draw horizontal lines as separators
+        for sep_pos in separator_positions:
+            if sep_pos < n_models - 0.5:  # Don't draw line after the last row
+                ax.axhline(y=sep_pos, color='black', linewidth=2, alpha=0.8)
+        
         # Set ticks and labels
         ax.set_xticks(range(n_tests))
         ax.set_yticks(range(n_models))
