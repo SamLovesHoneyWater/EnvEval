@@ -7,7 +7,8 @@
       "params": {
         "names": ["java", "javac", "mvn"]
       },
-      "score": 3
+      "score": 3,
+      "category": "configuration"
     },
     {
       "id": "check_java_version",
@@ -18,7 +19,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "configuration"
     },
     {
       "id": "check_maven_version",
@@ -29,7 +31,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "configuration"
     },
     {
       "id": "check_system_tools",
@@ -37,7 +40,8 @@
       "params": {
         "names": ["git", "bash", "curl", "wget"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_dirs",
@@ -54,7 +58,8 @@
           "example-spring6-test"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_main_files",
@@ -71,7 +76,8 @@
           "SECURITY.md"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_core_module_files",
@@ -83,7 +89,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_extension_module_files",
@@ -96,7 +103,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_kotlin_module_files",
@@ -107,7 +115,8 @@
         ]
       },
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_java_home_env",
@@ -115,7 +124,8 @@
       "params": {
         "name": "JAVA_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_maven_home_env",
@@ -123,7 +133,8 @@
       "params": {
         "name": "MAVEN_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_maven_wrapper_executable",
@@ -132,7 +143,8 @@
         "command": "test -x mvnw"
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_maven_help",
@@ -142,7 +154,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_maven_clean",
@@ -152,7 +165,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_maven_compile",
@@ -162,7 +176,8 @@
       },
       "timeout": 120,
       "score": 3,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_maven_test_compile",
@@ -172,7 +187,8 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_core_module_compile",
@@ -182,7 +198,8 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_core_module_files", "check_java_javac_mvn"]
+      "requires": ["check_core_module_files", "check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_extension_module_compile",
@@ -192,7 +209,8 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_extension_module_files", "check_java_javac_mvn"]
+      "requires": ["check_extension_module_files", "check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_kotlin_module_compile",
@@ -202,7 +220,8 @@
       },
       "timeout": 120,
       "score": 1,
-      "requires": ["check_kotlin_module_files", "check_java_javac_mvn"]
+      "requires": ["check_kotlin_module_files", "check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_java_compilation",
@@ -212,7 +231,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "configuration"
     },
     {
       "id": "test_pom_xml_fastjson2_detection",
@@ -222,7 +242,8 @@
         "contains": ["fastjson2", "com.alibaba.fastjson2", "Fastjson is a JSON processor"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_maven_dependencies_resolve",
@@ -232,7 +253,8 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_maven_install",
@@ -242,7 +264,8 @@
       },
       "timeout": 300,
       "score": 3,
-      "requires": ["check_java_javac_mvn"]
+      "requires": ["check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_readme_content",
@@ -252,7 +275,8 @@
         "contains": ["FastJSON2", "JSON processor", "Java", "Maven"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_android_module",
@@ -262,17 +286,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["check_main_dirs"]
-    },
-    {
-      "id": "test_kotlin_module_compile",
-      "type": "run_command",
-      "params": {
-        "command": "cd kotlin && mvn compile -q"
-      },
-      "timeout": 120,
-      "score": 2,
-      "requires": ["check_kotlin_module_files", "check_java_javac_mvn"]
+      "requires": ["check_main_dirs"],
+      "category": "functionality"
     },
     {
       "id": "test_extension_jaxrs_compile",
@@ -282,7 +297,8 @@
       },
       "timeout": 120,
       "score": 1,
-      "requires": ["check_main_dirs", "check_java_javac_mvn"]
+      "requires": ["check_main_dirs", "check_java_javac_mvn"],
+      "category": "functionality"
     },
     {
       "id": "test_extension_solon_compile",
@@ -292,7 +308,8 @@
       },
       "timeout": 120,
       "score": 1,
-      "requires": ["check_main_dirs", "check_java_javac_mvn"]
+      "requires": ["check_main_dirs", "check_java_javac_mvn"],
+      "category": "functionality"
     }
   ]
 }

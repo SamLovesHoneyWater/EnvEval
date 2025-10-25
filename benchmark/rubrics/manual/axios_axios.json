@@ -7,7 +7,8 @@
       "params": {
         "names": ["node", "npm"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_node_version",
@@ -18,7 +19,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_node_npm"]
+      "requires": ["check_node_npm"],
+      "category": "configuration"
     },
     {
       "id": "check_npm_version",
@@ -29,7 +31,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_node_npm"]
+      "requires": ["check_node_npm"],
+      "category": "configuration"
     },
     {
       "id": "check_system_tools",
@@ -37,7 +40,8 @@
       "params": {
         "names": ["git", "curl"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_dirs",
@@ -53,7 +57,8 @@
           "bin"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_main_files",
@@ -69,7 +74,8 @@
           "LICENSE"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_build_config_files",
@@ -83,7 +89,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_test_config_files",
@@ -96,7 +103,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_axios_detection",
@@ -106,7 +114,8 @@
         "contains": ["\"name\": \"axios\"", "Promise based HTTP client"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_npm_install",
@@ -116,7 +125,8 @@
       },
       "timeout": 120,
       "score": 3,
-      "requires": ["check_node_npm"]
+      "requires": ["check_node_npm"],
+      "category": "configuration"
     },
     {
       "id": "test_core_dependencies",
@@ -126,7 +136,8 @@
       },
       "timeout": 30,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "configuration"
     },
     {
       "id": "test_dev_dependencies",
@@ -136,7 +147,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "configuration"
     },
     {
       "id": "test_axios_core_import",
@@ -146,7 +158,8 @@
       },
       "timeout": 30,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_lib_structure",
@@ -156,7 +169,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_test_structure",
@@ -166,7 +180,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_examples_structure",
@@ -176,7 +191,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_sandbox_structure",
@@ -186,7 +202,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_eslint_config",
@@ -196,7 +213,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_test_config_files"]
+      "requires": ["check_test_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_karma_config",
@@ -206,7 +224,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_test_config_files"]
+      "requires": ["check_test_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_rollup_config",
@@ -216,7 +235,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_build_config_files"]
+      "requires": ["check_build_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_gulp_config",
@@ -226,7 +246,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_build_config_files"]
+      "requires": ["check_build_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_webpack_config",
@@ -236,7 +257,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_build_config_files"]
+      "requires": ["check_build_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_tsconfig",
@@ -246,7 +268,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_build_config_files"]
+      "requires": ["check_build_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_npm_scripts",
@@ -256,7 +279,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_mocha_scripts",
@@ -266,7 +290,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_package_json_scripts",
@@ -276,7 +301,8 @@
         "contains": ["\"test\"", "\"build\"", "\"start\"", "\"lint\""]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_package_exports",
@@ -286,7 +312,8 @@
         "contains": ["\"exports\"", "\"browser\"", "\"react-native\""]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_es_modules_config",
@@ -296,7 +323,8 @@
         "contains": ["\"type\": \"module\""]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_browser_support",
@@ -306,7 +334,8 @@
         "contains": ["\"browser\"", "\"react-native\""]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_build_process",
@@ -316,7 +345,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_follow_redirects_functionality",
@@ -326,7 +356,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_core_dependencies"]
+      "requires": ["test_core_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "test_form_data_functionality",
@@ -336,7 +367,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_core_dependencies"]
+      "requires": ["test_core_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "test_readme_content",
@@ -346,7 +378,8 @@
         "contains": ["axios", "HTTP client", "Promise", "browser", "node.js"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_typescript_compilation",
@@ -356,7 +389,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_rollup_build",
@@ -366,7 +400,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_gulp_tasks",
@@ -376,7 +411,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     }
   ]
 }

@@ -7,7 +7,8 @@
       "params": {
         "names": ["python", "pip"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_python_version",
@@ -18,7 +19,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_python_pip"]
+      "requires": ["check_python_pip"],
+      "category": "configuration"
     },
     {
       "id": "check_go_kubectl_kind_helm",
@@ -26,7 +28,8 @@
       "params": {
         "names": ["go", "kubectl", "kind", "helm"]
       },
-      "score": 3
+      "score": 3,
+      "category": "configuration"
     },
     {
       "id": "check_go_version",
@@ -37,7 +40,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_go_kubectl_kind_helm"]
+      "requires": ["check_go_kubectl_kind_helm"],
+      "category": "configuration"
     },
     {
       "id": "check_system_tools",
@@ -45,7 +49,8 @@
       "params": {
         "names": ["git", "make", "curl", "wget"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_dirs",
@@ -61,7 +66,8 @@
           "test"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_main_files",
@@ -76,7 +82,8 @@
           "Makefile"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_acto_module_files",
@@ -91,7 +98,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_chactos_files",
@@ -105,7 +113,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_python_dependencies",
@@ -115,7 +124,8 @@
       },
       "timeout": 60,
       "score": 3,
-      "requires": ["check_python_pip"]
+      "requires": ["check_python_pip"],
+      "category": "configuration"
     },
     {
       "id": "check_acto_module_import",
@@ -125,7 +135,8 @@
       },
       "timeout": 30,
       "score": 3,
-      "requires": ["check_python_dependencies"]
+      "requires": ["check_python_dependencies"],
+      "category": "functionality"
     },
     {
       "id": "check_acto_cli_help",
@@ -135,7 +146,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["check_acto_module_import"]
+      "requires": ["check_acto_module_import"],
+      "category": "functionality"
     },
     {
       "id": "check_acto_reproduce_cli",
@@ -145,7 +157,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["check_acto_module_import"]
+      "requires": ["check_acto_module_import"],
+      "category": "functionality"
     },
     {
       "id": "check_make_build",
@@ -155,7 +168,8 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "functionality"
     },
     {
       "id": "check_requirements_txt_dependencies",
@@ -165,7 +179,8 @@
         "contains": ["kubernetes==31.0.0", "deepdiff==6.3.1", "exrex==0.11.0", "jsonschema==4.17.3", "jsonpatch==1.33", "pandas==2.0.3", "pydantic==2.5.2"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_pyproject_toml_config",
@@ -175,7 +190,8 @@
         "contains": ["name = \"acto\"", "requires-python = \">= 3.12\"", "kubernetes==31.0.0", "deepdiff", "exrex", "jsonschema"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_kubernetes_client",
@@ -185,7 +201,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["check_python_dependencies"]
+      "requires": ["check_python_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "check_yaml_processing",
@@ -195,7 +212,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_python_dependencies"]
+      "requires": ["check_python_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "check_json_processing",
@@ -205,7 +223,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_python_dependencies"]
+      "requires": ["check_python_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "check_pandas_functionality",
@@ -215,7 +234,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_python_dependencies"]
+      "requires": ["check_python_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "check_pytest_availability",
@@ -225,7 +245,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_python_dependencies"]
+      "requires": ["check_python_dependencies"],
+      "category": "configuration"
     },
     {
       "id": "check_acto_home_env",
@@ -233,7 +254,8 @@
       "params": {
         "name": "ACTO_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_pythonpath_env",
@@ -241,7 +263,8 @@
       "params": {
         "name": "PYTHONPATH"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_kubeconfig_env",
@@ -249,7 +272,8 @@
       "params": {
         "name": "KUBECONFIG"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_readme_content",
@@ -259,7 +283,8 @@
         "contains": ["Acto", "Kubernetes", "Operators", "Controllers", "End-to-End Testing"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_acto_submodules",
@@ -269,7 +294,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["check_acto_module_import"]
+      "requires": ["check_acto_module_import"],
+      "category": "functionality"
     },
     {
       "id": "test_go_lib_build",
@@ -279,7 +305,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["check_go_kubectl_kind_helm"]
+      "requires": ["check_go_kubectl_kind_helm"],
+      "category": "functionality"
     }
   ]
 }

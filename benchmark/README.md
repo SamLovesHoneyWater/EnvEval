@@ -136,8 +136,6 @@ The rubric file should follow this structure:
 - **`timeout`** (optional): Maximum execution time in seconds (default: 30)
 - **`score`** (optional): Points awarded for passing this test (default: 1)
 - **`category`** (required): Test category - one of `"structure"`, `"configuration"`, or `"functionality"`
-- **`requires`** (optional): Array of test IDs that must pass before this test runs
-- **`category`** (optional): Test category for analysis - one of "structure", "configuration", or "functionality"
 
 ### Test Parameters by Type
 

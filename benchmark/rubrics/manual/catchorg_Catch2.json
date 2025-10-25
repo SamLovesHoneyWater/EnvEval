@@ -7,7 +7,8 @@
       "params": {
         "names": ["g++", "clang++"]
       },
-      "score": 3
+      "score": 3,
+      "category": "configuration"
     },
     {
       "id": "check_build_tools",
@@ -15,7 +16,8 @@
       "params": {
         "names": ["cmake", "make", "ninja"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_python_tools",
@@ -23,7 +25,8 @@
       "params": {
         "names": ["python3"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_system_tools",
@@ -31,7 +34,8 @@
       "params": {
         "names": ["git", "bash", "ls", "doxygen"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_dirs",
@@ -48,7 +52,8 @@
           "extras"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_main_files",
@@ -63,7 +68,8 @@
           "conanfile.py"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_cmake_config",
@@ -73,6 +79,7 @@
         "contains": ["cmake_minimum_required", "CATCH_", "option", "include"]
       },
       "score": 2,
+      "category": "structure",
       "requires": ["check_main_files"]
     },
     {
@@ -83,6 +90,7 @@
         "contains": ["project", "catch2", "dependency"]
       },
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_files"]
     },
     {
@@ -93,6 +101,7 @@
         "contains": ["cc_library", "catch2"]
       },
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_files"]
     },
     {
@@ -103,6 +112,7 @@
         "contains": ["ConanFile", "catch2"]
       },
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_files"]
     },
     {
@@ -113,6 +123,7 @@
       },
       "timeout": 60,
       "score": 3,
+      "category": "functionality",
       "requires": ["check_build_tools", "check_cmake_config"]
     },
     {
@@ -123,6 +134,7 @@
       },
       "timeout": 60,
       "score": 2,
+      "category": "functionality",
       "requires": ["check_build_tools", "check_meson_config"]
     },
     {
@@ -133,6 +145,7 @@
       },
       "timeout": 120,
       "score": 3,
+      "category": "functionality",
       "requires": ["check_build_tools", "check_cmake_config"]
     },
     {
@@ -143,6 +156,7 @@
       },
       "timeout": 60,
       "score": 2,
+      "category": "functionality",
       "requires": ["check_cpp_compilers"]
     },
     {
@@ -153,6 +167,7 @@
       },
       "timeout": 30,
       "score": 1,
+      "category": "functionality",
       "requires": ["check_python_tools"]
     },
     {
@@ -163,6 +178,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -173,6 +189,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -183,6 +200,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -193,6 +211,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -203,6 +222,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -213,6 +233,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -223,6 +244,7 @@
         "contains": ["Catch2", "C++", "testing", "framework"]
       },
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_files"]
     },
     {
@@ -233,6 +255,7 @@
         "contains": ["Boost Software License"]
       },
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_files"]
     },
     {
@@ -243,6 +266,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_system_tools"]
     },
     {
@@ -253,6 +277,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_system_tools"]
     },
     {
@@ -263,6 +288,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_system_tools"]
     },
     {
@@ -273,6 +299,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_system_tools"]
     },
     {
@@ -283,6 +310,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_cpp_compilers"]
     },
     {
@@ -293,6 +321,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_build_tools"]
     },
     {
@@ -303,6 +332,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_build_tools"]
     },
     {
@@ -313,6 +343,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "configuration",
       "requires": ["check_build_tools"]
     },
     {
@@ -323,6 +354,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_system_tools", "check_main_files"]
     },
     {
@@ -333,6 +365,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     },
     {
@@ -343,6 +376,7 @@
       },
       "timeout": 10,
       "score": 1,
+      "category": "structure",
       "requires": ["check_main_dirs"]
     }
   ]

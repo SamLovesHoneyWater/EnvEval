@@ -7,7 +7,8 @@
       "params": {
         "names": ["node", "npm"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_node_version",
@@ -18,7 +19,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_node_npm"]
+      "requires": ["check_node_npm"],
+      "category": "configuration"
     },
     {
       "id": "check_npm_version",
@@ -29,7 +31,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_node_npm"]
+      "requires": ["check_node_npm"],
+      "category": "configuration"
     },
     {
       "id": "check_system_tools",
@@ -37,7 +40,8 @@
       "params": {
         "names": ["git", "curl"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_dirs",
@@ -51,7 +55,8 @@
           "scripts"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_main_files",
@@ -66,7 +71,8 @@
           "vercel.json"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_config_files",
@@ -80,7 +86,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_api_files",
@@ -91,7 +98,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_github_readme_stats_detection",
@@ -101,7 +109,8 @@
         "contains": ["github-readme-stats", "Dynamically generate stats"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_npm_install",
@@ -111,7 +120,8 @@
       },
       "timeout": 120,
       "score": 3,
-      "requires": ["check_node_npm"]
+      "requires": ["check_node_npm"],
+      "category": "configuration"
     },
     {
       "id": "test_core_dependencies",
@@ -121,7 +131,8 @@
       },
       "timeout": 30,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "configuration"
     },
     {
       "id": "test_dev_dependencies",
@@ -131,7 +142,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "configuration"
     },
     {
       "id": "test_main_module_import",
@@ -141,7 +153,8 @@
       },
       "timeout": 30,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_express_import",
@@ -151,7 +164,8 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "configuration"
     },
     {
       "id": "test_jest_config",
@@ -161,7 +175,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_config_files"]
+      "requires": ["check_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_eslint_config",
@@ -171,7 +186,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_config_files"]
+      "requires": ["check_config_files"],
+      "category": "structure"
     },
     {
       "id": "test_npm_scripts",
@@ -181,7 +197,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_format_check",
@@ -191,7 +208,8 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "requires": ["test_npm_install"],
+      "category": "functionality"
     },
     {
       "id": "test_vercel_config",
@@ -201,7 +219,8 @@
         "contains": ["functions", "routes"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_express_setup",
@@ -211,7 +230,8 @@
         "contains": ["express", "app"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_api_structure",
@@ -221,7 +241,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_src_structure",
@@ -231,7 +252,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_themes_structure",
@@ -241,7 +263,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_tests_structure",
@@ -251,7 +274,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_scripts_structure",
@@ -261,7 +285,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_package_json_scripts",
@@ -271,7 +296,8 @@
         "contains": ["\"test\"", "\"lint\"", "\"format\"", "\"start\""]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_readme_content",
@@ -281,7 +307,8 @@
         "contains": ["github-readme-stats", "GitHub", "stats", "cards"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_vercel_deployment",
@@ -291,7 +318,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_express_server",
@@ -301,7 +329,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_husky_git_hooks",
@@ -311,7 +340,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     }
   ]
 }

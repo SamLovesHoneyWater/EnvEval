@@ -7,7 +7,8 @@
       "params": {
         "names": ["rustc", "cargo"]
       },
-      "score": 3
+      "score": 3,
+      "category": "configuration"
     },
     {
       "id": "check_rust_version",
@@ -18,7 +19,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_rust_cargo"]
+      "requires": ["check_rust_cargo"],
+      "category": "configuration"
     },
     {
       "id": "check_cargo_version",
@@ -29,7 +31,8 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_rust_cargo"]
+      "requires": ["check_rust_cargo"],
+      "category": "configuration"
     },
     {
       "id": "check_k8s_tools",
@@ -37,7 +40,8 @@
       "params": {
         "names": ["kubectl", "minikube"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_kubectl_version",
@@ -48,7 +52,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_k8s_tools"]
+      "requires": ["check_k8s_tools"],
+      "category": "configuration"
     },
     {
       "id": "check_minikube_version",
@@ -59,7 +64,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_k8s_tools"]
+      "requires": ["check_k8s_tools"],
+      "category": "configuration"
     },
     {
       "id": "check_system_tools",
@@ -67,7 +73,8 @@
       "params": {
         "names": ["git", "curl", "wget", "unzip", "pkg-config", "python3", "pip3"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_dirs",
@@ -82,7 +89,8 @@
           "doc"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_main_files",
@@ -98,7 +106,8 @@
           "local-test.sh"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_rust_toolchain_config",
@@ -108,7 +117,8 @@
         "contains": ["channel = \"1.88.0\"", "components", "targets"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_cargo_toml_config",
@@ -118,7 +128,8 @@
         "contains": ["name = \"verifiable-controllers\"", "edition = \"2021\"", "builtin", "vstd", "tungstenite", "rand"]
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "check_src_structure",
@@ -136,7 +147,8 @@
         ]
       },
       "score": 3,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_docker_structure",
@@ -147,7 +159,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "check_docker_files",
@@ -159,7 +172,8 @@
         ]
       },
       "score": 2,
-      "requires": ["check_docker_structure"]
+      "requires": ["check_docker_structure"],
+      "category": "structure"
     },
     {
       "id": "check_build_scripts",
@@ -168,7 +182,8 @@
         "command": "test -x build.sh && test -x deploy.sh && test -x local-test.sh"
       },
       "score": 2,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_cargo_check",
@@ -178,7 +193,8 @@
       },
       "timeout": 120,
       "score": 3,
-      "requires": ["check_rust_cargo"]
+      "requires": ["check_rust_cargo"],
+      "category": "functionality"
     },
     {
       "id": "test_rust_target_installed",
@@ -188,7 +204,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_rust_cargo"]
+      "requires": ["check_rust_cargo"],
+      "category": "configuration"
     },
     {
       "id": "test_build_script_syntax",
@@ -198,7 +215,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_deploy_script_syntax",
@@ -208,7 +226,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_local_test_script_syntax",
@@ -218,7 +237,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_verus_integration",
@@ -228,7 +248,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_python_tabulate",
@@ -238,7 +259,8 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": ["check_system_tools"],
+      "category": "configuration"
     },
     {
       "id": "test_rust_basic_functionality",
@@ -248,7 +270,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_rust_cargo"]
+      "requires": ["check_rust_cargo"],
+      "category": "configuration"
     },
     {
       "id": "test_k8s_tools_functionality",
@@ -258,7 +281,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_k8s_tools"]
+      "requires": ["check_k8s_tools"],
+      "category": "configuration"
     },
     {
       "id": "test_system_libraries",
@@ -268,7 +292,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": ["check_system_tools"],
+      "category": "configuration"
     },
     {
       "id": "test_git_configuration",
@@ -278,7 +303,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_system_tools"]
+      "requires": ["check_system_tools"],
+      "category": "configuration"
     },
     {
       "id": "test_readme_content",
@@ -288,7 +314,8 @@
         "contains": ["anvil", "verifiable", "controllers", "Rust"]
       },
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_verus_dependency",
@@ -298,7 +325,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_files"]
+      "requires": ["check_main_files"],
+      "category": "structure"
     },
     {
       "id": "test_e2e_tests",
@@ -308,7 +336,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     },
     {
       "id": "test_deploy_scripts",
@@ -318,7 +347,8 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_main_dirs"]
+      "requires": ["check_main_dirs"],
+      "category": "structure"
     }
   ]
 }
