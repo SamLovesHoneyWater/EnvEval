@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import json
+import random
 import subprocess
 import sys
 import tempfile
@@ -46,7 +47,6 @@ class DockerfileEvaluator:
         self.rubric_path = Path(f"{rubric_dir}/{repo_name}.json")
         self.skip_warnings = skip_warnings
         # Use more precise timestamp + random suffix to avoid conflicts
-        import random
         timestamp = int(time.time() * 1000)  # milliseconds for better precision
         random_suffix = random.randint(1000, 9999)
         self.container_name = f"eval_{repo_name.lower()}_{timestamp}_{random_suffix}"
@@ -54,6 +54,7 @@ class DockerfileEvaluator:
         self.results: List[TestResult] = []
         self.tests: List[Dict[str, Any]] = []
         self.build_log: Dict[str, Any] = {}  # Store detailed build information
+        self.running_container_id: Optional[str] = None  # Track running container
         
     def load_rubric(self) -> Dict[str, Any]:
         """Load and parse the JSON rubric file"""
@@ -248,21 +249,56 @@ class DockerfileEvaluator:
             
             # Note: copied_dockerfile_path cleanup is handled by removing the parent directory
     
-    def run_docker_command(self, command: str, timeout: int = -1):
-        """Run a command inside the Docker container"""
+    def start_container(self) -> bool:
+        """Start a persistent container for running tests"""
         try:
-            # Generate unique container name for each command to avoid conflicts
-            import random
-            unique_suffix = random.randint(10000, 99999)
-            unique_container_name = f"{self.container_name}_temp_{unique_suffix}"
-            
             cmd = [
-                "docker", "run", "--rm",
+                "docker", "run", "-d",
                 "--label", f"uuid={self.container_name}",
-                "--name", unique_container_name,
+                "--name", self.container_name,
                 self.image_name,
+                "sleep", "infinity"  # Keep container running indefinitely
+            ]
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
+            
+            if result.returncode == 0:
+                self.running_container_id = result.stdout.strip()
+                print(f"Started persistent container: {self.container_name}")
+                return True
+            else:
+                print(f"Failed to start container: {result.stderr}")
+                return False
+                
+        except Exception as e:
+            print(f"Error starting container: {e}")
+            return False
+    
+    def stop_container(self):
+        """Stop and remove the persistent container"""
+        if self.running_container_id:
+            try:
+                subprocess.run(["docker", "stop", self.container_name], 
+                             capture_output=True, check=False)
+                subprocess.run(["docker", "rm", self.container_name], 
+                             capture_output=True, check=False)
+                print(f"Stopped and removed persistent container: {self.container_name}")
+                self.running_container_id = None
+            except Exception as e:
+                print(f"Warning: Could not stop container: {e}")
+    
+    def run_docker_command(self, command: str, timeout: int = -1):
+        """Run a command inside the persistent Docker container"""
+        if not self.running_container_id:
+            return False, "", "No running container available"
+            
+        try:
+            cmd = [
+                "docker", "exec",
+                self.container_name,
                 "sh", "-c", command
             ]
+            
             if timeout != -1:
                 result = subprocess.run(
                     cmd,
@@ -271,7 +307,7 @@ class DockerfileEvaluator:
                     encoding='utf-8',
                     errors='replace',
                     timeout=timeout
-            )
+                )
             else:
                 result = subprocess.run(
                     cmd,
@@ -279,7 +315,7 @@ class DockerfileEvaluator:
                     text=True,
                     encoding='utf-8',
                     errors='replace'
-            )            
+                )            
             success = result.returncode == 0
             return success, result.stdout, result.stderr
             
@@ -579,24 +615,11 @@ class DockerfileEvaluator:
         """Clean up Docker resources"""
         uuid_label = f"uuid={self.container_name}"
         try:
-            # 1. Stop and remove any containers with our name pattern (including _temp variants)
-            subprocess.run(["docker", "stop", self.container_name], 
-                         capture_output=True, check=False)
-            subprocess.run(["docker", "rm", self.container_name], 
-                         capture_output=True, check=False)
+            # 1. Ensure persistent container is stopped (redundant but safe)
+            if self.running_container_id:
+                self.stop_container()
             
-            # 2. Clean up any temp containers with our base name pattern
-            temp_pattern = f"{self.container_name}_temp"
-            result = subprocess.run(["docker", "ps", "-a", "--filter", f"name={temp_pattern}", "--format", "{{.Names}}"],
-                                  capture_output=True, text=True, check=False)
-            temp_containers = result.stdout.strip().splitlines()
-            for container_name in temp_containers:
-                if container_name.strip():
-                    subprocess.run(["docker", "stop", container_name.strip()], capture_output=True, check=False)
-                    subprocess.run(["docker", "rm", container_name.strip()], capture_output=True, check=False)
-                    print(f"  - Cleaned up temp container: {container_name.strip()}")
-            
-            # 3. Also clean up any leftover containers from previous runs using labels
+            # 2. Clean up any leftover containers from previous runs using labels
             result = subprocess.run(["docker", "ps", "-a", "--filter", f"label={uuid_label}", "--format", "{{.ID}}"],
                                   capture_output=True, text=True, check=False)
             container_ids = result.stdout.strip().splitlines()
@@ -606,13 +629,13 @@ class DockerfileEvaluator:
                     subprocess.run(["docker", "rm", cid.strip()], capture_output=True, check=False)
                     print(f"  - Cleaned up leftover container: {cid.strip()}")
             
-            # 4. Remove image
+            # 3. Remove image
             subprocess.run(
                 ["docker", "rmi", "-f", self.image_name],
                 capture_output=True, check=False
             )
 
-            # 5. Remove volumes created by this job (if named or labeled)
+            # 4. Remove volumes created by this job (if named or labeled)
             vol_result = subprocess.run(
                 ["docker", "volume", "ls", "--filter", f"label={uuid_label}", "--format", "{{.Name}}"],
                 capture_output=True, text=True, check=False
@@ -622,7 +645,7 @@ class DockerfileEvaluator:
                     subprocess.run(["docker", "volume", "rm", "-f", vol.strip()], capture_output=True, check=False)
                     print(f"  - Removed volume: {vol.strip()}")
 
-            # 6. Clean up build cache for this job only (via label)
+            # 5. Clean up build cache for this job only (via label)
             subprocess.run(
                 ["docker", "builder", "prune", "-f", "--filter", f"label={uuid_label}"],
                 capture_output=True, check=False
@@ -690,6 +713,11 @@ class DockerfileEvaluator:
             print("Failed to build Docker image, cannot run tests")
             return self.generate_report()
         
+        # Start persistent container
+        if not self.start_container():
+            print("Failed to start container, cannot run tests")
+            return self.generate_report()
+        
         try:
             # Run tests
             print(f"\nRunning {len(tests)} tests...")
@@ -700,6 +728,7 @@ class DockerfileEvaluator:
             
         finally:
             # Always cleanup
+            self.stop_container()
             self.cleanup()
 
 
