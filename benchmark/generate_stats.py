@@ -544,7 +544,7 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
                                   rubrics_dir: str = "rubrics/manual",
                                   output_dir: Path = None) -> None:
     """
-    Create detailed bar charts showing individual test performance for each model.
+    Create detailed heatmap showing individual test performance for each model.
     
     Args:
         model_stats: Model statistics dictionary
@@ -555,15 +555,11 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
     """
     import matplotlib.colors as mcolors
     
-    # Order models according to target_strings pairing and coloring scheme
+    # Order models according to target_strings pairing
     target_strings = ["opus4", "35haiku", "gpt41", "gpt41mini"]
     ordered_models = []
-    model_colors = {}
     
     # First, add paired models (baseline + ours) for each target string
-    base_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA726']  # Base colors for pairs
-    color_idx = 0
-    
     for target in target_strings:
         baseline_model = None
         ours_model = None
@@ -576,44 +572,22 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
                 else:
                     baseline_model = model_name
         
-        # Add baseline model first (original color), then ours model (dark color)
+        # Add baseline model first, then ours model
         if baseline_model and ours_model:
-            base_color = base_colors[color_idx % len(base_colors)]
-            
-            # Add baseline model with original color
             ordered_models.append(baseline_model)
-            baseline_color = mcolors.to_rgba(base_color, alpha=1.0)
-            model_colors[baseline_model] = baseline_color
-            
-            # Add ours model with darker color (blend with black)
             ordered_models.append(ours_model)
-            dark_color = mcolors.to_rgba(base_color)
-            dark_color = (
-                dark_color[0] * 0.5,  # Blend red with black
-                dark_color[1] * 0.5,  # Blend green with black
-                dark_color[2] * 0.5,  # Blend blue with black
-                1.0  # Full opacity
-            )
-            model_colors[ours_model] = dark_color
-            
-            color_idx += 1
     
     # Then add all other models that don't contain target strings
     other_models = [model for model in model_stats.keys() 
                    if model not in ordered_models]
-    
-    # Generate colors for other models
-    other_colors = plt.cm.Set3(range(len(other_models)))
-    for i, model in enumerate(other_models):
-        ordered_models.append(model)
-        model_colors[model] = other_colors[i] if i < len(other_colors) else '#95A5A6'
+    ordered_models.extend(other_models)
     
     # Use ordered_models instead of model_names
     model_names = ordered_models
     n_models = len(model_names)
     
     for repo in repos:
-        print(f"  Creating detailed test comparison for repository: {repo}")
+        print(f"  Creating detailed test comparison heatmap for repository: {repo}")
         
         try:
             # Load rubric to get test information
@@ -661,7 +635,7 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
             print(f"    Warning: No test data found for repository {repo}")
             continue
         
-        # Sort test IDs for consistent ordering
+        # Sort test IDs for consistent ordering and group by category
         sorted_test_ids = sorted(all_test_ids)
         n_tests = len(sorted_test_ids)
         
@@ -669,70 +643,66 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
             print(f"    Warning: No tests found for repository {repo}")
             continue
         
-        # Create the chart
-        fig_width = max(16, n_tests * 2)  # Minimum 16 inches, scale with number of tests
-        fig, ax = plt.subplots(figsize=(fig_width, 8))
+        # Create heatmap data matrix
+        # Rows: models, Columns: tests
+        heatmap_data = np.zeros((n_models, n_tests))
         
-        # Calculate bar positions
-        bar_width = 0.8 / n_models  # Total width of 0.8 per test group
-        group_spacing = 1.0  # Space between test groups
-        
-        x_positions = {}
-        test_positions = {}
-        
-        for i, test_id in enumerate(sorted_test_ids):
-            test_center = i * group_spacing
-            test_positions[test_id] = test_center
-            
-            for j, model_name in enumerate(model_names):
-                x_pos = test_center - (n_models - 1) * bar_width / 2 + j * bar_width
-                if test_id not in x_positions:
-                    x_positions[test_id] = {}
-                x_positions[test_id][model_name] = x_pos
-        
-        # Plot bars
-        for test_id in sorted_test_ids:
-            for model_name in model_names:
+        for i, model_name in enumerate(model_names):
+            for j, test_id in enumerate(sorted_test_ids):
                 if model_name in test_data.get(test_id, {}):
                     score, max_score = test_data[test_id][model_name]
                     percentage = (score / max_score * 100) if max_score > 0 else 0
                 else:
                     percentage = 0  # Model didn't have data for this test
-                
-                x_pos = x_positions[test_id][model_name]
-                color = model_colors[model_name]
-                
-                bar = ax.bar(x_pos, percentage, bar_width, 
-                           color=color, alpha=0.8, 
-                           label=model_name if test_id == sorted_test_ids[0] else "")
-                
-                # Add value labels on bars for better readability
-                if percentage > 5:  # Only show label if bar is tall enough
-                    ax.text(x_pos, percentage + 1, f'{percentage:.0f}%',
-                           ha='center', va='bottom', fontsize=8, rotation=90)
+                heatmap_data[i, j] = percentage
         
-        # Customize the chart
-        ax.set_xlabel('Test ID', fontsize=12)
-        ax.set_ylabel('Score Percentage (%)', fontsize=12)
-        ax.set_title(f'Detailed Test Performance Comparison - {repo}', 
-                     fontsize=16, fontweight='bold')
+        # Create the heatmap
+        fig_width = max(12, n_tests * 0.8)  # Scale with number of tests
+        fig_height = max(8, n_models * 0.6)   # Scale with number of models
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
         
-        # Set x-axis ticks and labels with category information
-        ax.set_xticks([test_positions[test_id] for test_id in sorted_test_ids])
-        # Create labels with category in parentheses
+        # Create custom orange colormap (white for 0, bright orange for 100)
+        # Using reversed oranges colormap so brighter = less score (white for zero)
+        colors = ['#FFFFFF', '#FFF4E6', '#FFE4CC', '#FFD4B3', '#FFC299', 
+                  '#FFB180', '#FF9F66', '#FF8E4D', '#FF7C33', '#FF6B1A', '#FF5500']
+        n_bins = 100
+        cmap = mcolors.LinearSegmentedColormap.from_list('orange_reversed', colors, N=n_bins)
+        
+        # Plot heatmap
+        im = ax.imshow(heatmap_data, cmap=cmap, aspect='auto', vmin=0, vmax=100)
+        
+        # Set ticks and labels
+        ax.set_xticks(range(n_tests))
+        ax.set_yticks(range(n_models))
+        
+        # Create test labels with category information
         test_labels = []
         for test_id in sorted_test_ids:
             category = categories.get(test_id, 'unknown')
-            test_labels.append(f"{test_id} ({category})")
-        ax.set_xticklabels(test_labels, rotation=45, ha='right')
+            test_labels.append(f"{test_id}\n({category})")
         
-        ax.set_ylim(0, 110)
-        ax.grid(axis='y', alpha=0.3)
+        ax.set_xticklabels(test_labels, rotation=45, ha='right', fontsize=8)
+        ax.set_yticklabels(model_names, fontsize=9)
         
-        # Add legend
-        handles, labels = ax.get_legend_handles_labels()
-        if handles:
-            ax.legend(handles, labels, bbox_to_anchor=(1.05, 1), loc='upper left')
+        # Add text annotations with percentage values
+        for i in range(n_models):
+            for j in range(n_tests):
+                percentage = heatmap_data[i, j]
+                # Only show text if percentage is high enough for visibility
+                if percentage > 20:
+                    text_color = 'black' if percentage > 50 else 'white'
+                    ax.text(j, i, f'{percentage:.0f}%', ha='center', va='center',
+                           color=text_color, fontsize=7, fontweight='bold')
+        
+        # Customize the chart
+        ax.set_xlabel('Test ID', fontsize=12)
+        ax.set_ylabel('Model', fontsize=12)
+        ax.set_title(f'Test Performance Heatmap - {repo}', 
+                     fontsize=16, fontweight='bold', pad=20)
+        
+        # Add colorbar
+        cbar = plt.colorbar(im, ax=ax, shrink=0.8)
+        cbar.set_label('Score Percentage (%)', rotation=270, labelpad=20, fontsize=12)
         
         # Adjust layout to prevent clipping
         plt.tight_layout()
@@ -741,11 +711,11 @@ def create_detailed_test_comparison(model_stats: Dict[str, Any], repos: List[str
         repo_output_dir = output_dir / repo
         repo_output_dir.mkdir(exist_ok=True)
         
-        plt.savefig(repo_output_dir / f'{repo}_detailed_test_comparison.png', 
+        plt.savefig(repo_output_dir / f'{repo}_detailed_test_heatmap.png', 
                    dpi=300, bbox_inches='tight')
         plt.close()
         
-        print(f"    Created detailed test comparison: {repo_output_dir / f'{repo}_detailed_test_comparison.png'}")
+        print(f"    Created detailed test heatmap: {repo_output_dir / f'{repo}_detailed_test_heatmap.png'}")
 
 
 def create_ours_vs_baseline_comparison(model_stats: Dict[str, Any], output_dir: Path) -> None:
@@ -1053,7 +1023,7 @@ Examples:
     print(f"    - comprehensive_performance.png")
     print(f"    - error_distribution.png")
     print(f"  - For each repository: {output_dir}/[repo_name]/")
-    print(f"    - [repo_name]_detailed_test_comparison.png")
+    print(f"    - [repo_name]_detailed_test_heatmap.png")
 
 
 if __name__ == "__main__":
