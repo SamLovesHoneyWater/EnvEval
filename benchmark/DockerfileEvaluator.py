@@ -85,7 +85,7 @@ class DockerfileEvaluator:
             # Determine scenario based on dockerfile path structure
             # Scenario 1: path/envgym.dockerfile
             # Scenario 2: path/envgym/envgym.dockerfile
-            is_scenario_2 = self.dockerfile_path.parent.name == "envgym"
+            is_scenario_2 = dockerfile_dir.name == "envgym"
             
             # Copy repo directory to dockerfile directory if it exists
             if repo_data_path.exists() and repo_data_path.is_dir():
@@ -149,9 +149,13 @@ class DockerfileEvaluator:
                     print(f"Copied {repo_data_path} to {copied_repo_path}")
                     
                     # Create nested repo directory inside the copied repo directory
+                    # Check if nested path would conflict with existing directory
                     nested_repo_path = copied_repo_path / self.repo_name
-                    shutil.copytree(repo_data_path, nested_repo_path)
-                    print(f"Created nested repo structure at {nested_repo_path}")
+                    if nested_repo_path.exists():
+                        print(f"Skipping nested repo creation - directory already exists at {nested_repo_path}")
+                    else:
+                        shutil.copytree(repo_data_path, nested_repo_path)
+                        print(f"Created nested repo structure at {nested_repo_path}")
                     
                     # Copy dockerfile into the repo directory
                     copied_dockerfile_path = copied_repo_path / self.dockerfile_path.name
