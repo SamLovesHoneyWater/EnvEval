@@ -8,9 +8,17 @@ creating two report structures:
 2. reports-by-repo/ - Summary tables comparing all models per repository
 
 Usage:
+    # Single repository
     python batch_evaluate.py --repo facebook_zstd
     python batch_evaluate.py --repo facebook_zstd --baseline-dir ./ENVGYM-baseline
     python batch_evaluate.py --repo facebook_zstd --skip-existing
+    
+    # Multiple repositories
+    python batch_evaluate.py --repos facebook_zstd,Kong_insomnia,Baleen
+    python batch_evaluate.py --repos-file repos_list.txt
+    
+    # All repositories
+    python batch_evaluate.py --all-repos
 """
 
 import argparse
@@ -20,7 +28,78 @@ import os
 import sys
 import csv
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Optional
+
+
+def discover_available_repos(data_dir: str = "data", rubric_dir: Optional[str] = None) -> List[str]:
+    """
+    Discover all available repositories from the data directory or rubrics directory.
+    
+    Args:
+        data_dir: Path to the data directory containing repository folders
+        rubric_dir: Path to the rubrics directory containing .json files (optional)
+        
+    Returns:
+        List of repository names
+    """
+    # If rubric_dir is provided, discover repos from rubric files
+    if rubric_dir:
+        rubric_path = Path(rubric_dir)
+        if not rubric_path.exists():
+            print(f"Warning: Rubric directory not found: {rubric_dir}")
+            return []
+        
+        repos = []
+        for rubric_file in rubric_path.glob("*.json"):
+            repo_name = rubric_file.stem  # Remove .json extension
+            repos.append(repo_name)
+        
+        return sorted(repos)
+    
+    # Default behavior: discover from data directory
+    data_path = Path(data_dir)
+    if not data_path.exists():
+        print(f"Warning: Data directory not found: {data_dir}")
+        return []
+    
+    repos = []
+    for item in data_path.iterdir():
+        if item.is_dir() and not item.name.startswith('.'):
+            repos.append(item.name)
+    
+    return sorted(repos)
+
+
+def parse_repos_list(repos_input: str) -> List[str]:
+    """
+    Parse comma-separated repository list.
+    
+    Args:
+        repos_input: Comma-separated string of repository names
+        
+    Returns:
+        List of repository names
+    """
+    return [repo.strip() for repo in repos_input.split(',') if repo.strip()]
+
+
+def read_repos_from_file(file_path: str) -> List[str]:
+    """
+    Read repository names from a file (one per line).
+    
+    Args:
+        file_path: Path to file containing repository names
+        
+    Returns:
+        List of repository names
+    """
+    try:
+        with open(file_path, 'r') as f:
+            repos = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+        return repos
+    except Exception as e:
+        print(f"Error reading repos file {file_path}: {e}")
+        return []
 
 
 def find_dockerfiles(repo_name: str, baseline_dir: str = "ENVGYM-baseline") -> List[Tuple[str, str]]:
@@ -475,9 +554,167 @@ def create_repo_summary(repo_name: str, reports_by_model_dir: str = "reports-by-
     return True and csv_success
 
 
+def evaluate_single_repo(repo_name: str, baseline_dir: str, reports_by_model_dir: str, 
+                         reports_by_repo_dir: str, rubric_dir: str, skip_existing: bool, 
+                         summary_only: bool, skip_warnings: bool, verbose: bool) -> Dict[str, int]:
+    """
+    Evaluate a single repository.
+    
+    Args:
+        repo_name: Repository name to evaluate
+        baseline_dir: Path to ENVGYM-baseline directory
+        reports_by_model_dir: Directory for individual model reports
+        reports_by_repo_dir: Directory for repository summary reports
+        rubric_dir: Directory containing rubric files
+        skip_existing: Skip evaluation if report already exists
+        summary_only: Only create repo summary (skip individual evaluations)
+        skip_warnings: Skip user confirmation prompts
+        verbose: Enable verbose output
+        
+    Returns:
+        Dictionary with evaluation statistics: {'successful': int, 'failed': int, 'skipped': int}
+    """
+    print(f"\n{'='*60}")
+    print(f"EVALUATING REPOSITORY: {repo_name}")
+    print(f"{'='*60}")
+    
+    # If summary-only mode, just create the repo summary
+    if summary_only:
+        print("Creating repository summary from existing reports...")
+        success = create_repo_summary(repo_name, reports_by_model_dir, reports_by_repo_dir, rubric_dir)
+        return {'successful': 1 if success else 0, 'failed': 0 if success else 1, 'skipped': 0}
+    
+    # Find all dockerfiles for the repo
+    dockerfiles = find_dockerfiles(repo_name, baseline_dir)
+    
+    if not dockerfiles:
+        print(f"No dockerfiles found for repository: {repo_name}")
+        return {'successful': 0, 'failed': 1, 'skipped': 0}
+    
+    print(f"Found {len(dockerfiles)} dockerfiles for {repo_name}:")
+    for dockerfile_path, relative_path in dockerfiles:
+        print(f"  {relative_path}")
+    print()
+    
+    # Clean up any existing Docker containers for this repo before starting
+    print(f"Cleaning up any existing Docker containers for {repo_name}...")
+    cleanup_docker_containers(repo_name)
+    
+    # Run evaluations
+    successful = 0
+    skipped = 0
+    failed = 0
+    
+    for dockerfile_path, relative_path in dockerfiles:
+        # Create corresponding report path
+        report_path = create_report_path(relative_path, reports_by_model_dir)
+        
+        # Check if report already exists
+        if skip_existing and os.path.exists(report_path):
+            print(f"⏭ Skipping (report exists): {relative_path}")
+            skipped += 1
+            continue
+        
+        # Run evaluation
+        print(f"🔄 Evaluating: {relative_path}")
+        if run_evaluation(dockerfile_path, repo_name, report_path, rubric_dir, verbose, skip_warnings):
+            successful += 1
+        else:
+            failed += 1
+        print()
+    
+    # Create repository summary
+    print("Creating repository summary...")
+    summary_success = create_repo_summary(repo_name, reports_by_model_dir, reports_by_repo_dir, rubric_dir)
+    
+    # Print summary for this repo
+    print(f"\nRepository: {repo_name}")
+    print(f"Total dockerfiles: {len(dockerfiles)}")
+    print(f"Successful evaluations: {successful}")
+    print(f"Failed evaluations: {failed}")
+    print(f"Skipped evaluations: {skipped}")
+    
+    if successful > 0:
+        print(f"Individual reports: {reports_by_model_dir}/")
+    
+    if summary_success:
+        print(f"Repository summary: {reports_by_repo_dir}/{repo_name}/{repo_name}_summary.json")
+        print(f"Comparison table: {reports_by_repo_dir}/{repo_name}/{repo_name}_comparison.md")
+        print(f"Test comparison CSV: {reports_by_repo_dir}/{repo_name}/{repo_name}_test_comparison.csv")
+    
+    return {'successful': successful, 'failed': failed, 'skipped': skipped}
+
+
+def create_overall_summary(repos: List[str], repo_stats: Dict[str, Dict[str, int]], 
+                          reports_by_repo_dir: str) -> None:
+    """
+    Create an overall summary for multiple repositories.
+    
+    Args:
+        repos: List of repository names
+        repo_stats: Dictionary mapping repo names to their statistics
+        reports_by_repo_dir: Directory for repository summary reports
+    """
+    from datetime import datetime
+    
+    # Calculate totals
+    total_successful = sum(stats['successful'] for stats in repo_stats.values())
+    total_failed = sum(stats['failed'] for stats in repo_stats.values())
+    total_skipped = sum(stats['skipped'] for stats in repo_stats.values())
+    total_dockerfiles = total_successful + total_failed + total_skipped
+    
+    # Create overall summary
+    overall_summary = {
+        'timestamp': datetime.now().isoformat(),
+        'total_repositories': len(repos),
+        'total_dockerfiles': total_dockerfiles,
+        'total_successful': total_successful,
+        'total_failed': total_failed,
+        'total_skipped': total_skipped,
+        'success_rate': round(total_successful / total_dockerfiles * 100, 2) if total_dockerfiles > 0 else 0,
+        'repository_details': repo_stats
+    }
+    
+    # Save overall summary
+    summary_path = Path(reports_by_repo_dir) / "overall_summary.json"
+    with open(summary_path, 'w') as f:
+        json.dump(overall_summary, f, indent=2)
+    
+    # Create markdown summary
+    md_path = Path(reports_by_repo_dir) / "overall_summary.md"
+    with open(md_path, 'w') as f:
+        f.write("# Overall Batch Evaluation Summary\n\n")
+        f.write(f"**Timestamp:** {overall_summary['timestamp']}\n\n")
+        f.write(f"**Total Repositories:** {len(repos)}\n")
+        f.write(f"**Total Dockerfiles:** {total_dockerfiles}\n")
+        f.write(f"**Success Rate:** {overall_summary['success_rate']}%\n\n")
+        
+        f.write("## Repository Breakdown\n\n")
+        f.write("| Repository | Successful | Failed | Skipped | Total |\n")
+        f.write("|------------|------------|--------|---------|-------|\n")
+        
+        for repo in repos:
+            stats = repo_stats.get(repo, {'successful': 0, 'failed': 0, 'skipped': 0})
+            total = stats['successful'] + stats['failed'] + stats['skipped']
+            f.write(f"| {repo} | {stats['successful']} | {stats['failed']} | {stats['skipped']} | {total} |\n")
+    
+    print(f"\nOverall summary saved to: {summary_path}")
+    print(f"Overall markdown summary: {md_path}")
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Batch evaluate Dockerfiles for a repository")
-    parser.add_argument("--repo", required=True, help="Repository name to evaluate")
+    parser = argparse.ArgumentParser(description="Batch evaluate Dockerfiles for repositories")
+    
+    # Repository selection options (mutually exclusive)
+    repo_group = parser.add_mutually_exclusive_group(required=True)
+    repo_group.add_argument("--repo", help="Single repository name to evaluate")
+    repo_group.add_argument("--repos", help="Comma-separated list of repository names to evaluate")
+    repo_group.add_argument("--repos-file", help="File containing repository names (one per line)")
+    repo_group.add_argument("--all-repos", action="store_true", help="Evaluate all available repositories")
+    repo_group.add_argument("--list-repos", action="store_true", help="List all available repositories and exit")
+    
+    parser.add_argument("--data-dir", default="data",
+                       help="Path to data directory containing repository source code folders")
     parser.add_argument("--baseline-dir", default="ENVGYM-baseline", 
                        help="Path to ENVGYM-baseline directory")
     parser.add_argument("--reports-by-model-dir", default="reports-by-model",
@@ -497,83 +734,92 @@ def main():
     
     args = parser.parse_args()
     
-    print(f"Batch evaluation for repository: {args.repo}")
+    # Handle list-repos option
+    if args.list_repos:
+        available_repos = discover_available_repos(args.data_dir, args.rubric_dir)
+        print(f"Available repositories ({len(available_repos)}):")
+        for repo in available_repos:
+            print(f"  {repo}")
+        sys.exit(0)
+    
+    # Determine which repositories to evaluate
+    repos_to_evaluate = []
+    
+    if args.repo:
+        repos_to_evaluate = [args.repo]
+    elif args.repos:
+        repos_to_evaluate = parse_repos_list(args.repos)
+    elif args.repos_file:
+        repos_to_evaluate = read_repos_from_file(args.repos_file)
+    elif args.all_repos:
+        repos_to_evaluate = discover_available_repos(args.data_dir, args.rubric_dir)
+    
+    if not repos_to_evaluate:
+        print("Error: No repositories specified or found")
+        sys.exit(1)
+    
+    # Validate repositories exist
+    available_repos = discover_available_repos(args.data_dir, args.rubric_dir)
+    invalid_repos = [repo for repo in repos_to_evaluate if repo not in available_repos]
+    if invalid_repos:
+        print(f"Error: The following repositories were not found: {', '.join(invalid_repos)}")
+        print(f"Available repositories: {', '.join(available_repos)}")
+        sys.exit(1)
+    
+    print(f"Batch evaluation for {len(repos_to_evaluate)} repository(ies): {', '.join(repos_to_evaluate)}")
+    print(f"Data directory: {args.data_dir}")
     print(f"Baseline directory: {args.baseline_dir}")
     print(f"Reports by model: {args.reports_by_model_dir}")
     print(f"Reports by repo: {args.reports_by_repo_dir}")
     print("-" * 60)
     
-    # If summary-only mode, just create the repo summary
-    if args.summary_only:
-        print("Creating repository summary from existing reports...")
-        success = create_repo_summary(args.repo, args.reports_by_model_dir, args.reports_by_repo_dir, args.rubric_dir)
-        sys.exit(0 if success else 1)
+    # Evaluate each repository
+    repo_stats = {}
+    overall_successful = 0
+    overall_failed = 0
+    overall_skipped = 0
     
-    # Find all dockerfiles for the repo
-    dockerfiles = find_dockerfiles(args.repo, args.baseline_dir)
-    
-    if not dockerfiles:
-        print(f"No dockerfiles found for repository: {args.repo}")
-        sys.exit(1)
-    
-    print(f"Found {len(dockerfiles)} dockerfiles for {args.repo}:")
-    for dockerfile_path, relative_path in dockerfiles:
-        print(f"  {relative_path}")
-    print()
-    
-    # Clean up any existing Docker containers for this repo before starting
-    print(f"Cleaning up any existing Docker containers for {args.repo}...")
-    cleanup_docker_containers(args.repo)
-    
-    # Run evaluations
-    successful = 0
-    skipped = 0
-    failed = 0
-    
-    for dockerfile_path, relative_path in dockerfiles:
-        # Create corresponding report path
-        report_path = create_report_path(relative_path, args.reports_by_model_dir)
+    for i, repo_name in enumerate(repos_to_evaluate, 1):
+        print(f"\nProcessing repository {i}/{len(repos_to_evaluate)}: {repo_name}")
         
-        # Check if report already exists
-        if args.skip_existing and os.path.exists(report_path):
-            print(f"⏭ Skipping (report exists): {relative_path}")
-            skipped += 1
-            continue
+        stats = evaluate_single_repo(
+            repo_name, args.baseline_dir, args.reports_by_model_dir,
+            args.reports_by_repo_dir, args.rubric_dir, args.skip_existing,
+            args.summary_only, args.skip_warnings, args.verbose
+        )
         
-        # Run evaluation
-        print(f"🔄 Evaluating: {relative_path}")
-        if run_evaluation(dockerfile_path, args.repo, report_path, args.rubric_dir, args.verbose, args.skip_warnings):
-            successful += 1
-        else:
-            failed += 1
-        print()
+        repo_stats[repo_name] = stats
+        overall_successful += stats['successful']
+        overall_failed += stats['failed']
+        overall_skipped += stats['skipped']
     
-    # Create repository summary
-    print("Creating repository summary...")
-    summary_success = create_repo_summary(args.repo, args.reports_by_model_dir, args.reports_by_repo_dir, args.rubric_dir)
+    # Create overall summary if multiple repositories
+    if len(repos_to_evaluate) > 1:
+        create_overall_summary(repos_to_evaluate, repo_stats, args.reports_by_repo_dir)
     
-    # Print summary
+    # Print overall summary
+    print("\n" + "=" * 60)
+    print("OVERALL BATCH EVALUATION SUMMARY")
     print("=" * 60)
-    print("BATCH EVALUATION SUMMARY")
-    print("=" * 60)
-    print(f"Repository: {args.repo}")
-    print(f"Total dockerfiles: {len(dockerfiles)}")
-    print(f"Successful evaluations: {successful}")
-    print(f"Failed evaluations: {failed}")
-    print(f"Skipped evaluations: {skipped}")
+    print(f"Total repositories: {len(repos_to_evaluate)}")
+    print(f"Total successful evaluations: {overall_successful}")
+    print(f"Total failed evaluations: {overall_failed}")
+    print(f"Total skipped evaluations: {overall_skipped}")
+    print(f"Total dockerfiles: {overall_successful + overall_failed + overall_skipped}")
     
-    if successful > 0:
-        print(f"\nIndividual reports: {args.reports_by_model_dir}/")
-        print("(Directory structure mirrors ENVGYM-baseline)")
+    if overall_successful + overall_failed + overall_skipped > 0:
+        success_rate = overall_successful / (overall_successful + overall_failed + overall_skipped) * 100
+        print(f"Overall success rate: {success_rate:.2f}%")
     
-    if summary_success:
-        print(f"Repository summary: {args.reports_by_repo_dir}/{args.repo}/{args.repo}_summary.json")
-        print(f"Comparison table (markdown): {args.reports_by_repo_dir}/{args.repo}/{args.repo}_comparison.md")
-        print(f"Test comparison CSV: {args.reports_by_repo_dir}/{args.repo}/{args.repo}_test_comparison.csv")
-        print(f"Individual model reports: {args.reports_by_repo_dir}/{args.repo}/models/")
+    print(f"\nIndividual reports: {args.reports_by_model_dir}/")
+    print("(Directory structure mirrors ENVGYM-baseline)")
+    print(f"Repository summaries: {args.reports_by_repo_dir}/")
+    
+    if len(repos_to_evaluate) > 1:
+        print(f"Overall summary: {args.reports_by_repo_dir}/overall_summary.json")
     
     # Exit with appropriate code
-    sys.exit(0 if failed == 0 else 1)
+    sys.exit(0 if overall_failed == 0 else 1)
 
 
 if __name__ == "__main__":
