@@ -251,10 +251,15 @@ class DockerfileEvaluator:
     def run_docker_command(self, command: str, timeout: int = -1):
         """Run a command inside the Docker container"""
         try:
+            # Generate unique container name for each command to avoid conflicts
+            import random
+            unique_suffix = random.randint(10000, 99999)
+            unique_container_name = f"{self.container_name}_temp_{unique_suffix}"
+            
             cmd = [
                 "docker", "run", "--rm",
                 "--label", f"uuid={self.container_name}",
-                "--name", f"{self.container_name}_temp",
+                "--name", unique_container_name,
                 self.image_name,
                 "sh", "-c", command
             ]
@@ -574,14 +579,25 @@ class DockerfileEvaluator:
         """Clean up Docker resources"""
         uuid_label = f"uuid={self.container_name}"
         try:
-            # 1. Stop and remove any containers with our name pattern
+            # 1. Stop and remove any containers with our name pattern (including _temp variants)
             subprocess.run(["docker", "stop", self.container_name], 
                          capture_output=True, check=False)
             subprocess.run(["docker", "rm", self.container_name], 
                          capture_output=True, check=False)
             
-            # 2. Also clean up any leftover containers from previous runs
-            result = subprocess.run(["docker", "ps", "-a", "--filter", "--filter", f"label={uuid_label}", "--format", "{{.ID}}"],
+            # 2. Clean up any temp containers with our base name pattern
+            temp_pattern = f"{self.container_name}_temp"
+            result = subprocess.run(["docker", "ps", "-a", "--filter", f"name={temp_pattern}", "--format", "{{.Names}}"],
+                                  capture_output=True, text=True, check=False)
+            temp_containers = result.stdout.strip().splitlines()
+            for container_name in temp_containers:
+                if container_name.strip():
+                    subprocess.run(["docker", "stop", container_name.strip()], capture_output=True, check=False)
+                    subprocess.run(["docker", "rm", container_name.strip()], capture_output=True, check=False)
+                    print(f"  - Cleaned up temp container: {container_name.strip()}")
+            
+            # 3. Also clean up any leftover containers from previous runs using labels
+            result = subprocess.run(["docker", "ps", "-a", "--filter", f"label={uuid_label}", "--format", "{{.ID}}"],
                                   capture_output=True, text=True, check=False)
             container_ids = result.stdout.strip().splitlines()
             for cid in container_ids:
@@ -590,13 +606,13 @@ class DockerfileEvaluator:
                     subprocess.run(["docker", "rm", cid.strip()], capture_output=True, check=False)
                     print(f"  - Cleaned up leftover container: {cid.strip()}")
             
-            # 3. Remove image
+            # 4. Remove image
             subprocess.run(
                 ["docker", "rmi", "-f", self.image_name],
                 capture_output=True, check=False
             )
 
-            # 4. Remove volumes created by this job (if named or labeled)
+            # 5. Remove volumes created by this job (if named or labeled)
             vol_result = subprocess.run(
                 ["docker", "volume", "ls", "--filter", f"label={uuid_label}", "--format", "{{.Name}}"],
                 capture_output=True, text=True, check=False
@@ -606,7 +622,7 @@ class DockerfileEvaluator:
                     subprocess.run(["docker", "volume", "rm", "-f", vol.strip()], capture_output=True, check=False)
                     print(f"  - Removed volume: {vol.strip()}")
 
-            # 5. Clean up build cache for this job only (via label)
+            # 6. Clean up build cache for this job only (via label)
             subprocess.run(
                 ["docker", "builder", "prune", "-f", "--filter", f"label={uuid_label}"],
                 capture_output=True, check=False
