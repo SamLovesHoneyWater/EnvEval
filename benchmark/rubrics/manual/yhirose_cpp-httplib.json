@@ -234,6 +234,16 @@
       "category": "functionality"
     },
     {
+      "id": "test_meson_setup",
+      "type": "run_command",
+      "params": {
+        "command": "meson setup test_meson_build --buildtype=release -Dtests=false && rm -rf test_meson_build"
+      },
+      "timeout": 60,
+      "score": 2,
+      "category": "functionality"
+    },
+    {
       "id": "test_basic_server_compilation",
       "type": "run_command",
       "params": {
