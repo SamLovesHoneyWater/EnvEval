@@ -278,11 +278,12 @@ class DockerfileEvaluator:
         """Stop and remove the persistent container"""
         if self.running_container_id:
             try:
-                subprocess.run(["docker", "stop", self.container_name], 
-                             capture_output=True, check=False)
-                subprocess.run(["docker", "rm", self.container_name], 
-                             capture_output=True, check=False)
-                print(f"Stopped and removed persistent container: {self.container_name}")
+                subprocess.run(["docker", "stop", self.container_name],
+                               capture_output=True, check=False)
+                # Use -v to remove any anonymous volumes attached to the container
+                subprocess.run(["docker", "rm", "-v", self.container_name],
+                               capture_output=True, check=False)
+                print(f"Stopped and removed persistent container (and anonymous volumes): {self.container_name}")
                 self.running_container_id = None
             except Exception as e:
                 print(f"Warning: Could not stop container: {e}")
@@ -607,47 +608,128 @@ class DockerfileEvaluator:
     
     def cleanup(self):
         """Clean up Docker resources"""
-        uuid_label = f"uuid={self.container_name}"
+        # Use label filter to target only resources created by this evaluator run
+        label_key = "uuid"
+        label_value = self.container_name
+        
+        # Setup cleanup warnings log
+        cleanup_warnings_dir = Path("cleanup_warnings")
+        cleanup_warnings_dir.mkdir(exist_ok=True)
+        log_file = cleanup_warnings_dir / f"{self.repo_name}.log"
+        
+        def log_warning(message: str):
+            """Log warning to both file and console"""
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            log_entry = f"[{timestamp}] {message}\n"
+            try:
+                with open(log_file, 'a', encoding='utf-8') as f:
+                    f.write(log_entry)
+            except Exception as e:
+                print(f"Warning: Could not write to cleanup log: {e}")
+            print(f"  - Warning logged to {log_file}: {message}")
+        
         try:
             # 1. Ensure persistent container is stopped (redundant but safe)
             if self.running_container_id:
                 self.stop_container()
-            
-            # 2. Clean up any leftover containers from previous runs using labels
-            result = subprocess.run(["docker", "ps", "-a", "--filter", f"label={uuid_label}", "--format", "{{.ID}}"],
-                                  capture_output=True, text=True, check=False)
-            container_ids = result.stdout.strip().splitlines()
-            for cid in container_ids:
-                if cid.strip():
-                    subprocess.run(["docker", "stop", cid.strip()], capture_output=True, check=False)
-                    subprocess.run(["docker", "rm", cid.strip()], capture_output=True, check=False)
-                    print(f"  - Cleaned up leftover container: {cid.strip()}")
-            
-            # 3. Remove image
-            subprocess.run(
-                ["docker", "rmi", "-f", self.image_name],
-                capture_output=True, check=False
+
+            # 2. Clean up any leftover containers from previous runs using label filter
+            result = subprocess.run(
+                ["docker", "ps", "-a", "--filter", f"label={label_key}={label_value}", "--format", "{{.ID}}"],
+                capture_output=True, text=True, check=False
             )
+            if result.returncode == 0 and result.stdout.strip():
+                container_ids = [c.strip() for c in result.stdout.strip().splitlines() if c.strip()]
+                for cid in container_ids:
+                    # Validate that this looks like a Docker container ID (12+ hex chars)
+                    if len(cid) >= 12 and all(c in '0123456789abcdef' for c in cid.lower()):
+                        # Stop (ignore errors) and remove with -v to clear anonymous volumes
+                        subprocess.run(["docker", "stop", cid], capture_output=True, check=False)
+                        rm_result = subprocess.run(["docker", "rm", "-v", cid], capture_output=True, check=False)
+                        if rm_result.returncode == 0:
+                            print(f"  - Cleaned up leftover container: {cid}")
+                        else:
+                            log_warning(f"Failed to remove container {cid}: {rm_result.stderr.strip()}")
+                    else:
+                        log_warning(f"Skipped invalid container ID: {cid}")
+            elif result.stderr.strip():
+                log_warning(f"Could not list containers: {result.stderr.strip()}")
+
+            # 3. Remove images that have the label (safer than removing by name)
+            img_result = subprocess.run(
+                ["docker", "images", "--filter", f"label={label_key}={label_value}", "--format", "{{.ID}}"],
+                capture_output=True, text=True, check=False
+            )
+            if img_result.returncode == 0 and img_result.stdout.strip():
+                image_ids = [i.strip() for i in img_result.stdout.strip().splitlines() if i.strip()]
+                for iid in image_ids:
+                    # Validate that this looks like a Docker image ID (12+ hex chars)
+                    if len(iid) >= 12 and all(c in '0123456789abcdef' for c in iid.lower()):
+                        result = subprocess.run(["docker", "rmi", "-f", iid], capture_output=True, check=False)
+                        if result.returncode == 0:
+                            print(f"  - Removed image: {iid}")
+                        else:
+                            log_warning(f"Failed to remove image {iid}: {result.stderr.strip()}")
+                    else:
+                        log_warning(f"Skipped invalid image ID: {iid}")
+            elif img_result.stderr.strip():
+                log_warning(f"Could not list images: {img_result.stderr.strip()}")
 
             # 4. Remove volumes created by this job (if named or labeled)
             vol_result = subprocess.run(
-                ["docker", "volume", "ls", "--filter", f"label={uuid_label}", "--format", "{{.Name}}"],
+                ["docker", "volume", "ls", "--filter", f"label={label_key}={label_value}", "--format", "{{.Name}}"],
                 capture_output=True, text=True, check=False
             )
-            for vol in vol_result.stdout.strip().splitlines():
-                if vol.strip():
-                    subprocess.run(["docker", "volume", "rm", "-f", vol.strip()], capture_output=True, check=False)
-                    print(f"  - Removed volume: {vol.strip()}")
+            if vol_result.returncode == 0 and vol_result.stdout.strip():
+                volumes = [v.strip() for v in vol_result.stdout.strip().splitlines() if v.strip()]
+                for vol in volumes:
+                    # Basic validation: volume names shouldn't contain spaces or special chars
+                    if vol and not any(c in vol for c in [' ', '\t', '\n', '|', ';', '&']):
+                        rm_result = subprocess.run(["docker", "volume", "rm", "-f", vol], capture_output=True, check=False)
+                        if rm_result.returncode == 0:
+                            print(f"  - Removed volume: {vol}")
+                        else:
+                            log_warning(f"Failed to remove volume {vol}: {rm_result.stderr.strip()}")
+                    else:
+                        log_warning(f"Skipped invalid volume name: {vol}")
+            elif vol_result.stderr.strip():
+                log_warning(f"Could not list volumes: {vol_result.stderr.strip()}")
 
-            # 5. Clean up build cache for this job only (via label)
+            # 5. Remove networks created for this job (if any were labeled)
+            net_result = subprocess.run(
+                ["docker", "network", "ls", "--filter", f"label={label_key}={label_value}", "--format", "{{.ID}}"],
+                capture_output=True, text=True, check=False
+            )
+            if net_result.returncode == 0 and net_result.stdout.strip():
+                networks = [n.strip() for n in net_result.stdout.strip().splitlines() if n.strip()]
+                for net in networks:
+                    # Validate that this looks like a Docker network ID (12+ hex chars)
+                    if len(net) >= 12 and all(c in '0123456789abcdef' for c in net.lower()):
+                        rm_result = subprocess.run(["docker", "network", "rm", net], capture_output=True, check=False)
+                        if rm_result.returncode == 0:
+                            print(f"  - Removed network: {net}")
+                        else:
+                            log_warning(f"Failed to remove network {net}: {rm_result.stderr.strip()}")
+                    else:
+                        log_warning(f"Skipped invalid network ID: {net}")
+            elif net_result.stderr.strip():
+                log_warning(f"Could not list networks: {net_result.stderr.strip()}")
+
+            # 6. Clean up build cache for this job only (via label)
             subprocess.run(
-                ["docker", "builder", "prune", "-f", "--filter", f"label={uuid_label}"],
+                ["docker", "builder", "prune", "-f", "--filter", f"label={label_key}={label_value}"],
                 capture_output=True, check=False
             )
 
+            # 7. As a best-effort fallback, try to remove the image by name (legacy behavior)
+            try:
+                subprocess.run(["docker", "rmi", "-f", self.image_name], capture_output=True, check=False)
+            except Exception:
+                pass
+
             print(f"Cleaned up Docker resources for: {self.repo_name}")
         except Exception as e:
-            print(f"Warning: Could not clean up Docker resources: {e}")
+            log_warning(f"Could not clean up Docker resources: {e}")
     
     def generate_report(self) -> Dict[str, Any]:
         """Generate a summary report of all test results"""
