@@ -6,28 +6,32 @@
       "type": "commands_exist",
       "params": {
         "names": ["gcc", "g++", "make", "cmake", "ninja", "pkg-config"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_python_tools", 
       "type": "commands_exist",
       "params": {
         "names": ["python3", "pip3"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_network_tools",
       "type": "commands_exist", 
       "params": {
         "names": ["git", "curl", "wget"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_compression_tools",
       "type": "commands_exist",
       "params": {
         "names": ["lz4", "brotli", "gzip"]
-      }
+      },
+      "category": "configuration"
     },
     {
       "id": "check_cc_env",
@@ -35,7 +39,8 @@
       "params": {
         "name": "CC"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cxx_env",
@@ -43,7 +48,8 @@
       "params": {
         "name": "CXX"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cflags_env",
@@ -51,7 +57,8 @@
       "params": {
         "name": "CFLAGS"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cxxflags_env",
@@ -59,7 +66,8 @@
       "params": {
         "name": "CXXFLAGS"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_ldflags_env",
@@ -67,7 +75,8 @@
       "params": {
         "name": "LDFLAGS"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_gcc_in_path",
@@ -77,7 +86,8 @@
         "contains": ["gcc"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_make_in_path",
@@ -87,7 +97,8 @@
         "contains": ["make"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_zlib_dev",
@@ -96,7 +107,8 @@
         "command": "pkg-config --exists zlib"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_lz4_dev",
@@ -105,7 +117,8 @@
         "command": "pkg-config --exists liblz4"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_snappy_dev",
@@ -114,7 +127,8 @@
         "command": "pkg-config --exists snappy"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_lzo2_dev",
@@ -123,7 +137,8 @@
         "command": "pkg-config --exists lzo2"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_main_directories",
@@ -139,7 +154,8 @@
           "zlibWrapper"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_root_files",
@@ -154,7 +170,8 @@
           "Package.swift"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_lib_files",
@@ -167,7 +184,8 @@
           "lib/Makefile"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_program_files",
@@ -180,7 +198,8 @@
           "programs/datagen.c"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_test_files",
@@ -192,7 +211,8 @@
           "tests/fullbench.c"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "test_gcc_version",
@@ -202,7 +222,8 @@
         "contains": ["gcc"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_gpp_version",
@@ -212,7 +233,8 @@
         "contains": ["g++"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_make_version",
@@ -222,7 +244,8 @@
         "contains": ["GNU Make", "make"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_cmake_version",
@@ -232,7 +255,8 @@
         "contains": ["cmake"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python_version",
@@ -241,7 +265,8 @@
         "command": "(python --version 2>&1 | grep -q Python) || (python3 --version 2>&1 | grep -q Python)"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_git_version",
@@ -251,7 +276,8 @@
         "contains": ["git"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_c_compilation",
@@ -260,7 +286,8 @@
         "command": "echo '#include <stdio.h>\nint main() { printf(\"Hello from C\\n\"); return 0; }' > test.c && gcc -o test_c test.c && ./test_c && rm -f test_c test.c"
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_cpp_compilation",
@@ -269,7 +296,8 @@
         "command": "echo '#include <iostream>\nint main() { std::cout << \"Hello from C++\" << std::endl; return 0; }' > test.cpp && g++ -o test_cpp test.cpp && ./test_cpp && rm -f test_cpp test.cpp"
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_make_help",
@@ -278,7 +306,8 @@
         "command": "make --version"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_cmake_help",
@@ -287,7 +316,8 @@
         "command": "cmake --help"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python_execution",
@@ -296,7 +326,8 @@
         "command": "(python -c \"print('Hello from Python')\") || (python3 -c \"print('Hello from Python3')\")"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_pip_list",
@@ -305,7 +336,8 @@
         "command": "(pip list >/dev/null 2>&1) || (pip3 list >/dev/null 2>&1)"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_zstd_header_compilation",
@@ -314,7 +346,8 @@
         "command": "echo '#include \"lib/zstd.h\"\n#include <stdio.h>\nint main() { printf(\"ZSTD version: %s\\n\", ZSTD_VERSION_STRING); return 0; }' > test_zstd.c && gcc -I. -o test_zstd test_zstd.c && ./test_zstd && rm -f test_zstd test_zstd.c"
       },
       "timeout": 60,
-      "score": 3
+      "score": 3,
+      "category": "functionality"
     },
     {
       "id": "test_lib_build",
@@ -323,7 +356,8 @@
         "command": "make lib"
       },
       "timeout": 120,
-      "score": 3
+      "score": 3,
+      "category": "functionality"
     },
     {
       "id": "check_libzstd_files",
@@ -332,7 +366,8 @@
         "command": "[ -f \"lib/libzstd.a\" ] || [ -f \"lib/libzstd.so\" ]"
       },
       "timeout": 10,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_zstd_build",
@@ -341,7 +376,8 @@
         "command": "make zstd"
       },
       "timeout": 180,
-      "score": 3
+      "score": 3,
+      "category": "functionality"
     },
     {
       "id": "test_zstd_binary_exists",
@@ -351,7 +387,8 @@
           "zstd"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_zstd_version",
@@ -360,7 +397,8 @@
         "command": "./zstd --version"
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_zstd_help",
@@ -369,7 +407,8 @@
         "command": "./zstd --help"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     }
   ]
 }
