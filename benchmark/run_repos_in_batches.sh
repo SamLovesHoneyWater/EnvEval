@@ -19,6 +19,7 @@ echo
 # Function to wait for all running screens to finish
 wait_for_batch_completion() {
     local batch_repos=("$@")
+    local batch_size=${#batch_repos[@]}
     echo "⏳ Waiting for batch to complete..."
     
     while true; do
@@ -35,7 +36,7 @@ wait_for_batch_completion() {
             break
         fi
         
-        echo "   Still running: $running_count/$BATCH_SIZE repositories..."
+        echo "   Still running: $running_count/$batch_size repositories..."
         sleep 30  # Check every 30 seconds
     done
 }
