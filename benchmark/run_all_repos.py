@@ -22,7 +22,8 @@ def count_running_screens(repo_names, session_code):
         session_code: Unique session identifier to filter our screens
         
     Returns:
-        tuple: (running_count, running_repos, finished_repos)
+        tuple: (success, running_count, running_repos, finished_repos)
+        success: bool - True if check was successful, False if there was an error
     """
     try:
         # Get list of all active screens
@@ -41,14 +42,14 @@ def count_running_screens(repo_names, session_code):
             else:
                 finished_repos.append(repo)
         
-        return len(running_repos), running_repos, finished_repos
+        return True, len(running_repos), running_repos, finished_repos
         
     except FileNotFoundError:
         print("Warning: 'screen' command not found. Cannot check running screens.")
-        return 0, [], repo_names
+        return False, 0, [], repo_names
     except subprocess.CalledProcessError:
         # screen -ls returns non-zero when no screens are running
-        return 0, [], repo_names
+        return True, 0, [], repo_names
 
 def wait_for_batch_completion(batch_repos, session_code, check_interval=30):
     """
@@ -63,7 +64,12 @@ def wait_for_batch_completion(batch_repos, session_code, check_interval=30):
     start_time = time.time()
     
     while True:
-        running_count, running_repos, finished_repos = count_running_screens(batch_repos, session_code)
+        success, running_count, running_repos, finished_repos = count_running_screens(batch_repos, session_code)
+        
+        if not success:
+            print(f"⚠️  Cannot check screen status. Will retry in {check_interval}s...")
+            time.sleep(check_interval)
+            continue
         
         if running_count == 0:
             elapsed = time.time() - start_time
