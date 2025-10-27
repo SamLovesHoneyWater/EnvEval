@@ -158,12 +158,12 @@ def parse_model_report(report_path: Path, categories: Dict[str, str], max_scores
         
         # Determine category and max score from rubric
         if test_id not in categories:
-            raise ValueError(f"Test ID '{test_id}' not found in rubric for report {report_path}. "
-                           f"This indicates a mismatch between the evaluation report and rubric file.")
+            print(f"test id: {test_id}, categories:\n{categories}")
+            raise ValueError(f"Category for test ID '{test_id}' not found in rubric for report {report_path}.")
         if test_id not in max_scores:
-            raise ValueError(f"Test ID '{test_id}' has no max score defined in rubric for report {report_path}. "
-                           f"This indicates a mismatch between the evaluation report and rubric file.")
-        
+            print(f"test id: {test_id}, max_scores:\n{max_scores}")
+            raise ValueError(f"Max score for test ID '{test_id}' not found in rubric for report {report_path}.")
+
         category = categories[test_id]
         test_max_score = max_scores[test_id]
         
