@@ -77,7 +77,7 @@ def load_rubric_categories(repo_name: str, rubrics_dir: str = "rubrics/manual") 
         for test in rubric.get('tests', []):
             test_id = test.get('id')
             category = test.get('category')
-            score = test.get('score')
+            score = test.get('score', 1)
             
             if test_id and category and score is not None:
                 categories[test_id] = category
@@ -90,6 +90,8 @@ def load_rubric_categories(repo_name: str, rubrics_dir: str = "rubrics/manual") 
                 if category and score is not None:
                     categories[generated_id] = category
                     max_scores[generated_id] = score
+            else:
+                raise ValueError(f"Invalid test entry in rubric: {test}, missing required fields. Got test_id: {test_id}, category: {category}, score: {score}")
                 
         return categories, max_scores
         
