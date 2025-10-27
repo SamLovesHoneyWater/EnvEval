@@ -196,11 +196,13 @@ def main():
         print(f"✅ Batch {batch_num + 1} launched: {len(launched_repos)} screens started")
         
         # Wait for batch to complete
+        time.sleep(5)  # Short delay before checking
         wait_for_batch_completion(launched_repos, session_code, args.check_interval)
         completed_repos.extend(launched_repos)
         
-        # Clean Docker system between batches (except for the last batch)
-        if not args.skip_docker_cleanup and batch_num < total_batches - 1:
+        # Clean Docker system between batches
+        if not args.skip_docker_cleanup:
+            time.sleep(5)  # Short delay before cleaning
             clean_docker_system()
             print()  # Add spacing before next batch
     
