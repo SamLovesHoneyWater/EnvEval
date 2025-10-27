@@ -271,11 +271,11 @@ class DockerfileEvaluator:
                 self.running_container_id = result.stdout.strip()
                 print(f"Started persistent container: {self.container_name}")
                 
-                # Verify container is actually running
-                if self.is_container_running():
+                # Wait for container to be fully ready (handles restart policies)
+                if self.wait_for_container_ready():
                     return True
                 else:
-                    print(f"Container started but not running properly")
+                    print(f"Container started but failed to become ready")
                     return False
             else:
                 print(f"Failed to start container: {result.stderr}")
@@ -314,6 +314,56 @@ class DockerfileEvaluator:
                 # Still clear the ID to prevent future attempts
                 self.running_container_id = None
     
+    def wait_for_container_ready(self, timeout_seconds: int = 300) -> bool:
+        """Wait for container to be ready (not restarting or starting)"""
+        import time
+        
+        start_time = time.time()
+        retry_interval = 30  # Wait 30 seconds between checks
+        
+        while time.time() - start_time < timeout_seconds:
+            try:
+                # Check container state
+                result = subprocess.run(
+                    ["docker", "inspect", "-f", "{{.State.Status}}", self.container_name],
+                    capture_output=True, text=True, check=False
+                )
+                
+                if result.returncode == 0:
+                    status = result.stdout.strip().lower()
+                    print(f"Container {self.container_name} status: {status}")
+                    
+                    if status == "running":
+                        # Double-check that it's actually responsive
+                        test_result = subprocess.run(
+                            ["docker", "exec", self.container_name, "echo", "test"],
+                            capture_output=True, text=True, check=False, timeout=10
+                        )
+                        if test_result.returncode == 0:
+                            print(f"Container {self.container_name} is ready and responsive")
+                            return True
+                        else:
+                            print(f"Container {self.container_name} is running but not responsive yet")
+                    elif status in ["restarting", "starting"]:
+                        elapsed = int(time.time() - start_time)
+                        print(f"Container {self.container_name} is {status}, waiting... ({elapsed}s elapsed)")
+                    elif status in ["exited", "dead"]:
+                        print(f"Container {self.container_name} has {status}, restart failed")
+                        return False
+                else:
+                    print(f"Failed to check container status: {result.stderr}")
+                    
+            except subprocess.TimeoutExpired:
+                print(f"Container exec test timed out, container may still be starting")
+            except Exception as e:
+                print(f"Error checking container status: {e}")
+            
+            # Wait before next check
+            time.sleep(retry_interval)
+        
+        print(f"Timeout waiting for container {self.container_name} to be ready after {timeout_seconds}s")
+        return False
+    
     def is_container_running(self) -> bool:
         """Check if the container is actually running"""
         if not self.running_container_id:
@@ -333,22 +383,37 @@ class DockerfileEvaluator:
         if self.is_container_running():
             return True
             
-        print(f"Container {self.container_name} is not running, attempting to restart...")
+        print(f"Container {self.container_name} is not running, checking status...")
         
-        # Try to start the existing container first
+        # Check if container is in a restarting state
         try:
             result = subprocess.run(
-                ["docker", "start", self.container_name],
+                ["docker", "inspect", "-f", "{{.State.Status}}", self.container_name],
                 capture_output=True, text=True, check=False
             )
+            
             if result.returncode == 0:
-                print(f"Successfully restarted existing container: {self.container_name}")
-                return True
-        except Exception:
-            pass
+                status = result.stdout.strip().lower()
+                print(f"Container status: {status}")
+                
+                if status in ["restarting", "starting"]:
+                    print(f"Container is {status}, waiting for it to be ready...")
+                    return self.wait_for_container_ready()
+                elif status == "exited":
+                    print(f"Container has exited, attempting to restart...")
+                    # Try to start the existing container
+                    restart_result = subprocess.run(
+                        ["docker", "start", self.container_name],
+                        capture_output=True, text=True, check=False
+                    )
+                    if restart_result.returncode == 0:
+                        print(f"Container start command successful, waiting for ready state...")
+                        return self.wait_for_container_ready()
+        except Exception as e:
+            print(f"Error checking container status: {e}")
         
-        # If starting existing container failed, create a new one
-        print(f"Failed to restart existing container, creating new one...")
+        # If all else fails, create a new container
+        print(f"Could not restart existing container, creating new one...")
         
         # Clean up the old container
         try:
@@ -403,11 +468,18 @@ class DockerfileEvaluator:
             except Exception as e:
                 error_msg = str(e)
                 
-                # Check if this is a "container not running" error
-                if "is not running" in error_msg and attempt < max_retries - 1:
-                    print(f"Container stopped during command execution, attempting recovery (attempt {attempt + 1}/{max_retries})...")
+                # Check if this is a container issue that requires waiting/recovery
+                if any(phrase in error_msg.lower() for phrase in ["is not running", "is restarting", "wait until"]) and attempt < max_retries - 1:
+                    print(f"Container issue detected: {error_msg}")
+                    print(f"Attempting recovery (attempt {attempt + 1}/{max_retries})...")
+                    
                     if not self.ensure_container_running():
                         return False, "", "Could not recover container after failure"
+                    
+                    # Additional wait to ensure container is fully ready
+                    if not self.wait_for_container_ready(120):  # Shorter timeout for retries
+                        return False, "", "Container not ready after recovery attempt"
+                    
                     continue
                     
                 return False, "", error_msg
