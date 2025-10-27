@@ -252,10 +252,15 @@ class DockerfileEvaluator:
     def start_container(self) -> bool:
         """Start a persistent container for running tests"""
         try:
+            # Clean up any existing container with the same name first
+            subprocess.run(["docker", "rm", "-f", self.container_name], 
+                         capture_output=True, check=False)
+            
             cmd = [
                 "docker", "run", "-d",
                 "--label", f"uuid={self.container_name}",
                 "--name", self.container_name,
+                "--restart", "unless-stopped",  # Auto-restart if container stops unexpectedly
                 self.image_name,
                 "sleep", "infinity"  # Keep container running indefinitely
             ]
@@ -265,7 +270,13 @@ class DockerfileEvaluator:
             if result.returncode == 0:
                 self.running_container_id = result.stdout.strip()
                 print(f"Started persistent container: {self.container_name}")
-                return True
+                
+                # Verify container is actually running
+                if self.is_container_running():
+                    return True
+                else:
+                    print(f"Container started but not running properly")
+                    return False
             else:
                 print(f"Failed to start container: {result.stderr}")
                 return False
@@ -278,52 +289,130 @@ class DockerfileEvaluator:
         """Stop and remove the persistent container"""
         if self.running_container_id:
             try:
-                subprocess.run(["docker", "stop", self.container_name],
-                               capture_output=True, check=False)
-                # Use -v to remove any anonymous volumes attached to the container
-                subprocess.run(["docker", "rm", "-v", self.container_name],
-                               capture_output=True, check=False)
-                print(f"Stopped and removed persistent container (and anonymous volumes): {self.container_name}")
+                # First try to stop gracefully with timeout
+                stop_result = subprocess.run(["docker", "stop", "-t", "10", self.container_name],
+                                           capture_output=True, text=True, check=False)
+                
+                # Force kill if graceful stop failed
+                if stop_result.returncode != 0:
+                    print(f"Graceful stop failed, force killing container: {self.container_name}")
+                    subprocess.run(["docker", "kill", self.container_name],
+                                 capture_output=True, check=False)
+                
+                # Use -f to force remove and -v to remove any anonymous volumes attached to the container
+                rm_result = subprocess.run(["docker", "rm", "-f", "-v", self.container_name],
+                                         capture_output=True, text=True, check=False)
+                
+                if rm_result.returncode == 0:
+                    print(f"Stopped and removed persistent container (and anonymous volumes): {self.container_name}")
+                else:
+                    print(f"Warning: Failed to remove container {self.container_name}: {rm_result.stderr}")
+                    
                 self.running_container_id = None
             except Exception as e:
                 print(f"Warning: Could not stop container: {e}")
+                # Still clear the ID to prevent future attempts
+                self.running_container_id = None
     
-    def run_docker_command(self, command: str, timeout: int = -1):
-        """Run a command inside the persistent Docker container"""
+    def is_container_running(self) -> bool:
+        """Check if the container is actually running"""
         if not self.running_container_id:
-            return False, "", "No running container available"
+            return False
             
         try:
-            cmd = [
-                "docker", "exec",
-                self.container_name,
-                "sh", "-c", command
-            ]
+            result = subprocess.run(
+                ["docker", "inspect", "-f", "{{.State.Running}}", self.container_name],
+                capture_output=True, text=True, check=False
+            )
+            return result.returncode == 0 and result.stdout.strip().lower() == "true"
+        except Exception:
+            return False
+    
+    def ensure_container_running(self) -> bool:
+        """Ensure container is running, restart if necessary"""
+        if self.is_container_running():
+            return True
             
-            if timeout != -1:
-                result = subprocess.run(
-                    cmd,
-                    capture_output=True,
-                    text=True,
-                    encoding='utf-8',
-                    errors='replace',
-                    timeout=timeout
-                )
-            else:
-                result = subprocess.run(
-                    cmd,
-                    capture_output=True,
-                    text=True,
-                    encoding='utf-8',
-                    errors='replace'
-                )            
-            success = result.returncode == 0
-            return success, result.stdout, result.stderr
+        print(f"Container {self.container_name} is not running, attempting to restart...")
+        
+        # Try to start the existing container first
+        try:
+            result = subprocess.run(
+                ["docker", "start", self.container_name],
+                capture_output=True, text=True, check=False
+            )
+            if result.returncode == 0:
+                print(f"Successfully restarted existing container: {self.container_name}")
+                return True
+        except Exception:
+            pass
+        
+        # If starting existing container failed, create a new one
+        print(f"Failed to restart existing container, creating new one...")
+        
+        # Clean up the old container
+        try:
+            subprocess.run(["docker", "rm", "-f", self.container_name], 
+                         capture_output=True, check=False)
+        except Exception:
+            pass
             
-        except subprocess.TimeoutExpired:
-            return False, "", f"Command timed out ({timeout}s)"
-        except Exception as e:
-            return False, "", str(e)
+        # Start a new container
+        return self.start_container()
+    
+    def run_docker_command(self, command: str, timeout: int = -1):
+        """Run a command inside the persistent Docker container with automatic recovery"""
+        if not self.running_container_id:
+            return False, "", "No running container available"
+        
+        # Ensure container is running before executing command
+        if not self.ensure_container_running():
+            return False, "", "Could not ensure container is running"
+            
+        max_retries = 2
+        for attempt in range(max_retries):
+            try:
+                cmd = [
+                    "docker", "exec",
+                    self.container_name,
+                    "sh", "-c", command
+                ]
+                
+                if timeout != -1:
+                    result = subprocess.run(
+                        cmd,
+                        capture_output=True,
+                        text=True,
+                        encoding='utf-8',
+                        errors='replace',
+                        timeout=timeout
+                    )
+                else:
+                    result = subprocess.run(
+                        cmd,
+                        capture_output=True,
+                        text=True,
+                        encoding='utf-8',
+                        errors='replace'
+                    )            
+                success = result.returncode == 0
+                return success, result.stdout, result.stderr
+                
+            except subprocess.TimeoutExpired:
+                return False, "", f"Command timed out ({timeout}s)"
+            except Exception as e:
+                error_msg = str(e)
+                
+                # Check if this is a "container not running" error
+                if "is not running" in error_msg and attempt < max_retries - 1:
+                    print(f"Container stopped during command execution, attempting recovery (attempt {attempt + 1}/{max_retries})...")
+                    if not self.ensure_container_running():
+                        return False, "", "Could not recover container after failure"
+                    continue
+                    
+                return False, "", error_msg
+                
+        return False, "", "Failed after all retry attempts"
     
     def test_commands_exist(self, test: Dict[str, Any]) -> TestResult:
         """Test if commands exist in the container with proportional scoring"""
@@ -633,19 +722,35 @@ class DockerfileEvaluator:
             if self.running_container_id:
                 self.stop_container()
 
-            # 2. Clean up any leftover containers from previous runs using label filter
+            # 2. Clean up any leftover containers from previous runs using multiple filters
+            # First try by label
             result = subprocess.run(
                 ["docker", "ps", "-a", "--filter", f"label={label_key}={label_value}", "--format", "{{.ID}}"],
                 capture_output=True, text=True, check=False
             )
+            container_ids_by_label = set()
             if result.returncode == 0 and result.stdout.strip():
-                container_ids = [c.strip() for c in result.stdout.strip().splitlines() if c.strip()]
-                for cid in container_ids:
+                container_ids_by_label = set(c.strip() for c in result.stdout.strip().splitlines() if c.strip())
+            
+            # Also try by name pattern as fallback
+            result = subprocess.run(
+                ["docker", "ps", "-a", "--filter", f"name={self.container_name}", "--format", "{{.ID}}"],
+                capture_output=True, text=True, check=False
+            )
+            container_ids_by_name = set()
+            if result.returncode == 0 and result.stdout.strip():
+                container_ids_by_name = set(c.strip() for c in result.stdout.strip().splitlines() if c.strip())
+            
+            # Combine both sets
+            all_container_ids = container_ids_by_label | container_ids_by_name
+            
+            if all_container_ids:
+                for cid in all_container_ids:
                     # Validate that this looks like a Docker container ID (12+ hex chars)
                     if len(cid) >= 12 and all(c in '0123456789abcdef' for c in cid.lower()):
-                        # Stop (ignore errors) and remove with -v to clear anonymous volumes
-                        subprocess.run(["docker", "stop", cid], capture_output=True, check=False)
-                        rm_result = subprocess.run(["docker", "rm", "-v", cid], capture_output=True, check=False)
+                        # Stop with timeout (ignore errors) and remove with -f -v to clear anonymous volumes
+                        subprocess.run(["docker", "stop", "-t", "5", cid], capture_output=True, check=False)
+                        rm_result = subprocess.run(["docker", "rm", "-f", "-v", cid], capture_output=True, check=False)
                         if rm_result.returncode == 0:
                             print(f"  - Cleaned up leftover container: {cid}")
                         else:
@@ -739,11 +844,19 @@ class DockerfileEvaluator:
         max_score = sum(test.get('score', 1) for test in self.tests)
         total_time = sum(r.execution_time for r in self.results)
         
+        # Add container health information for debugging
+        container_health = {
+            "final_container_running": self.is_container_running(),
+            "container_id": self.running_container_id,
+            "container_name": self.container_name
+        }
+        
         report = {
             "repo": self.repo_name,
             "dockerfile": str(self.dockerfile_path),
             "rubric": str(self.rubric_path),
             "build_log": self.build_log,  # Include detailed build information
+            "container_health": container_health,  # Add container health info
             "summary": {
                 "total_tests": total_tests,
                 "passed_tests": passed_tests,
