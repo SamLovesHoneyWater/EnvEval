@@ -910,6 +910,50 @@ def create_combined_error_visualization(model_stats: Dict[str, Any], output_dir:
     plt.close()
 
 
+def collect_zero_scored_evals(repos: List[str], reports_base_dir: str = "reports-by-repo", 
+                             output_dir: Path = None) -> None:
+    """
+    Collect and save information about evaluations that scored zero.
+    
+    Args:
+        repos: List of repository names
+        reports_base_dir: Base directory for reports
+        output_dir: Output directory to save the zero_scored_evals.txt file
+    """
+    zero_scored_evals = []
+    
+    for repo in repos:
+        # Find model reports for this repo
+        model_reports = find_model_reports(repo, reports_base_dir)
+        
+        for model_name, report_path in model_reports:
+            try:
+                with open(report_path, 'r') as f:
+                    report = json.load(f)
+                
+                # Check summary total score
+                summary = report.get('summary', {})
+                total_score = summary.get('total_score', 0)
+                
+                if total_score == 0:
+                    zero_scored_evals.append(f"{model_name} {repo}")
+                    
+            except Exception as e:
+                print(f"Warning: Could not process report {report_path}: {e}")
+                continue
+    
+    # Save zero-scored evaluations to file
+    if output_dir:
+        zero_scored_file = output_dir / "zero_scored_evals.txt"
+        with open(zero_scored_file, 'w') as f:
+            for eval_entry in zero_scored_evals:
+                f.write(f"{eval_entry}\n")
+        
+        print(f"  Found {len(zero_scored_evals)} zero-scored evaluations")
+        if zero_scored_evals:
+            print(f"  Saved to: {zero_scored_file}")
+
+
 def generate_summary_report(model_stats: Dict[str, Any], repos: List[str], 
                            output_dir: Path) -> None:
     """
@@ -1042,6 +1086,10 @@ Examples:
     print("  Creating detailed test comparisons...")
     create_detailed_test_comparison(model_stats, args.repos, args.reports_dir, args.rubrics_dir, output_dir)
 
+    # 9. Collect zero-scored evaluations
+    print("  Collecting zero-scored evaluations...")
+    collect_zero_scored_evals(args.repos, args.reports_dir, output_dir)
+
     # Generate summary report
     print("  Creating summary report...")
     generate_summary_report(model_stats, args.repos, output_dir)
@@ -1053,6 +1101,7 @@ Examples:
     print(f"  - ours_vs_baseline_comparison.png")
     print(f"  - repo_composition_comparison.png")
     print(f"  - summary_report.json")
+    print(f"  - zero_scored_evals.txt")
     print(f"  - For each model: {output_dir}/[model_name]/")
     print(f"    - category_performance.png")
     print(f"    - comprehensive_performance.png")
