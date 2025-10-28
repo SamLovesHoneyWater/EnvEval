@@ -176,6 +176,7 @@ class DockerfileEvaluator:
             cmd = [
                 "docker", "build", 
                 "--no-cache",
+                "--network", "host",
                 "--label", f"uuid={self.container_name}",
                 "-t", self.image_name,
                 "-f", dockerfile_to_use,
