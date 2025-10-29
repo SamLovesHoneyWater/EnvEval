@@ -120,8 +120,7 @@ The rubric file should follow this structure:
       },
       "timeout": 30,
       "score": 2,
-      "category": "configuration",
-      "requires": ["dependency_test_id"]
+      "category": "configuration"
     }
   ]
 }
@@ -243,8 +242,7 @@ Tests can depend on other tests using the `requires` field:
     "command": "java -version",
     "contains": ["11"]
   },
-  "category": "configuration",
-  "requires": ["check_java"]
+  "category": "configuration"
 }
 ```
 

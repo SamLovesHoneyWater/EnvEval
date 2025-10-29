@@ -55,9 +55,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -68,9 +65,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -81,9 +75,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -94,9 +85,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -107,9 +95,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -120,9 +105,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -133,9 +115,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -146,9 +125,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -159,9 +135,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -172,9 +145,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -185,9 +155,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -198,9 +165,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -211,9 +175,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -224,9 +185,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -237,9 +195,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -250,9 +205,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -263,9 +215,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -276,9 +225,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -289,9 +235,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "configuration"
     },
     {
@@ -303,7 +246,7 @@
           "Baleen"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -332,9 +275,6 @@
         ]
       },
       "score": 3,
-      "requires": [
-        "check_bcachesim_dir"
-      ],
       "category": "structure"
     },
     {
@@ -357,9 +297,6 @@
         ]
       },
       "score": 2,
-      "requires": [
-        "check_bcachesim_dir"
-      ],
       "category": "structure"
     },
     {
@@ -370,9 +307,6 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": [
-        "check_bcachesim_run_script"
-      ],
       "category": "functionality"
     },
     {
@@ -394,9 +328,6 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": [
-        "check_data_scripts"
-      ],
       "category": "functionality"
     },
     {
@@ -429,7 +360,7 @@
           "getting-started.sh"
         ]
       },
-      "score": 2,
+      "score": 1,
       "category": "structure"
     },
     {
@@ -440,9 +371,6 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": [
-        "check_getting_started"
-      ],
       "category": "functionality"
     },
     {
@@ -453,9 +381,6 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": [
-        "check_system_tools"
-      ],
       "category": "functionality"
     },
     {
@@ -466,9 +391,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_bcachesim_structure"
-      ],
       "category": "configuration"
     },
     {
@@ -479,9 +401,6 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": [
-        "check_bcachesim_structure"
-      ],
       "category": "configuration"
     },
     {
@@ -539,9 +458,6 @@
         ]
       },
       "score": 2,
-      "requires": [
-        "check_data_scripts"
-      ],
       "category": "structure"
     },
     {
@@ -554,9 +470,6 @@
         ]
       },
       "score": 4,
-      "requires": [
-        "check_trace_files_downloaded"
-      ],
       "category": "structure"
     },
     {
@@ -567,10 +480,6 @@
       },
       "timeout": 400,
       "score": 5,
-      "requires": [
-        "check_bcachesim_run_script",
-        "check_bcachesim_structure"
-      ],
       "category": "functionality"
     },
     {
@@ -581,10 +490,6 @@
       },
       "timeout": 100,
       "score": 5,
-      "requires": [
-        "check_bcachesim_run_script",
-        "check_bcachesim_structure"
-      ],
       "category": "functionality"
     }
   ]
