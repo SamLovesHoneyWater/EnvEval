@@ -17,14 +17,20 @@ SOPHIA_BASE_URL = "https://inference-api.alcf.anl.gov/resource_server/sophia/vll
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_BASE_URL = "https://api.openai.com/v1"
 
-def build_model(model_name: str, use_openai: bool = False):
-    if use_openai:
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+ANTHROPIC_BASE_URL = "https://api.anthropic.com/v1/"
+
+def build_model(model_name: str, provider: str = "anl"):
+    if provider == "openai":
         token = OPENAI_API_KEY
-        print(token[:20])
+        print(token[:5])
         base_url = OPENAI_BASE_URL
-    else:
+    elif provider == "anl":
         token = SOPHIA_TOKEN
         base_url = SOPHIA_BASE_URL
+    elif provider == "anthropic":
+        token = ANTHROPIC_API_KEY
+        base_url = ANTHROPIC_BASE_URL
 
     return ChatOpenAI(
         model=model_name,
@@ -197,9 +203,10 @@ def run_agent_step(
     return None, new_scratchpad_json
 
 def main():
-    model = build_model("openai/gpt-oss-120b")
+    #model = build_model("openai/gpt-oss-120b")
     #model  = build_model("meta-llama/Meta-Llama-3.1-70B-Instruct")
     #model = build_model("gpt-5-nano", use_openai=True)
+    model = build_model("claude-sonnet-4-5", provider="anthropic")
     print("Model loaded!")
     
     # Initialize conversation history
@@ -222,7 +229,8 @@ def main():
     
     repo_name = "Baleen"
     example_name = "Fairify"
-    rubric_path = "rubrics/generated-oct20"
+    output_rubric_path = "rubrics/generated-claude"
+    golden_rubric_path = "rubrics/manual"
 
     if loaded:
         user_input = "[SYSTEM] Continue previous conversation."
@@ -230,12 +238,16 @@ def main():
         user_input = f"""
 Your task is to create a json rubric for evaluating a Dockerfile's ability to set up an environment for a repository.
 Look at how a rubric is composed in the readme and understand its purpose.
-Then produce a rubric for repo '{repo_name}' and write it at {rubric_path}/{repo_name}.json, referring to:
+Then produce a rubric for repo '{repo_name}' and write it at {output_rubric_path}/{repo_name}.json, referring to:
 1. The readme and relevant information about the target repo cloned at data/{repo_name}/.
 2. The reference rubric (machine generated and potentially inaccurate) rubrics/deprecated/{repo_name}_refer_to.sh.
-In the process, refer to how the {rubric_path}/{example_name} rubric is constructed based on:
+In the process, refer to how the {golden_rubric_path}/{example_name} rubric is constructed based on:
 1. The example repo at data/{example_name}/.
 2. rubrics/deprecated/{example_name}_refer_to.sh script.
+
+Additionally, follow those rules:
+1. Evaluations that test file structure should make up LESS than 1/4 the weighted score
+2. Check the README of the target repo and other relevant files to understand how the repo is supposed to be run. Test for functionality by seeing if the runs can indeed succeed. Look closely for sections like testing, verifying setup, running the project, etc.
 
 Make sure to follow the rubric structure as shown in the readme, and cover the key aspects as demonstrated in the {example_name} example.
     """
