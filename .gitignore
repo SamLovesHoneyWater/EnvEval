@@ -176,3 +176,6 @@ benchmark/reports-by-model/*
 benchmark/reports-by-repo/*
 benchmark/rubrics/deprecated/*.sh
 benchmark/overview-stats*
+
+# EnvEval experimental agent
+agent/conversations/*.txt
