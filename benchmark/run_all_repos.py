@@ -143,6 +143,8 @@ def main():
                        help='How often to check for completion in seconds (default: 30)')
     parser.add_argument('--skip-docker-cleanup', action='store_true',
                        help='Skip Docker system cleanup between batches')
+    parser.add_argument('--rubric-dir', type=str, default='rubrics/manual',
+                       help='Directory containing rubric JSON files (default: rubrics/manual)')
     
     args = parser.parse_args()
     
@@ -154,10 +156,11 @@ def main():
     print(f"🚀 Starting batched evaluation with session code: {session_code}")
     print(f"📦 Batch size: {args.batch_size} repositories at a time")
     print(f"⏱️  Check interval: {args.check_interval}s")
+    print(f"📁 Rubric directory: {args.rubric_dir}")
     print()
     
     # Directory containing the rubric JSON files
-    rubric_dir = "rubrics/manual"
+    rubric_dir = args.rubric_dir
     
     # Check if rubric directory exists
     if not os.path.exists(rubric_dir):
