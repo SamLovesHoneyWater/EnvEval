@@ -1,0 +1,308 @@
+{
+  "repo": "grpc_grpc-go",
+  "tests": [
+    {
+      "id": "check_go",
+      "type": "commands_exist",
+      "params": { "commands": ["go"] },
+      "score": 10,
+      "category": "configuration"
+    },
+    {
+      "id": "check_protoc",
+      "type": "commands_exist",
+      "params": { "commands": ["protoc"] },
+      "score": 7,
+      "category": "configuration"
+    },
+    {
+      "id": "check_make",
+      "type": "commands_exist",
+      "params": { "commands": ["make"] },
+      "score": 4,
+      "category": "configuration"
+    },
+    {
+      "id": "check_git",
+      "type": "commands_exist",
+      "params": { "commands": ["git"] },
+      "score": 4,
+      "category": "configuration"
+    },
+    {
+      "id": "check_compilers",
+      "type": "commands_exist",
+      "params": { "commands": ["gcc", "g++"] },
+      "score": 3,
+      "category": "configuration"
+    },
+    {
+      "id": "check_curl",
+      "type": "commands_exist",
+      "params": { "commands": ["curl"] },
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "check_wget",
+      "type": "commands_exist",
+      "params": { "commands": ["wget"] },
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "check_go_version",
+      "type": "run_command",
+      "params": { "command": "go version" },
+      "timeout": 10,
+      "score": 5,
+      "category": "configuration"
+    },
+    {
+      "id": "check_protoc_version",
+      "type": "run_command",
+      "params": { "command": "protoc --version" },
+      "timeout": 10,
+      "score": 4,
+      "category": "configuration"
+    },
+    {
+      "id": "check_go_std_list",
+      "type": "run_command",
+      "params": { "command": "go list std >/dev/null" },
+      "timeout": 10,
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "env_GOROOT",
+      "type": "envvar_set",
+      "params": { "var": "GOROOT" },
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "env_GOPATH",
+      "type": "envvar_set",
+      "params": { "var": "GOPATH" },
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "env_GO111MODULE",
+      "type": "envvar_set",
+      "params": { "var": "GO111MODULE" },
+      "score": 1,
+      "category": "configuration"
+    },
+    {
+      "id": "check_protoc_gen_go",
+      "type": "run_command",
+      "params": { "command": "protoc-gen-go --version" },
+      "timeout": 10,
+      "score": 5,
+      "category": "configuration"
+    },
+    {
+      "id": "check_protoc_gen_go_grpc",
+      "type": "run_command",
+      "params": { "command": "protoc-gen-go-grpc --version" },
+      "timeout": 10,
+      "score": 5,
+      "category": "configuration"
+    },
+    {
+      "id": "check_go_version_requirement",
+      "type": "output_contains",
+      "params": { 
+        "command": "go version",
+        "contains": ["go1.19", "go1.20", "go1.21", "go1.22", "go1.23", "go1.24"]
+      },
+      "timeout": 10,
+      "score": 3,
+      "category": "configuration"
+    },
+    {
+      "id": "check_pkg_config",
+      "type": "commands_exist",
+      "params": { "commands": ["pkg-config"] },
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "check_bash",
+      "type": "commands_exist",
+      "params": { "commands": ["bash"] },
+      "score": 2,
+      "category": "configuration"
+    },
+    {
+      "id": "check_unzip",
+      "type": "commands_exist",
+      "params": { "commands": ["unzip"] },
+      "score": 1,
+      "category": "configuration"
+    },
+
+    {
+      "id": "build_examples_helloworld",
+      "type": "run_command",
+      "params": { "command": "[ -d examples/helloworld ] && cd examples/helloworld && go build ./..." },
+      "timeout": 60,
+      "score": 12,
+      "category": "functionality"
+    },
+    {
+      "id": "build_examples_route_guide",
+      "type": "run_command",
+      "params": { "command": "[ -d examples/route_guide ] && cd examples/route_guide && go build ./..." },
+      "timeout": 60,
+      "score": 8,
+      "category": "functionality"
+    },
+    {
+      "id": "regenerate_protos_script",
+      "type": "run_command",
+      "params": { "command": "[ -f scripts/regenerate.sh ] && (bash scripts/regenerate.sh --help || ./scripts/regenerate.sh --help)" },
+      "timeout": 20,
+      "score": 5,
+      "category": "functionality"
+    },
+    {
+      "id": "run_go_tests",
+      "type": "run_command",
+      "params": { "command": "go test ./..." },
+      "timeout": 120,
+      "score": 10,
+      "category": "functionality"
+    },
+    {
+      "id": "build_examples_features",
+      "type": "run_command",
+      "params": { "command": "[ -d examples/features ] && cd examples/features && go build ./..." },
+      "timeout": 60,
+      "score": 6,
+      "category": "functionality"
+    },
+    {
+      "id": "build_benchmark",
+      "type": "run_command",
+      "params": { "command": "[ -d benchmark ] && cd benchmark && go build ./..." },
+      "timeout": 60,
+      "score": 5,
+      "category": "functionality"
+    },
+    {
+      "id": "run_make_test",
+      "type": "run_command",
+      "params": { "command": "make test" },
+      "timeout": 180,
+      "score": 8,
+      "category": "functionality"
+    },
+    {
+      "id": "run_make_vet",
+      "type": "run_command",
+      "params": { "command": "make vet" },
+      "timeout": 60,
+      "score": 4,
+      "category": "functionality"
+    },
+    {
+      "id": "check_go_mod_tidy",
+      "type": "run_command",
+      "params": { "command": "go mod tidy && git diff --exit-code go.mod go.sum" },
+      "timeout": 30,
+      "score": 3,
+      "category": "functionality"
+    },
+    {
+      "id": "protoc_compile_test",
+      "type": "run_command",
+      "params": { "command": "[ -f examples/helloworld/helloworld/helloworld.proto ] && protoc --go_out=. --go-grpc_out=. examples/helloworld/helloworld/helloworld.proto" },
+      "timeout": 30,
+      "score": 6,
+      "category": "functionality"
+    },
+    {
+      "id": "run_helloworld_server_test",
+      "type": "run_command",
+      "params": { "command": "[ -d examples/helloworld ] && cd examples/helloworld && timeout 5s go run greeter_server/main.go || [ $? -eq 124 ]" },
+      "timeout": 15,
+      "score": 5,
+      "category": "functionality"
+    },
+    {
+      "id": "regenerate_protos_dry_run",
+      "type": "run_command",
+      "params": { "command": "[ -f scripts/regenerate.sh ] && bash scripts/regenerate.sh --dry-run" },
+      "timeout": 30,
+      "score": 3,
+      "category": "functionality"
+    },
+
+    {
+      "id": "files_exist_core",
+      "type": "files_exist",
+      "params": { "files": ["README.md", "go.mod", "go.sum", "Makefile", "LICENSE"] },
+      "score": 8,
+      "category": "structure"
+    },
+    {
+      "id": "dirs_exist_main",
+      "type": "dirs_exist",
+      "params": { "dirs": ["examples", "benchmark", "scripts", "internal", "cmd", "test", "testdata"] },
+      "score": 7,
+      "category": "structure"
+    },
+    {
+      "id": "readme_contains_usage",
+      "type": "file_contains",
+      "params": { "file": "README.md", "contains": ["example", "Usage", "examples", "gRPC"] },
+      "score": 5,
+      "category": "structure"
+    },
+    {
+      "id": "dirs_exist_examples_subdirs",
+      "type": "dirs_exist",
+      "params": { "dirs": ["examples/helloworld", "examples/route_guide", "examples/features"] },
+      "score": 4,
+      "category": "structure"
+    },
+    {
+      "id": "files_exist_makefile_targets",
+      "type": "file_contains",
+      "params": { "file": "Makefile", "contains": ["test:", "vet:", "fmt:"] },
+      "score": 3,
+      "category": "structure"
+    },
+    {
+      "id": "files_exist_proto_files",
+      "type": "files_exist",
+      "params": { "files": ["examples/helloworld/helloworld/helloworld.proto", "examples/route_guide/routeguide/route_guide.proto"] },
+      "score": 3,
+      "category": "structure"
+    },
+    {
+      "id": "go_mod_contains_grpc",
+      "type": "file_contains",
+      "params": { "file": "go.mod", "contains": ["google.golang.org/grpc", "google.golang.org/protobuf"] },
+      "score": 2,
+      "category": "structure"
+    },
+    {
+      "id": "dirs_exist_internal",
+      "type": "dirs_exist",
+      "params": { "dirs": ["internal/grpcutil", "internal/transport"] },
+      "score": 2,
+      "category": "structure"
+    },
+    {
+      "id": "files_exist_scripts",
+      "type": "files_exist",
+      "params": { "files": ["scripts/regenerate.sh"] },
+      "score": 1,
+      "category": "structure"
+    }
+  ]
+}
