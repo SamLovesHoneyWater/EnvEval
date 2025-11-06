@@ -7,7 +7,8 @@
       "params": {
         "names": ["python3", "pip3", "git", "bash", "curl"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_python_version",
@@ -18,7 +19,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_python_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_conda",
@@ -26,7 +27,8 @@
       "params": {
         "names": ["conda"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_r",
@@ -34,7 +36,8 @@
       "params": {
         "names": ["R", "Rscript"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_build_tools_optional",
@@ -42,7 +45,8 @@
       "params": {
         "names": ["gcc", "make", "wget"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_basic_files",
@@ -54,7 +58,8 @@
           ".gitignore"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_tool_directories",
@@ -66,7 +71,8 @@
           "tool/scripts"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_tool_files",
@@ -85,7 +91,8 @@
           "tool/scripts/get_setup_extras.py"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_conda_env",
@@ -93,7 +100,8 @@
       "params": {
         "name": "CONDA_DEFAULT_ENV"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_pythonpath",
@@ -101,7 +109,8 @@
       "params": {
         "name": "PYTHONPATH"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_virtual_env",
@@ -109,7 +118,8 @@
       "params": {
         "name": "VIRTUAL_ENV"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_r_home",
@@ -117,7 +127,8 @@
       "params": {
         "name": "R_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_python_in_path",
@@ -127,7 +138,8 @@
         "contains": ["python"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_conda_in_path",
@@ -137,7 +149,8 @@
         "contains": ["conda"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_pip_install",
@@ -146,7 +159,8 @@
         "command": "pip3 install -r requirements.txt"
       },
       "timeout": 300,
-      "score": 3
+      "score": 3,
+      "category": "functionality"
     },
     {
       "id": "test_python_execution",
@@ -155,7 +169,8 @@
         "command": "python3 -c \"print('Hello from Python3')\""
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python_import_system",
@@ -164,7 +179,8 @@
         "command": "python3 -c \"import sys; print('Python path:', sys.path[0])\""
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_pip_version",
@@ -173,7 +189,8 @@
         "command": "pip3 --version || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_pip_list",
@@ -182,7 +199,8 @@
         "command": "pip3 list || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_conda_info",
@@ -192,7 +210,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_conda"]
+      "category": "configuration"
     },
     {
       "id": "test_conda_env_list",
@@ -202,7 +220,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_conda"]
+      "category": "configuration"
     },
     {
       "id": "test_r_version",
@@ -212,7 +230,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_r"]
+      "category": "configuration"
     },
     {
       "id": "test_rscript_execution",
@@ -222,7 +240,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_r"]
+      "category": "configuration"
     },
     {
       "id": "test_python_dependencies",
@@ -232,7 +250,7 @@
       },
       "timeout": 60,
       "score": 3,
-      "requires": ["test_pip_install"]
+      "category": "functionality"
     },
     {
       "id": "test_numpy",
@@ -242,7 +260,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_pip_install"]
+      "category": "configuration"
     },
     {
       "id": "test_scipy",
@@ -252,7 +270,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_pip_install"]
+      "category": "configuration"
     },
     {
       "id": "test_pandas",
@@ -262,7 +280,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_pip_install"]
+      "category": "configuration"
     },
     {
       "id": "test_r_eva_package",
@@ -272,7 +290,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_r"]
+      "category": "configuration"
     },
     {
       "id": "test_venv_module",
@@ -281,7 +299,8 @@
         "command": "python3 -c \"import venv; print('venv module available')\" || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_python_files",
@@ -290,7 +309,8 @@
         "command": "[ -d \"tool\" ] && find tool -name '*.py' | head -1"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_flex_scripts_executable",
@@ -299,7 +319,8 @@
         "command": "[ -f \"tool/scripts/general_setup.sh\" ] && chmod +x tool/scripts/general_setup.sh 2>/dev/null && [ -x \"tool/scripts/general_setup.sh\" ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_boundschecker_import",
@@ -308,7 +329,8 @@
         "command": "python3 -c \"import sys; sys.path.append('tool'); exec(open('tool/boundschecker.py').read()) \" 2>&1 | head -5 || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_config_module",
@@ -317,7 +339,8 @@
         "command": "python3 -c \"import sys; sys.path.append('tool/src'); import Config; print('Config module imported')\" || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_testdriver_module",
@@ -326,7 +349,8 @@
         "command": "python3 -c \"import sys; sys.path.append('tool/src'); import TestDriver; print('TestDriver module imported')\" || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_testinstrumentor_module",
@@ -335,7 +359,8 @@
         "command": "python3 -c \"import sys; sys.path.append('tool/src'); import TestInstrumentor; print('TestInstrumentor module imported')\" || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_util_module",
@@ -344,7 +369,8 @@
         "command": "python3 -c \"import sys; sys.path.append('tool/src'); import Util; print('Util module imported')\" || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "check_newbugs_csv",
@@ -353,7 +379,8 @@
         "command": "[ -f \"tool/newbugs.csv\" ] && [ -r \"tool/newbugs.csv\" ] && [ -s \"tool/newbugs.csv\" ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     }
   ]
 }

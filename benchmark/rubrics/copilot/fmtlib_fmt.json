@@ -7,7 +7,8 @@
       "params": {
         "names": ["gcc", "g++", "cmake", "make", "git", "bash", "curl"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_cmake_version",
@@ -18,7 +19,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_gcc_version",
@@ -28,7 +29,8 @@
         "contains": ["gcc"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_gpp_version",
@@ -38,7 +40,8 @@
         "contains": ["g++"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_clang",
@@ -46,7 +49,8 @@
       "params": {
         "names": ["clang", "clang++"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_ninja",
@@ -54,7 +58,8 @@
       "params": {
         "names": ["ninja"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_python3",
@@ -62,7 +67,8 @@
       "params": {
         "names": ["python3"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_doxygen",
@@ -70,7 +76,8 @@
       "params": {
         "names": ["doxygen"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_valgrind",
@@ -78,7 +85,8 @@
       "params": {
         "names": ["valgrind"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_bazel",
@@ -86,7 +94,8 @@
       "params": {
         "names": ["bazel"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_wget",
@@ -94,7 +103,8 @@
       "params": {
         "names": ["wget"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_project_files",
@@ -109,7 +119,8 @@
           "CONTRIBUTING.md"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_project_directories",
@@ -124,7 +135,8 @@
           "support"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_fmt_header_files",
@@ -143,7 +155,8 @@
           "include/fmt/std.h"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_fmt_source_files",
@@ -155,7 +168,8 @@
           "src/os.cc"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_test_files",
@@ -170,7 +184,8 @@
           "test/CMakeLists.txt"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_support_files",
@@ -183,7 +198,8 @@
           "doc/index.rst"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_cc_env",
@@ -191,7 +207,8 @@
       "params": {
         "name": "CC"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cxx_env",
@@ -199,7 +216,8 @@
       "params": {
         "name": "CXX"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cflags_env",
@@ -207,7 +225,8 @@
       "params": {
         "name": "CFLAGS"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cxxflags_env",
@@ -215,7 +234,8 @@
       "params": {
         "name": "CXXFLAGS"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_ldflags_env",
@@ -223,7 +243,8 @@
       "params": {
         "name": "LDFLAGS"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_gcc_in_path",
@@ -233,7 +254,8 @@
         "contains": ["gcc"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_cmake_in_path",
@@ -243,7 +265,8 @@
         "contains": ["cmake"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_c_compilation",
@@ -252,7 +275,8 @@
         "command": "echo '#include <stdio.h>\nint main() { printf(\"Hello from C\\n\"); return 0; }' > test.c && gcc -o test_c test.c 2>/dev/null && ./test_c && rm -f test_c test.c || rm -f test.c"
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_cpp_compilation",
@@ -261,7 +285,8 @@
         "command": "echo '#include <iostream>\nint main() { std::cout << \"Hello from C++\" << std::endl; return 0; }' > test.cpp && g++ -o test_cpp test.cpp 2>/dev/null && ./test_cpp && rm -f test_cpp test.cpp || rm -f test.cpp"
       },
       "timeout": 30,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_clang_c_compilation",
@@ -271,7 +296,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_clang"]
+      "category": "functionality"
     },
     {
       "id": "test_clang_cpp_compilation",
@@ -281,7 +306,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_clang"]
+      "category": "functionality"
     },
     {
       "id": "test_fmt_core_compilation",
@@ -290,7 +315,8 @@
         "command": "g++ -std=c++11 -I. -I include -c include/fmt/core.h -o /tmp/test.o 2>&1 | head -5 || true"
       },
       "timeout": 60,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_cmake_version_command",
@@ -299,7 +325,8 @@
         "command": "cmake --version || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_cmake_help",
@@ -308,7 +335,8 @@
         "command": "cmake --help || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_make_version",
@@ -317,7 +345,8 @@
         "command": "make --version || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_ninja_version",
@@ -327,7 +356,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_ninja"]
+      "category": "configuration"
     },
     {
       "id": "test_cmake_configure",
@@ -337,7 +366,7 @@
       },
       "timeout": 120,
       "score": 3,
-      "requires": ["check_cmake_version"]
+      "category": "functionality"
     },
     {
       "id": "test_cmake_build",
@@ -347,7 +376,7 @@
       },
       "timeout": 300,
       "score": 3,
-      "requires": ["test_cmake_configure"]
+      "category": "functionality"
     },
     {
       "id": "test_make_build",
@@ -357,7 +386,7 @@
       },
       "timeout": 300,
       "score": 2,
-      "requires": ["test_cmake_configure"]
+      "category": "functionality"
     },
     {
       "id": "test_ninja_build",
@@ -367,7 +396,7 @@
       },
       "timeout": 300,
       "score": 2,
-      "requires": ["check_ninja", "test_cmake_configure"]
+      "category": "functionality"
     },
     {
       "id": "test_fmt_basic_formatting",
@@ -376,7 +405,8 @@
         "command": "echo '#include \"include/fmt/core.h\"\nint main() { std::string s = fmt::format(\"The answer is {}.\", 42); fmt::print(\"{}\\n\", s); return 0; }' > test_fmt_features.cpp && g++ -std=c++11 -I. -o test_fmt_features test_fmt_features.cpp 2>/dev/null && ./test_fmt_features && rm -f test_fmt_features test_fmt_features.cpp || rm -f test_fmt_features.cpp"
       },
       "timeout": 60,
-      "score": 2
+      "score": 2,
+      "category": "functionality"
     },
     {
       "id": "test_python3_execution",
@@ -386,7 +416,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_python3"]
+      "category": "configuration"
     },
     {
       "id": "test_doxygen_version",
@@ -396,7 +426,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_doxygen"]
+      "category": "configuration"
     },
     {
       "id": "test_valgrind_version",
@@ -406,7 +436,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_valgrind"]
+      "category": "configuration"
     },
     {
       "id": "test_bazel_version",
@@ -416,7 +446,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_bazel"]
+      "category": "configuration"
     },
     {
       "id": "test_docopt_import",
@@ -426,7 +456,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_python3"]
+      "category": "functionality"
     }
   ]
 }
