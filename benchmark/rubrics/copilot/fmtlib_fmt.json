@@ -97,6 +97,7 @@
       "score": 1
     },
     {
+      "id": "check_project_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -111,6 +112,7 @@
       "score": 2
     },
     {
+      "id": "check_project_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -125,6 +127,7 @@
       "score": 2
     },
     {
+      "id": "check_fmt_header_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -143,6 +146,7 @@
       "score": 3
     },
     {
+      "id": "check_fmt_source_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -154,6 +158,7 @@
       "score": 2
     },
     {
+      "id": "check_test_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -168,6 +173,7 @@
       "score": 2
     },
     {
+      "id": "check_support_files",
       "type": "files_exist",
       "params": {
         "paths": [

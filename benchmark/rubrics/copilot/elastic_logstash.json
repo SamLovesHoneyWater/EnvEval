@@ -62,6 +62,7 @@
       "category": "configuration"
     },
     {
+      "id": "check_build_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -78,6 +79,7 @@
       "category": "structure"
     },
     {
+      "id": "check_project_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -123,6 +125,7 @@
       "category": "configuration"
     },
     {
+      "id": "check_bin_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -165,6 +168,7 @@
       "category": "functionality"
     },
     {
+      "id": "check_logstash_lib_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [

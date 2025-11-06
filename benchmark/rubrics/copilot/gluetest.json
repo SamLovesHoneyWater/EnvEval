@@ -94,6 +94,7 @@
       "score": 1
     },
     {
+      "id": "check_project_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -105,6 +106,7 @@
       "score": 1
     },
     {
+      "id": "check_project_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -123,6 +125,7 @@
       "score": 3
     },
     {
+      "id": "check_maven_pom_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -136,6 +139,7 @@
       "score": 2
     },
     {
+      "id": "check_script_files",
       "type": "files_exist",
       "params": {
         "paths": [

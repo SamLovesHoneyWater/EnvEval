@@ -60,6 +60,7 @@
       "category": "configuration"
     },
     {
+      "id": "check_go_mod_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -161,6 +162,7 @@
       "category": "structure"
     },
     {
+      "id": "check_project_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -183,6 +185,7 @@
       "category": "structure"
     },
     {
+      "id": "check_cmd_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -194,6 +197,7 @@
       "category": "structure"
     },
     {
+      "id": "check_cmd_main_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -265,6 +269,7 @@
       "category": "structure"
     },
     {
+      "id": "check_build_script_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -285,6 +290,7 @@
       "category": "functionality"
     },
     {
+      "id": "check_makefile",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -345,6 +351,7 @@
       "category": "structure"
     },
     {
+      "id": "check_test_integration_directory",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -355,6 +362,7 @@
       "category": "structure"
     },
     {
+      "id": "check_test_helper_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -375,6 +383,7 @@
       "category": "structure"
     },
     {
+      "id": "check_acceptance_test_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -385,6 +394,7 @@
       "category": "structure"
     },
     {
+      "id": "check_acceptance_testdata_directory",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -395,6 +405,7 @@
       "category": "structure"
     },
     {
+      "id": "check_readme_license_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -426,6 +437,7 @@
       "category": "structure"
     },
     {
+      "id": "check_config_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -439,6 +451,7 @@
       "category": "structure"
     },
     {
+      "id": "check_license_files",
       "type": "files_exist",
       "params": {
         "paths": [

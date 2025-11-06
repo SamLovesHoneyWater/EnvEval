@@ -45,6 +45,7 @@
       "score": 1
     },
     {
+      "id": "check_basic_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -56,6 +57,7 @@
       "score": 2
     },
     {
+      "id": "check_tool_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -67,6 +69,7 @@
       "score": 2
     },
     {
+      "id": "check_tool_files",
       "type": "files_exist",
       "params": {
         "paths": [

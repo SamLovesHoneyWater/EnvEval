@@ -41,6 +41,7 @@
       "category": "configuration"
     },
     {
+      "id": "check_package_json",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -51,6 +52,7 @@
       "category": "structure"
     },
     {
+      "id": "check_package_lock_json",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -71,6 +73,7 @@
       "category": "functionality"
     },
     {
+      "id": "check_project_directories",
       "type": "dirs_exist",
       "params": {
         "paths": [
@@ -83,6 +86,7 @@
       "category": "structure"
     },
     {
+      "id": "check_task_config_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -94,6 +98,7 @@
       "category": "structure"
     },
     {
+      "id": "check_readme_license_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -105,6 +110,7 @@
       "category": "structure"
     },
     {
+      "id": "check_typescript_config",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -115,6 +121,7 @@
       "category": "structure"
     },
     {
+      "id": "check_test_config_files",
       "type": "files_exist",
       "params": {
         "paths": [

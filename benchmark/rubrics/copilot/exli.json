@@ -98,6 +98,7 @@
       "category": "configuration"
     },
     {
+      "id": "check_project_files",
       "type": "files_exist",
       "params": {
         "paths": ["README.md", "REPRODUCE.md", "LICENSE", "Dockerfile"]
@@ -106,6 +107,7 @@
       "category": "structure"
     },
     {
+      "id": "check_project_directories",
       "type": "dirs_exist",
       "params": {
         "paths": ["python", "java", "jacoco-extension", "poms", "data", "jars"]
@@ -114,6 +116,7 @@
       "category": "structure"
     },
     {
+      "id": "check_setup_files",
       "type": "files_exist",
       "params": {
         "paths": [
@@ -126,6 +129,7 @@
       "category": "structure"
     },
     {
+      "id": "check_source_directories",
       "type": "dirs_exist",
       "params": {
         "paths": ["python/exli", "java/raninline"]
