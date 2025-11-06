@@ -7,7 +7,8 @@
       "params": {
         "names": ["java", "gradle", "jruby", "git", "bash", "curl", "wget", "unzip", "perl"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_java_version",
@@ -18,7 +19,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_gradle_version",
@@ -29,7 +30,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_jruby_version",
@@ -40,7 +41,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_java_home",
@@ -48,7 +49,8 @@
       "params": {
         "name": "JAVA_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_jruby_home",
@@ -56,7 +58,8 @@
       "params": {
         "name": "JRUBY_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "type": "files_exist",
@@ -71,7 +74,8 @@
           "LICENSE.txt"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
@@ -85,7 +89,8 @@
           "x-pack"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "id": "check_ruby_version",
@@ -94,7 +99,8 @@
         "path": ".ruby-version",
         "contains": ["jruby-9.2", "jruby-9.3", "jruby-9.4"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_jruby",
@@ -103,7 +109,8 @@
         "command": "jruby -v"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_jruby_gem",
@@ -113,7 +120,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_jruby"]
+      "category": "configuration"
     },
     {
       "type": "files_exist",
@@ -124,7 +131,8 @@
           "bin/rspec"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "test_gradle_build",
@@ -133,7 +141,8 @@
         "command": "./gradlew --version"
       },
       "timeout": 60,
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "test_gradle_tasks",
@@ -143,7 +152,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["test_gradle_build"]
+      "category": "functionality"
     },
     {
       "id": "test_bundle_install",
@@ -153,7 +162,7 @@
       },
       "timeout": 300,
       "score": 2,
-      "requires": ["test_jruby_gem"]
+      "category": "functionality"
     },
     {
       "type": "dirs_exist",
@@ -163,7 +172,8 @@
           "logstash-core/lib/logstash"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_build_java_home",
@@ -171,7 +181,8 @@
       "params": {
         "name": "BUILD_JAVA_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_gem_home",
@@ -179,7 +190,8 @@
       "params": {
         "name": "GEM_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_gradle_user_home",
@@ -187,7 +199,8 @@
       "params": {
         "name": "GRADLE_USER_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_jruby_bundler",
@@ -197,7 +210,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_jruby_gem"]
+      "category": "configuration"
     },
     {
       "id": "test_jruby_rake",
@@ -207,7 +220,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_jruby_gem"]
+      "category": "configuration"
     },
     {
       "id": "test_jruby_rspec",
@@ -217,7 +230,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_jruby_gem"]
+      "category": "configuration"
     },
     {
       "id": "test_rake_help",
@@ -227,7 +240,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_jruby_rake"]
+      "category": "functionality"
     },
     {
       "id": "test_rake_tasks",
@@ -237,7 +250,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["test_jruby_rake"]
+      "category": "functionality"
     },
     {
       "id": "test_rspec_dry_run",
@@ -247,7 +260,7 @@
       },
       "timeout": 60,
       "score": 1,
-      "requires": ["test_jruby_rspec"]
+      "category": "functionality"
     },
     {
       "id": "check_bin_executable",
@@ -256,7 +269,8 @@
         "command": "[ -x \"bin/logstash\" ] && [ -x \"bin/logstash-plugin\" ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     }
   ]
 }

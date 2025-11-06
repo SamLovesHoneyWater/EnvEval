@@ -7,7 +7,8 @@
       "params": {
         "names": ["node", "npm", "git", "bash", "curl"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_deno",
@@ -15,7 +16,8 @@
       "params": {
         "names": ["deno"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_node_version_major",
@@ -25,7 +27,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "check_node_version_output",
@@ -36,7 +38,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "type": "files_exist",
@@ -45,7 +47,8 @@
           "package.json"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -54,7 +57,8 @@
           "package-lock.json"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_npm_install",
@@ -64,7 +68,7 @@
       },
       "timeout": 300,
       "score": 3,
-      "requires": ["check_system_dependencies"]
+      "category": "functionality"
     },
     {
       "type": "dirs_exist",
@@ -75,7 +79,8 @@
           "tests"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -85,7 +90,8 @@
           "eslint.config.js"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -95,7 +101,8 @@
           "LICENSE"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -104,7 +111,8 @@
           "src/tsconfig.json"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -114,7 +122,8 @@
           "tests/inject/karma.conf.cjs"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_npm_build_all",
@@ -124,7 +133,7 @@
       },
       "timeout": 300,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "check_build_release_directory",
@@ -134,7 +143,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["test_npm_build_all"]
+      "category": "functionality"
     },
     {
       "id": "check_build_chrome_zip",
@@ -144,7 +153,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["test_npm_build_all"]
+      "category": "functionality"
     },
     {
       "id": "check_build_firefox_xpi",
@@ -154,7 +163,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["test_npm_build_all"]
+      "category": "functionality"
     },
     {
       "id": "test_npm_lint",
@@ -164,7 +173,7 @@
       },
       "timeout": 180,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "test_npm_test_unit",
@@ -174,7 +183,7 @@
       },
       "timeout": 300,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "test_npm_test_inject",
@@ -184,7 +193,7 @@
       },
       "timeout": 70,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "test_npm_version",
@@ -193,7 +202,8 @@
         "command": "npm --version"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_node_execution",
@@ -202,7 +212,8 @@
         "command": "node -e \"console.log('Node.js works')\""
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_node_modules_exists",
@@ -212,7 +223,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["test_npm_install"]
+      "category": "structure"
     }
   ]
 }

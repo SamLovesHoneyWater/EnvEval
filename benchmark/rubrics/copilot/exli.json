@@ -16,7 +16,8 @@
           "unzip"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_python_version",
@@ -27,7 +28,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_java_version",
@@ -38,7 +39,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_maven_version",
@@ -49,7 +50,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_build_tools"]
+      "category": "configuration"
     },
     {
       "id": "check_conda",
@@ -57,7 +58,8 @@
       "params": {
         "names": ["conda"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_pip",
@@ -65,7 +67,8 @@
       "params": {
         "names": ["pip3", "pip"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_firefox",
@@ -73,7 +76,8 @@
       "params": {
         "names": ["firefox"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_geckodriver",
@@ -81,7 +85,8 @@
       "params": {
         "names": ["geckodriver"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_build_tools_optional",
@@ -89,21 +94,24 @@
       "params": {
         "names": ["gcc", "make"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "type": "files_exist",
       "params": {
         "paths": ["README.md", "REPRODUCE.md", "LICENSE", "Dockerfile"]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
       "params": {
         "paths": ["python", "java", "jacoco-extension", "poms", "data", "jars"]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -114,14 +122,16 @@
           "java/install.sh"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
       "params": {
         "paths": ["python/exli", "java/raninline"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_conda_env",
@@ -129,7 +139,8 @@
       "params": {
         "name": "CONDA_DEFAULT_ENV"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_java_home",
@@ -137,7 +148,8 @@
       "params": {
         "name": "JAVA_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_maven_home",
@@ -145,7 +157,8 @@
       "params": {
         "name": "MAVEN_HOME"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_conda_in_path",
@@ -155,7 +168,8 @@
         "contains": ["conda"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_java_in_path",
@@ -165,7 +179,8 @@
         "contains": ["java"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python_execution",
@@ -174,7 +189,8 @@
         "command": "python3 -c \"print('Hello from Python')\""
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python_imports",
@@ -183,7 +199,8 @@
         "command": "python3 -c \"import sys; sys.exit(0)\""
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_pip_list",
@@ -192,7 +209,8 @@
         "command": "pip3 list || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_conda_info",
@@ -201,7 +219,8 @@
         "command": "conda info || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_conda_env_list",
@@ -210,7 +229,8 @@
         "command": "conda env list || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_java_compilation",
@@ -219,7 +239,8 @@
         "command": "echo 'public class Test { public static void main(String[] args) { System.out.println(\\\"Hello\\\"); } }' > Test.java && javac Test.java && rm -f Test.java Test.class || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_maven_version",
@@ -228,7 +249,8 @@
         "command": "mvn -version || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_maven_help",
@@ -237,7 +259,8 @@
         "command": "mvn -help || true"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_python_package_install",
@@ -247,7 +270,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_pip"]
+      "category": "functionality"
     },
     {
       "id": "test_java_module_build",
@@ -257,7 +280,7 @@
       },
       "timeout": 300,
       "score": 2,
-      "requires": ["check_maven_version"]
+      "category": "functionality"
     },
     {
       "id": "test_maven_compile_poms",
@@ -267,7 +290,7 @@
       },
       "timeout": 180,
       "score": 2,
-      "requires": ["check_maven_version"]
+      "category": "functionality"
     },
     {
       "id": "check_java_files",
@@ -276,7 +299,8 @@
         "command": "[ -d \"java\" ] && find java -name '*.java' | head -1"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_python_files",
@@ -285,7 +309,8 @@
         "command": "[ -d \"python\" ] && find python -name '*.py' | head -1"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_firefox_version",
@@ -295,7 +320,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_firefox"]
+      "category": "configuration"
     },
     {
       "id": "test_geckodriver_version",
@@ -305,7 +330,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_geckodriver"]
+      "category": "configuration"
     }
   ]
 }

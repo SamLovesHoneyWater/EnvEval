@@ -7,7 +7,8 @@
       "params": {
         "names": ["go", "git", "make", "bash", "curl"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_go_version",
@@ -18,7 +19,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "check_go_version_minor",
@@ -28,7 +29,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "check_gopath",
@@ -36,7 +37,8 @@
       "params": {
         "name": "GOPATH"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_goroot",
@@ -44,7 +46,8 @@
       "params": {
         "name": "GOROOT"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_go_modules_enabled",
@@ -54,7 +57,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "type": "files_exist",
@@ -64,7 +67,8 @@
           "go.sum"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_go_mod_cli_project",
@@ -73,7 +77,8 @@
         "path": "go.mod",
         "contains": ["github.com/cli/cli"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_mod_version",
@@ -82,7 +87,8 @@
         "path": "go.mod",
         "contains": ["go 1.24"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_mod_toolchain",
@@ -91,7 +97,8 @@
         "path": "go.mod",
         "contains": ["toolchain go1.24"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_mod_module_name",
@@ -100,7 +107,8 @@
         "path": "go.mod",
         "contains": ["module github.com/cli/cli/v2"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_dependencies_cobra",
@@ -109,7 +117,8 @@
         "path": "go.mod",
         "contains": ["github.com/spf13/cobra"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_dependencies_go_gh",
@@ -118,7 +127,8 @@
         "path": "go.mod",
         "contains": ["github.com/cli/go-gh"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_dependencies_oauth",
@@ -127,7 +137,8 @@
         "path": "go.mod",
         "contains": ["github.com/cli/oauth"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_dependencies_glamour",
@@ -136,7 +147,8 @@
         "path": "go.mod",
         "contains": ["github.com/charmbracelet/glamour"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_go_dependencies_testify",
@@ -145,7 +157,8 @@
         "path": "go.mod",
         "contains": ["github.com/stretchr/testify"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
@@ -166,7 +179,8 @@
           "third-party"
         ]
       },
-      "score": 3
+      "score": 3,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
@@ -176,7 +190,8 @@
           "cmd/gen-docs"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -186,7 +201,8 @@
           "cmd/gen-docs/main.go"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "test_go_mod_download",
@@ -196,7 +212,7 @@
       },
       "timeout": 120,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "functionality"
     },
     {
       "id": "test_go_mod_verify",
@@ -206,7 +222,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_go_mod_download"]
+      "category": "functionality"
     },
     {
       "id": "test_go_build_gh",
@@ -216,7 +232,7 @@
       },
       "timeout": 180,
       "score": 3,
-      "requires": ["test_go_mod_verify"]
+      "category": "functionality"
     },
     {
       "id": "test_go_build_gen_docs",
@@ -226,7 +242,7 @@
       },
       "timeout": 180,
       "score": 2,
-      "requires": ["test_go_mod_verify"]
+      "category": "functionality"
     },
     {
       "id": "check_source_files_pkg",
@@ -235,7 +251,8 @@
         "command": "[ $(find pkg -name '*.go' 2>/dev/null | wc -l) -gt 0 ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_source_files_internal",
@@ -244,7 +261,8 @@
         "command": "[ $(find internal -name '*.go' 2>/dev/null | wc -l) -gt 0 ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -253,7 +271,8 @@
           "script/build.go"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_build_script_compile",
@@ -263,7 +282,7 @@
       },
       "timeout": 60,
       "score": 2,
-      "requires": ["test_go_mod_verify"]
+      "category": "functionality"
     },
     {
       "type": "files_exist",
@@ -272,7 +291,8 @@
           "Makefile"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_makefile_test_target",
@@ -281,7 +301,8 @@
         "command": "make -n test"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_makefile_clean_target",
@@ -290,7 +311,8 @@
         "command": "make -n clean"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_makefile_manpages_target",
@@ -299,7 +321,8 @@
         "command": "make -n manpages"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "test_makefile_completions_target",
@@ -308,7 +331,8 @@
         "command": "make -n completions"
       },
       "timeout": 30,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     },
     {
       "id": "check_test_files",
@@ -317,7 +341,8 @@
         "command": "[ $(find test -name '*.go' 2>/dev/null | wc -l) -gt 0 ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
@@ -326,7 +351,8 @@
           "test/integration"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -335,7 +361,8 @@
           "test/helpers.go"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_acceptance_test_files",
@@ -344,7 +371,8 @@
         "command": "[ $(find acceptance -name '*.go' 2>/dev/null | wc -l) -gt 0 ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -353,7 +381,8 @@
           "acceptance/acceptance_test.go"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
@@ -362,7 +391,8 @@
           "acceptance/testdata"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -372,7 +402,8 @@
           "LICENSE"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "id": "check_readme_content",
@@ -381,7 +412,8 @@
         "path": "README.md",
         "contains": ["GitHub CLI"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_docs_count",
@@ -390,7 +422,8 @@
         "command": "[ $(find docs -type f 2>/dev/null | wc -l) -gt 0 ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -402,7 +435,8 @@
           ".gitattributes"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -413,7 +447,8 @@
           "third-party-licenses.windows.md"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_go_basic_functionality",
@@ -422,7 +457,8 @@
         "command": "go version"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_go_env_access",
@@ -431,7 +467,8 @@
         "command": "go env"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_git_functionality",
@@ -440,7 +477,8 @@
         "command": "git --version"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_git_repository",
@@ -449,7 +487,8 @@
         "command": "[ -d .git ]"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_locale_lang",
@@ -459,7 +498,8 @@
         "contains": ["UTF-8"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_locale_lc_all",
@@ -469,7 +509,8 @@
         "contains": ["UTF-8"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     }
   ]
 }

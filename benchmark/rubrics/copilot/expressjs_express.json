@@ -7,7 +7,8 @@
       "params": {
         "names": ["node", "npm", "git"]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_redis_server",
@@ -15,7 +16,8 @@
       "params": {
         "names": ["redis-server"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_curl_wget",
@@ -23,7 +25,8 @@
       "params": {
         "names": ["curl", "wget"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_node_version",
@@ -34,7 +37,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "check_node_version_major",
@@ -44,7 +47,7 @@
       },
       "timeout": 10,
       "score": 2,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "test_node_execution",
@@ -54,7 +57,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "test_node_module_system",
@@ -64,7 +67,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "test_npm_version",
@@ -74,7 +77,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "id": "test_npm_list",
@@ -84,28 +87,31 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_system_dependencies"]
+      "category": "configuration"
     },
     {
       "type": "dirs_exist",
       "params": {
         "paths": ["lib", "test", "examples", "benchmarks"]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
       "params": {
         "paths": ["package.json", "index.js", "Readme.md", "LICENSE"]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "files_exist",
       "params": {
         "paths": [".npmrc", ".eslintrc.yml"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "type": "files_exist",
@@ -119,14 +125,16 @@
           "lib/utils.js"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "structure"
     },
     {
       "type": "dirs_exist",
       "params": {
         "paths": ["lib/router"]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "test_npm_install",
@@ -136,7 +144,7 @@
       },
       "timeout": 180,
       "score": 3,
-      "requires": ["check_system_dependencies"]
+      "category": "functionality"
     },
     {
       "id": "check_node_modules_exists",
@@ -146,7 +154,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["test_npm_install"]
+      "category": "structure"
     },
     {
       "id": "test_npm_test",
@@ -156,7 +164,7 @@
       },
       "timeout": 300,
       "score": 3,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "check_node_env",
@@ -164,7 +172,8 @@
       "params": {
         "name": "NODE_ENV"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_npm_config_prefix",
@@ -172,7 +181,8 @@
       "params": {
         "name": "npm_config_prefix"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_node_in_path",
@@ -182,7 +192,8 @@
         "contains": ["node"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_npm_in_path",
@@ -192,7 +203,8 @@
         "contains": ["npm"]
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_express_module_load",
@@ -202,7 +214,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "test_express_app_creation",
@@ -212,7 +224,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "test_express_http_server",
@@ -222,7 +234,7 @@
       },
       "timeout": 30,
       "score": 2,
-      "requires": ["test_npm_install"]
+      "category": "functionality"
     },
     {
       "id": "check_express_generator",
@@ -230,7 +242,8 @@
       "params": {
         "names": ["express"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_express_generator_version",
@@ -240,7 +253,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_express_generator"]
+      "category": "configuration"
     },
     {
       "id": "test_express_generator_help",
@@ -250,7 +263,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_express_generator"]
+      "category": "configuration"
     },
     {
       "id": "check_npx",
@@ -258,7 +271,8 @@
       "params": {
         "names": ["npx"]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "test_mocha",
@@ -268,7 +282,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_npx"]
+      "category": "configuration"
     },
     {
       "id": "test_eslint",
@@ -278,7 +292,7 @@
       },
       "timeout": 30,
       "score": 1,
-      "requires": ["check_npx"]
+      "category": "configuration"
     },
     {
       "id": "check_redis_cli",
@@ -287,7 +301,7 @@
         "names": ["redis-cli"]
       },
       "score": 1,
-      "requires": ["check_redis_server"]
+      "category": "configuration"
     },
     {
       "id": "test_redis_ping",
@@ -297,7 +311,7 @@
       },
       "timeout": 10,
       "score": 1,
-      "requires": ["check_redis_cli"]
+      "category": "configuration"
     }
   ]
 }
