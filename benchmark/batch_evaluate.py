@@ -31,6 +31,135 @@ from pathlib import Path
 from typing import List, Tuple, Dict, Any, Optional
 
 
+def validate_rubric(rubric_path: Path, repo_name: str) -> Tuple[bool, List[str]]:
+    """
+    Validate a rubric file for correct syntax and required fields.
+    
+    Args:
+        rubric_path: Path to the rubric JSON file
+        repo_name: Expected repository name
+        
+    Returns:
+        Tuple of (is_valid, list_of_errors)
+    """
+    errors = []
+    
+    # Check if file exists
+    if not rubric_path.exists():
+        errors.append(f"Rubric file not found: {rubric_path}")
+        return False, errors
+    
+    # Try to parse JSON
+    try:
+        with open(rubric_path, 'r', encoding='utf-8') as f:
+            rubric = json.load(f)
+    except json.JSONDecodeError as e:
+        errors.append(f"Invalid JSON syntax: {e}")
+        return False, errors
+    except Exception as e:
+        errors.append(f"Error reading file: {e}")
+        return False, errors
+    
+    # Check top-level structure
+    if not isinstance(rubric, dict):
+        errors.append("Rubric must be a JSON object/dictionary")
+        return False, errors
+
+    # Check "repo" field
+    if "repo" not in rubric:
+        errors.append("Missing required field 'repo'")
+    elif rubric.get("repo") != repo_name:
+        errors.append(f"Repo name mismatch: expected '{repo_name}', found '{rubric.get('repo')}'")
+
+    # Check "tests" field
+    tests_present = True
+    if "tests" not in rubric:
+        errors.append("Missing required field 'tests'")
+        tests_present = False
+    elif not isinstance(rubric["tests"], list):
+        errors.append("Field 'tests' must be a list/array")
+        tests_present = False
+    else:
+        if len(rubric["tests"]) == 0:
+            errors.append("Field 'tests' is empty - at least one test is required")
+    
+    # Validate each test
+    mandatory_fields = ["id", "type", "params", "category"]
+    test_ids = set()
+    
+    # Only iterate tests when the tests field is present and is a list
+    if tests_present:
+        for i, test in enumerate(rubric["tests"]):
+            test_num = i + 1
+            test_errors = []
+
+            if not isinstance(test, dict):
+                errors.append(f"Test #{test_num}: Test must be a JSON object/dictionary")
+                continue
+
+            # Check mandatory fields
+            for field in mandatory_fields:
+                if field not in test:
+                    test_errors.append(f"Missing mandatory field '{field}'")
+
+            # Check for duplicate test IDs
+            if "id" in test:
+                test_id = test["id"]
+                if test_id in test_ids:
+                    test_errors.append(f"Duplicate test ID '{test_id}'")
+                else:
+                    test_ids.add(test_id)
+
+                # Check that ID is non-empty string
+                if not isinstance(test_id, str) or not test_id.strip():
+                    test_errors.append(f"Test ID must be a non-empty string")
+
+            # Check type field
+            if "type" in test:
+                if not isinstance(test["type"], str) or not test["type"].strip():
+                    test_errors.append("Field 'type' must be a non-empty string")
+
+            # Check params field
+            if "params" in test:
+                if not isinstance(test["params"], dict):
+                    test_errors.append("Field 'params' must be a JSON object/dictionary")
+
+            # Check category field
+            if "category" in test:
+                if not isinstance(test["category"], str) or not test["category"].strip():
+                    test_errors.append("Field 'category' must be a non-empty string")
+
+            # Add test-specific errors with test identifier
+            if test_errors:
+                test_identifier = test.get("id", f"#{test_num}")
+                for err in test_errors:
+                    errors.append(f"Test '{test_identifier}': {err}")
+    
+    is_valid = len(errors) == 0
+    return is_valid, errors
+
+
+def validate_all_rubrics(repos: List[str], rubric_dir: str) -> Dict[str, List[str]]:
+    """
+    Validate rubrics for all specified repositories.
+    
+    Args:
+        repos: List of repository names
+        rubric_dir: Directory containing rubric files
+        
+    Returns:
+        Dictionary mapping repo names to their validation errors (empty list if valid)
+    """
+    validation_results = {}
+    
+    for repo_name in repos:
+        rubric_path = Path(rubric_dir) / f"{repo_name}.json"
+        is_valid, errors = validate_rubric(rubric_path, repo_name)
+        validation_results[repo_name] = errors
+    
+    return validation_results
+
+
 def discover_available_repos(data_dir: str = "data", rubric_dir: Optional[str] = None) -> List[str]:
     """
     Discover all available repositories from the data directory or rubrics directory.
@@ -757,6 +886,23 @@ def main():
     if not repos_to_evaluate:
         print("Error: No repositories specified or found")
         sys.exit(1)
+
+    # Validate rubrics for requested repositories (syntax and required fields)
+    print("Validating rubrics for requested repositories...")
+    validation_results = validate_all_rubrics(repos_to_evaluate, args.rubric_dir)
+    problematic = {r: errs for r, errs in validation_results.items() if errs}
+    if problematic:
+        print("\nERROR: Rubric validation failed for the following repositories:")
+        total_issues = 0
+        for r, errs in problematic.items():
+            print(f"\n- {r}:")
+            for e in errs:
+                print(f"    - {e}")
+            total_issues += len(errs)
+
+        print(f"\nFound {len(problematic)} problematic rubric(s) with {total_issues} issue(s).")
+        print("Please fix the above rubric files and re-run the batch evaluation.")
+        sys.exit(2)
     
     # Validate repositories exist
     available_repos = discover_available_repos(args.data_dir, args.rubric_dir)
