@@ -374,16 +374,6 @@
     },
     {
       "id": "check_acceptance_test_files",
-      "type": "run_command",
-      "params": {
-        "command": "[ $(find acceptance -name '*.go' 2>/dev/null | wc -l) -gt 0 ]"
-      },
-      "timeout": 10,
-      "score": 1,
-      "category": "structure"
-    },
-    {
-      "id": "check_acceptance_test_files",
       "type": "files_exist",
       "params": {
         "paths": [
