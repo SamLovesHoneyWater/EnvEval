@@ -13,6 +13,9 @@ import random
 import argparse
 from pathlib import Path
 
+# Import rubric validation from batch_evaluate
+from batch_evaluate import validate_all_rubrics
+
 def count_running_screens(repo_names, session_code):
     """
     Count how many screens are still running for our repositories.
@@ -67,17 +70,17 @@ def wait_for_batch_completion(batch_repos, session_code, check_interval=30):
         success, running_count, running_repos, finished_repos = count_running_screens(batch_repos, session_code)
         
         if not success:
-            print(f"⚠️  Cannot check screen status. Will retry in {check_interval}s...")
+            print(f"Cannot check screen status. Will retry in {check_interval}s...")
             time.sleep(check_interval)
             continue
         
         if running_count == 0:
             elapsed = time.time() - start_time
-            print(f"✅ Batch completed in {elapsed:.1f}s. All {len(batch_repos)} repositories finished.")
+            print(f"Batch completed in {elapsed:.1f}s. All {len(batch_repos)} repositories finished.")
             break
         
         elapsed = time.time() - start_time
-        print(f"⏱️  [{elapsed:.0f}s] Still running: {running_count}/{len(batch_repos)} - {', '.join(running_repos)}")
+        print(f"[{elapsed:.0f}s] Still running: {running_count}/{len(batch_repos)} - {', '.join(running_repos)}")
         time.sleep(check_interval)
 
 def clean_docker_system():
@@ -181,6 +184,27 @@ def main():
     print(f"Found {len(all_repos)} repos:")
     for repo in all_repos:
         print(f"  - {repo}")
+    print()
+    
+    # Validate rubrics for all repositories before starting evaluations
+    print("Validating rubrics for all repositories...")
+    validation_results = validate_all_rubrics(all_repos, rubric_dir)
+    problematic = {r: errs for r, errs in validation_results.items() if errs}
+    
+    if problematic:
+        print("\nERROR: Rubric validation failed for the following repositories:")
+        total_issues = 0
+        for r, errs in problematic.items():
+            print(f"\n- {r}:")
+            for e in errs:
+                print(f"    - {e}")
+            total_issues += len(errs)
+        
+        print(f"\nFound {len(problematic)} problematic rubric(s) with {total_issues} issue(s).")
+        print("Please fix the above rubric files and re-run the batch evaluation.")
+        sys.exit(2)
+    
+    print("All rubrics validated successfully!")
     print()
     
     # Process repositories in batches

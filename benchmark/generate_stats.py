@@ -259,7 +259,7 @@ def calculate_model_stats(repos: List[str], reports_base_dir: str = "reports-by-
                     # If max_score is 0, treat as 0% (no tests in this category for this repo)
                     category_percentages.append(0)
             if model_name == "ours-deepseek-deepseek-v3-0324":
-                print(f"Debug: {model_name} - {category} percentages: {category_percentages}")
+                print(f"Debug: Percentage of score that {model_name} scored in per category, per repo.\nCategory: {category}, score percentages: {category_percentages}")
             stats['category_percentages'][category] = (sum(category_percentages) / len(category_percentages) 
                                                      if category_percentages else 0)
     
