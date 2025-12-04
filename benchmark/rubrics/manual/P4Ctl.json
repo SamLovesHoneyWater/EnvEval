@@ -1,5 +1,5 @@
 {
-  "repo": "p4ctl",
+  "repo": "P4Ctl",
   "tests": [
     {
       "id": "check_python37",

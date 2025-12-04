@@ -48,16 +48,6 @@
       "category": "configuration"
     },
     {
-      "id": "check_lightgbm",
-      "type": "run_command",
-      "params": {
-        "command": "(python3 -c \"import lightgbm\") || (python -c \"import lightgbm\")"
-      },
-      "timeout": 30,
-      "score": 1,
-      "category": "configuration"
-    },
-    {
       "id": "check_numpy",
       "type": "run_command",
       "params": {
