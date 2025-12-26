@@ -8,11 +8,15 @@ from typing import List, Tuple, Dict, Any, Optional
 
 from benchmark.dockerfile_evaluator import DockerfileEvaluator
 
+def get_report_filename(repo_name: str) -> Path:
+    report_file = "codex-gpt41mini_report.json"
+    return Path(__file__).parent / "reports-by-repo" / repo_name / report_file
+
 def main():
     # Built-in defaults (no CLI args)
     baseline_output = Path(__file__).parent / "Baseline-codex-with-traj" / "output"
     rubric_dir = Path(__file__).parent / "rubrics" / "manual"
-    report_dir = Path(__file__).parent / "reports_codex_reprod"
+    
     skip_warnings = False
     verbose = False
 
@@ -78,7 +82,7 @@ def main():
                 report = {"repo": repo_name, "errors": error_messages}
             
             # Save partial report before exiting
-            out_file = report_dir / f"{repo_name}.json"
+            out_file = get_report_filename(repo_name)
             try:
                 if report:
                     if isinstance(report, dict) and 'errors' not in report:
