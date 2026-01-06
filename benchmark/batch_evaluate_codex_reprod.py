@@ -6,7 +6,7 @@ import csv
 from pathlib import Path
 from typing import List, Tuple, Dict, Any, Optional
 
-import DockerfileEvaluator
+from DockerfileEvaluator import DockerfileEvaluator
 
 def get_report_filename(repo_name: str) -> Path:
     report_file = "codex-gpt41mini_report.json"
