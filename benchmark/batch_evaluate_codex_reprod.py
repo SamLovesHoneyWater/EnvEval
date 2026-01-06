@@ -16,6 +16,7 @@ def main():
     # Built-in defaults (no CLI args)
     baseline_output = Path(__file__).parent / "Baseline-codex-with-traj" / "output"
     rubric_dir = Path(__file__).parent / "rubrics" / "manual"
+    report_dir = Path(__file__).parent / "reports-by-repo"
     
     skip_warnings = False
     verbose = False
@@ -55,7 +56,7 @@ def main():
         print("WARNING: One or more required files are missing. Aborting.")
         #raise Exception("One or more required files are missing. Aborting.")
 
-    # Ensure report dir exists
+    # Ensure report dir existss
     report_dir.mkdir(parents=True, exist_ok=True)
 
     any_failures = False
