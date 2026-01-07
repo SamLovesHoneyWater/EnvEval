@@ -119,7 +119,8 @@ def main():
                 report['errors'].extend(error_messages)
 
         # Save report (always, even partial)
-        out_file = report_dir / f"{repo_name}.json"
+        #out_file = report_dir / f"{repo_name}.json"
+        out_file = report_dir / repo_name / "models" / "codex-gpt41mini_report.json"
         try:
             if report:
                 with open(out_file, 'w', encoding='utf-8') as f:
