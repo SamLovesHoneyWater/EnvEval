@@ -1,5 +1,5 @@
 {
-  "repo": "Kilosort4",
+  "repo": "MouseLand_Kilosort",
   "tests": [
     {
       "id": "check_python_tools",
@@ -10,7 +10,8 @@
           "pip3"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_conda_tool",
@@ -20,7 +21,8 @@
           "conda"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_repo_files",
@@ -33,7 +35,8 @@
           "tox.ini"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_repo_dirs",
@@ -45,7 +48,8 @@
           "docs"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_readme_install_steps",
@@ -58,7 +62,8 @@
           "pip install pytest"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_workflow_python_tools",
@@ -71,7 +76,8 @@
           "tox"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_python_version",
@@ -87,7 +93,8 @@
       "score": 1,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "configuration"
     },
     {
       "id": "test_pip_version",
@@ -99,7 +106,8 @@
       "score": 1,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_setup_help",
@@ -111,7 +119,8 @@
       "score": 2,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_pytest_version",
@@ -120,7 +129,8 @@
         "command": "pytest --version"
       },
       "timeout": 10,
-      "score": 1
+      "score": 1,
+      "category": "functionality"
     }
   ]
 }

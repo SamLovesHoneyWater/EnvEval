@@ -1,5 +1,5 @@
 {
-  "repo": "tao_tutorials",
+  "repo": "NVIDIA_tao_tutorials",
   "tests": [
     {
       "id": "check_cli_tools",
@@ -12,7 +12,8 @@
           "git"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_notebook_support",
@@ -22,7 +23,8 @@
           "jupyter"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_nvidia_docker",
@@ -32,7 +34,8 @@
           "nvidia-docker"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_repo_dirs",
@@ -43,7 +46,8 @@
           "setup"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_setup_files",
@@ -54,7 +58,8 @@
           "setup/quickstart_launcher.sh"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_quickstart_contains_tao_install",
@@ -67,7 +72,8 @@
           "docker login"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_python_version",
@@ -82,7 +88,8 @@
       "score": 1,
       "requires": [
         "check_cli_tools"
-      ]
+      ],
+      "category": "configuration"
     },
     {
       "id": "test_pip_version",
@@ -94,7 +101,8 @@
       "score": 1,
       "requires": [
         "check_cli_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_docker_version",
@@ -106,7 +114,8 @@
       "score": 1,
       "requires": [
         "check_cli_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_jupyter_version",
@@ -118,7 +127,8 @@
       "score": 1,
       "requires": [
         "check_notebook_support"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_tao_install_command",
@@ -130,7 +140,8 @@
       "score": 2,
       "requires": [
         "check_cli_tools"
-      ]
+      ],
+      "category": "functionality"
     }
   ]
 }

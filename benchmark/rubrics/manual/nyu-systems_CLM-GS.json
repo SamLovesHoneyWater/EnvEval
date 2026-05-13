@@ -1,5 +1,5 @@
 {
-  "repo": "CLM-GS",
+  "repo": "nyu-systems_CLM-GS",
   "tests": [
     {
       "id": "check_python_tools",
@@ -10,7 +10,8 @@
           "pip3"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_conda_tool",
@@ -20,7 +21,8 @@
           "conda"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_git_tool",
@@ -30,7 +32,8 @@
           "git"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_repo_files",
@@ -42,7 +45,8 @@
           "train.py"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_repo_dirs",
@@ -55,7 +59,8 @@
           "strategies"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_readme_install_steps",
@@ -68,7 +73,8 @@
           "export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_submodule_paths",
@@ -81,7 +87,8 @@
           "submodules/clm_kernels"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_pytorch_cuda_alloc_conf",
@@ -89,7 +96,8 @@
       "params": {
         "name": "PYTORCH_CUDA_ALLOC_CONF"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_python_version",
@@ -104,7 +112,8 @@
       "score": 1,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "configuration"
     },
     {
       "id": "test_pip_version",
@@ -116,7 +125,8 @@
       "score": 1,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_train_help",
@@ -128,7 +138,8 @@
       "score": 2,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "functionality"
     }
   ]
 }

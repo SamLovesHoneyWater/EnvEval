@@ -1,5 +1,5 @@
 {
-  "repo": "CellViT-plus-plus",
+  "repo": "TIO-IKIM_CellViT-plus-plus",
   "tests": [
     {
       "id": "check_python_tools",
@@ -10,7 +10,8 @@
           "pip3"
         ]
       },
-      "score": 2
+      "score": 2,
+      "category": "configuration"
     },
     {
       "id": "check_conda_docker_tools",
@@ -21,7 +22,8 @@
           "docker"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_repo_files",
@@ -35,7 +37,8 @@
           "docker-compose.yaml"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_repo_dirs",
@@ -48,7 +51,8 @@
           "docs"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_environment_python_pin",
@@ -61,7 +65,8 @@
           "cucim=24.04.00"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_requirements_runtime_packages",
@@ -74,7 +79,8 @@
           "jupyterlab"
         ]
       },
-      "score": 1
+      "score": 1,
+      "category": "structure"
     },
     {
       "id": "check_cuda_visible_devices",
@@ -82,7 +88,8 @@
       "params": {
         "name": "CUDA_VISIBLE_DEVICES"
       },
-      "score": 1
+      "score": 1,
+      "category": "configuration"
     },
     {
       "id": "check_python_version",
@@ -97,7 +104,8 @@
       "score": 1,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "configuration"
     },
     {
       "id": "test_pip_version",
@@ -109,7 +117,8 @@
       "score": 1,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_check_environment_help",
@@ -121,7 +130,8 @@
       "score": 2,
       "requires": [
         "check_python_tools"
-      ]
+      ],
+      "category": "functionality"
     },
     {
       "id": "test_docker_version",
@@ -133,7 +143,8 @@
       "score": 1,
       "requires": [
         "check_conda_docker_tools"
-      ]
+      ],
+      "category": "functionality"
     }
   ]
 }
